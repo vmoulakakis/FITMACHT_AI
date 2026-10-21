@@ -11,9 +11,9 @@ function Choice({active,title,detail,emoji,onClick}:{active:boolean;title:string
 export default function Advisor(){
  const [started,setStarted]=useState(false);
  const [step,setStep]=useState(0);
+ const [a,setA]=useState<Answers>(initial);
  const flow=visibleScreens(a.goal);
  const current=flow[step]??0;
- const [a,setA]=useState<Answers>(initial);
  const [result,setResult]=useState<Result|null>(null);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
