@@ -1,0 +1,11 @@
+{
+  "name": "fitmatch-hf-offline-indexer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-index": "node build-index.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "3.8.1"
+  }
+}

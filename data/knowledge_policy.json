@@ -1,0 +1,32 @@
+[
+  {
+    "id": "space",
+    "text": "Σε μικρό χώρο χρειάζονται επιβεβαιωμένες διαστάσεις χρήσης και αποθήκευσης πριν από προτροπή αγοράς.",
+    "source_url": "/methodology",
+    "source_type": "editorial_policy"
+  },
+  {
+    "id": "noise",
+    "text": "Δεν ισχυριζόμαστε αθόρυβη λειτουργία χωρίς τεκμηριωμένη προδιαγραφή ή μέτρηση.",
+    "source_url": "/methodology",
+    "source_type": "editorial_policy"
+  },
+  {
+    "id": "budget",
+    "text": "Η πρόταση πρέπει να σέβεται το ανώτατο budget· μερικές φορές η σωστή σύσταση είναι καμία αγορά.",
+    "source_url": "/methodology",
+    "source_type": "editorial_policy"
+  },
+  {
+    "id": "running",
+    "text": "Για τρέξιμο απαιτείται έλεγχος επιφάνειας τρεξίματος, κινητήρα, ορίων βάρους και καταλληλότητας για τρέξιμο.",
+    "source_url": "/methodology",
+    "source_type": "editorial_policy"
+  },
+  {
+    "id": "affiliate",
+    "text": "Προϊόν χωρίς αποδεδειγμένη προμήθεια τουλάχιστον δέκα ευρώ και επαληθευμένα χαρακτηριστικά δεν εμφανίζεται ως χορηγούμενη πρόταση.",
+    "source_url": "/methodology",
+    "source_type": "editorial_policy"
+  }
+]
