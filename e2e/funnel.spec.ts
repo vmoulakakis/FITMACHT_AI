@@ -10,7 +10,8 @@ test("2-question walking funnel returns advice, alternatives and no fake offers"
  await expect(page.getByText("Ερώτηση 2 από 2")).toBeVisible();
  await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
  await expect(page.getByRole("heading",{name:"Walking pad"})).toBeVisible();
- await expect(page.getByRole("region",{name:"Εναλλακτικές λύσεις"}).count()).toBeGreaterThan(0);
+ await expect(page.getByRole("region",{name:"Εναλλακτικές λύσεις"})).toBeVisible();
+ await expect(page.locator(".solutionPath")).toHaveCount(3);
  await expect(page.getByText(/Η λύση είναι διαθέσιμη ως πλάνο/)).toBeVisible();
  await info.attach("walking-result-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
 });
