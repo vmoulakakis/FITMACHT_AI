@@ -32,3 +32,10 @@ This repo is staging-only and deliberately NOINDEX. Do not publish production wi
 - /readiness is a timestamped operational data-readiness dashboard; /api/readiness exposes snapshot vs live verified catalog separately.
 - CSV importer now quarantines records whose program ID is absent rather than rejecting the entire feed. Only an explicitly approved, attributed merchant crosswalk may resolve ambiguous names; still no monetization.
 - Historical Vercel failure on f9f4609 was a missing import path @/lib/flow; subsequent builds succeeded. Use atomic complete commits to avoid partial-build emails.
+
+## Conversational funnel v2 — two questions
+- 1. Goal. 2. Budget + space with optional quiet/storage/running toggles and optional free-text context.
+- Every valid combination returns primary actionable path plus two alternatives; practical no-purchase guidance is a solution, not a fake offer.
+- Local Greek/Greeklish contextual matching and category scoring operate without paid inference.
+- Optional environment HF_TOKEN supports explicit-consent Qwen/Qwen3-4B-Instruct-2507 for contextual cue extraction only. Open weights do not guarantee free provider quota; failure gracefully falls back.
+- ML does not determine stock, price, medical advice or commercial eligibility. Release remains blocked until verified products exist.

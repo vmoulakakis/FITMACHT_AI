@@ -28,3 +28,12 @@ Last verified: 2026-10-21 UTC.
 - github.com/vmoulakakis/FITMACHT_AI/actions: CI/E2E reports.
 
 Migration executed on VMDB: fitmatch_isolated_source_review_and_verified_offer_rls_20261021 (private fitmatch schema and RLS-protected public.fitmatch_verified_offers). The repo's db/STAGING_ONLY_fitmatch_isolation.sql is an earlier design draft and MUST NOT be blindly run over the applied schema.
+
+# FITMATCH two-question advisor acceptance (staging)
+- Purpose: for every buyer input return three actionable, distinct solution paths even without verified affiliate offers.
+- UI: only 2 core questions. Step 1: goal. Step 2: budget + space, optional noise/storage/running and free-text.
+- Natural-language cue processing works locally with transparent rules. Optional HF open-weight provider processes free text only after explicit consent, if credentials and quota are available; fallback guaranteed.
+- Never manufacture merchant products, affiliate rates, stock or fitness specifications to populate results.
+- Shopper paths are not live purchasable SKUs: commerce stays gated by the existing verified-offer RLS table.
+- Release is still blocked pending genuine merchant approval, specs and current stock; this funnel UI can be previewed independently.
+- Regression suite exhausts budget=0, low budget, 4 goals, 3 spaces, 2 noise states, 2 storage preferences and free-text cues.

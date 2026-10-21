@@ -1,16 +1,30 @@
 import {NextResponse} from "next/server";
-import {advise,choose,type Answers} from "@/lib/decision";
+import {choose,type Answers} from "@/lib/decision";
+import {solve} from "@/lib/solutions";
+import {optionalHF} from "@/lib/hf-context";
 import {catalog} from "@/lib/catalog";
 export const dynamic="force-dynamic";
-const goals=["walking","cardio","strength","mixed"], spaces=["compact","medium","large"], noises=["critical","normal"], activities=["walk","run","both"];
-export async function POST(req:Request){
- let v:Partial<Answers>;
- try{v=await req.json()}catch{return NextResponse.json({error:"invalid_json"},{status:400})}
- if(!v||!goals.includes(String(v.goal))||!spaces.includes(String(v.space))||!noises.includes(String(v.noise))||!activities.includes(String(v.activity))||typeof v.budget!=="number"||v.budget<0||v.budget>100000||typeof v.fold!=="boolean")
+const goals=["walking","cardio","strength","mixed"];
+const spaces=["compact","medium","large"],noises=["critical","normal"],activities=["walk","run","both"];
+export async function POST(request:Request){
+ let v:Record<string,unknown>;
+ try{v=await request.json() as Record<string,unknown>;}catch{return NextResponse.json({error:"invalid_json"},{status:400});}
+ if(!v||Array.isArray(v)||!goals.includes(String(v.goal))||(v.space!==undefined&&!spaces.includes(String(v.space)))||
+ (v.noise!==undefined&&!noises.includes(String(v.noise)))||(v.activity!==undefined&&!activities.includes(String(v.activity)))||
+ typeof v.budget!=="number"||!Number.isFinite(v.budget)||v.budget<0||v.budget>20000||
+ (v.fold!==undefined&&typeof v.fold!=="boolean")||(v.aiConsent!==undefined&&typeof v.aiConsent!=="boolean")||
+ (v.note!==undefined&&(typeof v.note!=="string"||v.note.length>600)))
  return NextResponse.json({error:"invalid_answers"},{status:422});
- const answers=v as Answers;
- const decision=advise(answers);
+ const a:Answers={goal:v.goal as Answers["goal"],budget:v.budget as number,
+ space:(v.space as Answers["space"]|undefined)||"compact",noise:(v.noise as Answers["noise"]|undefined)||"normal",
+ activity:(v.activity as Answers["activity"]|undefined)||"walk",fold:v.fold===true};
+ const note=(v.note as string|undefined)||"";
+ const context=await optionalHF(note,v.aiConsent===true);
+ const solutions=solve(a,note,context??undefined);
  const c=await catalog();
- const offers=choose(c.offers,answers,decision.category);
- return NextResponse.json({decision,offers,catalogState:c.mode,catalogNote:c.reason??"",disclosure:"Οι σύνδεσμοι αγοράς μπορεί να είναι affiliate. Καμία παραγγελία δεν ολοκληρώνεται στο FITMATCH AI."},{headers:{"Cache-Control":"no-store"}});
+ const offers=solutions.primary.category?choose(c.offers,a,solutions.primary.category):[];
+ return NextResponse.json({solutions,offers,catalogState:c.mode,catalogNote:c.reason??"",
+ aiStatus:context?"hf-assisted":"contextual-fallback",
+ disclosure:"Τυχόν σύνδεσμοι αγοράς μπορεί να είναι affiliate. Οι πληρωμές γίνονται μόνο στο κατάστημα. Οι προτάσεις κατηγορίας δεν αποτελούν πραγματικές προσφορές."
+ },{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
 }

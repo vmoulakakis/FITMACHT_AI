@@ -1,6 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import {visibleScreens} from "../lib/flow";
-test("strength requires four relevant screens",()=>assert.deepEqual(visibleScreens("strength"),[0,1,4,5]));
-test("running/cardio route includes usage and noise",()=>assert.deepEqual(visibleScreens("cardio"),[0,1,2,3,4,5]));
-test("all routes have valid four-to-seven length",()=>{for(const g of ["walking","cardio","strength","mixed"] as const){assert.ok(visibleScreens(g).length>=4&&visibleScreens(g).length<=7);}});
+import test from "node:test";import assert from "node:assert/strict";import {solve} from "../lib/solutions";import type {Answers} from "../lib/decision";
+const a:Answers={goal:"walking",space:"compact",noise:"normal",activity:"walk",budget:400,fold:false};
+test("two-question buyer journey always returns three solutions",()=>{const s=solve(a);assert.equal([s.primary,...s.alternatives].length,3);});
+test("no payment means no purchase guidance",()=>assert.equal(solve({...a,budget:0}).primary.kind,"no_purchase"));

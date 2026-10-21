@@ -1,29 +1,40 @@
 import {test,expect} from "@playwright/test";
-test("Greek landing to verified walking advice and zero-fabrication fallback",async({page},info)=>{
+test("2-question walking funnel returns advice, alternatives and no fake offers",async({page},info)=>{
  await page.goto("/");
  await expect(page).toHaveTitle(/FITMATCH AI/);
- await expect(page.getByRole("heading",{name:/Ο σωστός εξοπλισμός/})).toBeVisible();
- await info.attach("landing",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+ await info.attach("landing-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
  await page.getByRole("button",{name:/Βρες τι σου ταιριάζει/}).click();
- await expect(page.getByRole("heading",{name:/Ποιος είναι ο στόχος σου/})).toBeVisible();
- for(let i=0;i<5;i++)await page.getByRole("button",{name:"Συνέχεια"}).click();
- await page.getByRole("button",{name:"Δες την πρότασή μου"}).click();
+ await expect(page.getByText("Ερώτηση 1 από 2")).toBeVisible();
+ await expect(page.getByRole("heading",{name:"Τι θέλεις να πετύχεις;"})).toBeVisible();
+ await page.getByRole("button",{name:"Συνέχεια"}).click();
+ await expect(page.getByText("Ερώτηση 2 από 2")).toBeVisible();
+ await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
  await expect(page.getByRole("heading",{name:"Walking pad"})).toBeVisible();
- await expect(page.getByText(/Δεν εμφανίζουμε μη επαληθευμένες προσφορές/)).toBeVisible();
- await info.attach("walking-result",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+ await expect(page.getByRole("region",{name:"Εναλλακτικές λύσεις"}).count()).toBeGreaterThan(0);
+ await expect(page.getByText(/Η λύση είναι διαθέσιμη ως πλάνο/)).toBeVisible();
+ await info.attach("walking-result-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
 });
-test("strength user skips irrelevant activity and noise screens",async({page},info)=>{
+test("strength + zero budget works without product or extra screens",async({page},info)=>{
  await page.goto("/");
  await page.getByRole("button",{name:/Βρες τι σου ταιριάζει/}).click();
  await page.getByRole("button",{name:/Δύναμη & ενδυνάμωση/}).click();
- await expect(page.getByText("Βήμα 1 από 4")).toBeVisible();
  await page.getByRole("button",{name:"Συνέχεια"}).click();
- await expect(page.getByRole("heading",{name:/Πόσο χώρο διαθέτεις/})).toBeVisible();
+ await page.getByRole("button",{name:"Χωρίς αγορά"}).click();
+ await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
+ await expect(page.getByRole("heading",{name:"Ασκήσεις με το βάρος του σώματος"})).toBeVisible();
+ await expect(page.getByText("Τρία πρακτικά βήματα")).toBeVisible();
+ await info.attach("strength-free-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+});
+test("text context changes recommendation and alternatives remain clickable",async({page})=>{
+ await page.goto("/");
+ await page.getByRole("button",{name:/Βρες τι σου ταιριάζει/}).click();
+ await page.getByRole("button",{name:/Cardio & αντοχή/}).click();
  await page.getByRole("button",{name:"Συνέχεια"}).click();
- await expect(page.getByRole("heading",{name:/Ποιο είναι το ανώτατο budget/})).toBeVisible();
- await page.getByRole("button",{name:"Συνέχεια"}).click();
- await expect(page.getByRole("heading",{name:/Θέλεις να αποθηκεύεται εύκολα/})).toBeVisible();
- await page.getByRole("button",{name:"Δες την πρότασή μου"}).click();
- await expect(page.getByRole("heading",{name:"Ρυθμιζόμενοι αλτήρες"})).toBeVisible();
- await info.attach("strength-result",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+ await page.locator("#my-context").fill("Θέλω να τρέχω σε μικρό χώρο και να μην ενοχλώ γείτονες");
+ await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
+ await expect(page.getByRole("heading",{name:"Περπάτημα ή τρέξιμο εκτός σπιτιού"})).toBeVisible();
+ const choices=page.locator(".solutionPath");
+ await expect(choices).toHaveCount(3);
+ await choices.nth(1).click();
+ await expect(choices.nth(1)).toHaveAttribute("aria-pressed","true");
 });
