@@ -1,3 +1,5 @@
+-- SUPERSEDED DESIGN DRAFT (NOT the applied migration). Do not run without diff/review.
+-- The applied migration was named fitmatch_isolated_source_review_and_verified_offer_rls_20261021.
 -- FITMATCH AI isolated namespace in shared VMDB, prepared 2026-10-21.
 -- STAGING MIGRATION ONLY; not yet executed. Requires security review and rollback plan.
 -- Does not alter existing SocialMarket tables/functions.

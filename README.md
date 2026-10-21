@@ -21,7 +21,7 @@ SocialMarket ingestion currently uses an EUR15 source-gate and a commission calc
 The bridge reads only with an approved public/read-only credential if RLS allows it. All records start UNVERIFIED pending manual source and terms audit. No direct database writes occur.
 
 ## Next stage before real offers
-Audit actual Linkwise feed.csv taxonomy, merchant program terms per category, exclusions, approval rules and tracking URLs. Create independently namespaced audit tables and scheduled refresh. Map real verified specs and prices. Add documented ETL count/idempotence tests, full RAG evidence, consent-respecting analytics and attribution.
+Audit actual Linkwise feed.csv taxonomy, merchant program terms per category, exclusions, approval rules and tracking URLs. Use the already-created private fitmatch review views and public.fitmatch_verified_offers RLS table; add validated refresh and approval workers. Map real verified specs and prices. Add documented ETL count/idempotence tests, full RAG evidence, consent-respecting analytics and attribution.
 
 ## Release
 This repo is staging-only and deliberately NOINDEX. Do not publish production without source-data audit, acceptance tests, Linkwise compliance review, security/privacy and explicit owner signoff.
