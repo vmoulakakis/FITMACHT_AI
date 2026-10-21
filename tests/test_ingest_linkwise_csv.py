@@ -40,13 +40,15 @@ class TestFeed(unittest.TestCase):
         self.assertEqual(ingest_module.number("19,99"), 19.99)
         self.assertIsNone(ingest_module.number("not-a-price"))
 
-    def test_rejects_missing_program_id_column(self):
+    def test_quarantines_unmapped_program_column(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             source = root/"bad.csv"
             source.write_text("product_id,product_name,price,tracking_url\n1,A,150,https://example.org\n",encoding="utf-8")
-            with self.assertRaisesRegex(ValueError,"missing_columns:program_id"):
-                ingest_module.ingest(source,root/"db.sqlite",root/"qa.json",set())
+            report = ingest_module.ingest(source,root/"db.sqlite",root/"qa.json",set())
+            self.assertEqual(report["counts"].get("quarantined"), 1)
+            self.assertEqual(report["counts"].get("staged_total"), 0)
+            self.assertEqual(report["published_offers"], 0)
 
 if __name__ == "__main__":
     unittest.main()
