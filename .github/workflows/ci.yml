@@ -9,7 +9,7 @@ permissions:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -27,3 +27,16 @@ jobs:
         run: npm test
       - run: npm run typecheck
       - run: npm run build
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile browser journeys
+        run: npm run test:e2e
+      - name: Preserve test screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fitmatch-browser-evidence
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
