@@ -1,41 +1,32 @@
 import {test,expect} from "@playwright/test";
-test("2-question walking funnel returns advice, alternatives and no fake offers",async({page},info)=>{
+test("cinematic pain-led landing, two-input advisor and evidence-only commerce",async({page},info)=>{
  await page.goto("/");
- await expect(page).toHaveTitle(/FITMATCH AI/);
- await info.attach("landing-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
- await page.getByRole("button",{name:/Βρες τι σου ταιριάζει/}).click();
- await expect(page.getByText("Ερώτηση 1 από 2")).toBeVisible();
- await expect(page.getByRole("heading",{name:"Τι θέλεις να πετύχεις;"})).toBeVisible();
- await page.getByRole("button",{name:"Συνέχεια"}).click();
- await expect(page.getByText("Ερώτηση 2 από 2")).toBeVisible();
- await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
- await expect(page.getByRole("heading",{name:"Walking pad"})).toBeVisible();
- await expect(page.getByRole("region",{name:"Εναλλακτικές λύσεις"})).toBeVisible();
- await expect(page.locator(".solutionPath")).toHaveCount(3);
- await expect(page.getByText(/Η λύση είναι διαθέσιμη ως πλάνο/)).toBeVisible();
- await info.attach("walking-result-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+ await expect(page.getByRole("heading",{name:/Δεν έχεις χώρο/})).toBeVisible();
+ await expect(page.getByRole("heading",{name:/Ποιο είναι το/})).toBeVisible();
+ await info.attach("cinematic-landing",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+ await page.getByRole("button",{name:/Λύσε το πρόβλημα: Δεν έχω χώρο/}).click();
+ await expect(page.getByLabel(/ΠΕΣ ΤΟ ΠΡΟΒΛΗΜΑ/)).toBeVisible();
+ await page.getByRole("button",{name:/Βρες τι πραγματικά μου ταιριάζει/}).click();
+ await expect(page.getByRole("heading",{name:/Από το πρόβλημα/})).toBeVisible();
+ await expect(page.locator(".solutionChoice")).toHaveCount(3);
+ await expect(page.getByText(/Δεν έχουμε ακόμη επαληθευμένο προϊόν/)).toBeVisible();
+ await info.attach("cinematic-results",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
 });
-test("strength + zero budget works without product or extra screens",async({page},info)=>{
+test("zero budget yields solution without fake affiliate offer",async({page})=>{
  await page.goto("/");
- await page.getByRole("button",{name:/Βρες τι σου ταιριάζει/}).click();
- await page.getByRole("button",{name:/Δύναμη & ενδυνάμωση/}).click();
- await page.getByRole("button",{name:"Συνέχεια"}).click();
- await page.getByRole("button",{name:"Χωρίς αγορά"}).click();
- await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
- await expect(page.getByRole("heading",{name:"Ασκήσεις με το βάρος του σώματος"})).toBeVisible();
- await expect(page.getByText("Τρία πρακτικά βήματα")).toBeVisible();
- await info.attach("strength-free-v2",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+ await page.getByRole("button",{name:/Λύσε το πρόβλημα: Δεν θέλω να πετάξω/}).click();
+ await page.locator("#purchaseBudget").fill("0");
+ await page.getByRole("button",{name:/Βρες τι πραγματικά μου ταιριάζει/}).click();
+ await expect(page.getByRole("heading",{name:/Από το πρόβλημα/})).toBeVisible();
+ await expect(page.locator(".solutionChoice")).toHaveCount(3);
+ await expect(page.locator(".merchantOffers")).toHaveCount(0);
 });
-test("text context changes recommendation and alternatives remain clickable",async({page})=>{
+test("noise pain changes quick setup, alternative selection still works",async({page})=>{
  await page.goto("/");
- await page.getByRole("button",{name:/Βρες τι σου ταιριάζει/}).click();
- await page.getByRole("button",{name:/Cardio & αντοχή/}).click();
- await page.getByRole("button",{name:"Συνέχεια"}).click();
- await page.locator("#my-context").fill("Θέλω να τρέχω σε μικρό χώρο και να μην ενοχλώ γείτονες");
- await page.getByRole("button",{name:"Δες τις λύσεις μου"}).click();
- await expect(page.getByRole("heading",{name:"Περπάτημα ή τρέξιμο εκτός σπιτιού"})).toBeVisible();
- const choices=page.locator(".solutionPath");
- await expect(choices).toHaveCount(3);
- await choices.nth(1).click();
- await expect(choices.nth(1)).toHaveAttribute("aria-pressed","true");
+ await page.getByRole("button",{name:/Λύσε το πρόβλημα: Δεν θέλω να ενοχλώ/}).click();
+ await expect(page.locator(".quietControl input")).toBeChecked();
+ await page.getByRole("button",{name:/Βρες τι πραγματικά μου ταιριάζει/}).click();
+ await expect(page.locator(".solutionChoice")).toHaveCount(3);
+ await page.locator(".solutionChoice").nth(1).click();
+ await expect(page.locator(".solutionChoice").nth(1)).toHaveAttribute("aria-pressed","true");
 });
