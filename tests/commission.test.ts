@@ -1,0 +1,13 @@
+import test from "node:test";import assert from "node:assert/strict";import {assessPayout,type Rule} from "../lib/commission";
+const r:Rule={programId:"42",categoryCode:"fitness",approved:true,marketingAllowed:true,evidenceUrl:"https://merchant.example/terms",verifiedAt:"2026-10-01T00:00:00Z",payoutKind:"percent",minPercent:5,base:"gross"};
+const o={programId:"42",categoryCode:"fitness",productId:"p1",priceEur:200,now:Date.parse("2026-10-21T00:00:00Z")};
+test("EUR10 exactly passes",()=>assert.equal(assessPayout(r,o).status,"ELIGIBLE"));
+test("below threshold fails",()=>assert.equal(assessPayout({...r,minPercent:4},o).status,"INELIGIBLE"));
+test("no verified rate fails closed",()=>assert.equal(assessPayout({...r,minPercent:null},o).status,"UNVERIFIED"));
+test("VAT net basis is conservative",()=>assert.equal(assessPayout({...r,base:"net_ex_vat",vatPercent:24},o).status,"INELIGIBLE"));
+test("unknown VAT fails closed",()=>assert.equal(assessPayout({...r,base:"net_ex_vat"},o).status,"UNVERIFIED"));
+test("excluded SKU",()=>assert.equal(assessPayout({...r,excludedProductIds:["p1"]},o).reason,"excluded_product"));
+test("wrong category is not inherited",()=>assert.equal(assessPayout(r,{...o,categoryCode:"sports"}).status,"UNVERIFIED"));
+test("caps apply",()=>assert.equal(assessPayout({...r,capEur:7},o).minPayoutEur,7));
+test("terms expired",()=>assert.equal(assessPayout({...r,effectiveUntil:"2026-10-20"},o).status,"UNVERIFIED"));
+test("merchant not approved",()=>assert.equal(assessPayout({...r,approved:false},o).status,"INELIGIBLE"));
