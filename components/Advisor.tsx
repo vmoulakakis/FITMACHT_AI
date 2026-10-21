@@ -1,125 +1,97 @@
 "use client";
 import {useState} from "react";
-import {ArrowRight,ArrowLeft,Check,ChevronRight,ChevronDown,Compass,Footprints,ShieldCheck,HeartPulse,House,Activity,Dumbbell,Volume2,Wallet,PackageCheck,RotateCcw,ExternalLink,Sparkles,SlidersHorizontal,Ruler,MoveRight,Search,Eye,LockKeyhole} from "lucide-react";
-import type {Answers} from "@/lib/decision";
+import {ArrowRight,ArrowUpRight,Check,ChevronDown,Activity,Sparkles,ShieldCheck,Home,Volume2,Wallet,RotateCcw,ExternalLink,CheckCircle2,ScanSearch,MoveRight,LoaderCircle} from "lucide-react";
 import type {Plan,Path} from "@/lib/solutions";
-type Product = {id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string};
-type Result={solutions:Plan;offers:Product[];catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
-const initial:Answers={goal:"walking",space:"compact",noise:"normal",activity:"walk",budget:500,fold:false};
-
-function Choice({active,title,detail,emoji,onClick}:{active:boolean;title:string;detail?:string;emoji:string;onClick:()=>void}){return <button className={"choice"+(active?" selected":"")} type="button" onClick={onClick}><span className="choiceEmoji">{emoji}</span><span className="choiceCopy"><strong>{title}</strong>{detail&&<small>{detail}</small>}</span><span className="choiceCheck">{active?<Check size={16}/>:<span className="emptyCircle"/>}</span></button>;}
+type Offer={id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string;imageUrl?:string|null};
+type Result={solutions:Plan;offers:Offer[];catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
+const problems=[
+ {id:"space",icon:"◩",kicker:"ΜΙΚΡΟ ΣΠΙΤΙ",title:"Δεν έχω χώρο για όργανα.",note:"Μένω σε μικρό διαμέρισμα. Θέλω να γυμνάζομαι χωρίς να γεμίζει ο χώρος με εξοπλισμό.",goal:"mixed" as const},
+ {id:"noise",icon:"◉",kicker:"ΠΟΛΥΚΑΤΟΙΚΙΑ",title:"Δεν θέλω να ενοχλώ τους γείτονες.",note:"Μένω σε πολυκατοικία. Θέλω να κινούμαι μέσα στο σπίτι χωρίς θόρυβο.",goal:"walking" as const},
+ {id:"budget",icon:"↗",kicker:"ΕΞΥΠΝΗ ΑΓΟΡΑ",title:"Δεν θέλω να πετάξω τα χρήματά μου.",note:"Θέλω τον πιο κατάλληλο εξοπλισμό για το budget μου και να μη μείνει αχρησιμοποίητος.",goal:"mixed" as const}
+];
 export default function Advisor(){
- const [started,setStarted]=useState(false);
- const [step,setStep]=useState(0);
- const [a,setA]=useState<Answers>(initial);
- const [note,setNote]=useState("");
- const [aiConsent,setAiConsent]=useState(false);
+ const [active,setActive]=useState("space");
+ const [note,setNote]=useState(problems[0].note);
+ const [goal,setGoal]=useState<"walking"|"cardio"|"strength"|"mixed">("mixed");
+ const [budget,setBudget]=useState(450);
+ const [space,setSpace]=useState<"compact"|"medium"|"large">("compact");
+ const [quiet,setQuiet]=useState(false);
+ const [consent,setConsent]=useState(false);
  const [result,setResult]=useState<Result|null>(null);
  const [selected,setSelected]=useState(0);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
- const patch=(p:Partial<Answers>)=>setA(x=>({...x,...p}));
- const begin=()=>{setResult(null);setSelected(0);setError("");setStarted(true);setStep(0);window.scrollTo({top:0,behavior:"smooth"});};
- const next=async()=>{
-  if(step===0){setStep(1);return;}
+ function preset(p:typeof problems[number]){
+  setActive(p.id);setNote(p.note);setGoal(p.goal);setQuiet(p.id==="noise");setError("");setResult(null);
+ }
+ async function assess(){
   setLoading(true);setError("");
   try{
-   const response=await fetch("/api/recommend",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...a,note,aiConsent})});
-   if(!response.ok)throw new Error("Δεν ήταν δυνατή η αξιολόγηση. Δοκίμασε ξανά.");
-   const payload=await response.json() as Result;
-   if(!payload.solutions?.primary||!Array.isArray(payload.solutions.alternatives))throw new Error("Απρόσμενη απάντηση. Δοκίμασε ξανά.");
-   setResult(payload);setSelected(0);
-  }catch(e){setError(e instanceof Error?e.message:"Σφάλμα επικοινωνίας.");}
-  finally{setLoading(false);}
- };
- const paths:Path[]=result?[result.solutions.primary,...result.solutions.alternatives]:[];
- const selectedPath=paths[selected]||paths[0];
- const labels:Record<string,string>={walking:"Περπάτημα",cardio:"Cardio",strength:"Δύναμη",mixed:"Συνδυασμός"};
- return <div className="shell">
-  <header className="header"><div className="headerInside">
-    <a className="brand" href="/" aria-label="FITMATCH AI αρχική"><span className="brandMark"><Activity size={20} strokeWidth={2.8}/></span><span>FITMATCH<span className="brandAI"> AI</span></span></a>
-    <nav className="nav" aria-label="Κύρια πλοήγηση"><a href="#how">Πώς λειτουργεί</a><a href="#why">Η φιλοσοφία μας</a><a href="/methodology">Μεθοδολογία</a></nav>
-    <button className="headerCTA" onClick={begin} type="button">Βρες τον εξοπλισμό σου <ArrowRight size={16}/></button>
-  </div></header>
-  {!started?<main>
-    <section className="hero"><div className="heroInner"><div className="heroText">
-      <div className="eyebrow"><Sparkles size={14}/> AI BUYING ADVISOR · ΕΛΛΑΔΑ</div>
-      <h1>Ο σωστός εξοπλισμός.<br/><span className="accent">Για τον δικό σου χώρο.</span></h1>
-      <p className="heroLead">Δεν χρειάζεσαι άλλον έναν fitness κατάλογο. Χρειάζεσαι κάποιον να καταλάβει τι πραγματικά σου ταιριάζει — πριν ξοδέψεις ούτε ένα ευρώ.</p>
-      <div className="heroActions"><button onClick={begin} type="button" className="btnPrimary">Βρες τι σου ταιριάζει <ArrowRight size={19}/></button><a href="#how" className="btnSecondary">Πώς λειτουργεί <ChevronDown size={17}/></a></div>
-      <div className="heroPoints"><span><Check size={15}/> 2 ερωτήσεις</span><span><Check size={15}/> Χωρίς εγγραφή</span><span><Check size={15}/> Ανεξάρτητες συμβουλές</span></div>
+   const res=await fetch("/api/recommend",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({goal,space,budget,noise:quiet?"critical":"normal",activity:/τρέχ|τρεξ|trex|running/i.test(note)?"run":"walk",fold:space==="compact",note,aiConsent:consent})});
+   if(!res.ok)throw Error("Δεν ήταν δυνατή η ανάλυση. Παρακαλούμε δοκίμασε ξανά.");
+   const data=await res.json() as Result;
+   if(!data.solutions?.primary)throw Error("Η υπηρεσία δεν επέστρεψε κατάλληλη λύση.");
+   setResult(data);setSelected(0);requestAnimationFrame(()=>document.getElementById("your-solution")?.scrollIntoView({behavior:"smooth",block:"start"}));
+  }catch(e){setError(e instanceof Error?e.message:"Σφάλμα επικοινωνίας.");}finally{setLoading(false);}
+ }
+ const paths=result?[result.solutions.primary,...result.solutions.alternatives]:[];
+ const chosen:Path|undefined=paths[selected];
+ return <div className="cinematicSite">
+  <header className="cinematicHeader">
+   <a className="cinematicLogo" href="/" aria-label="FITMATCH AI — αρχική"><span className="logoGlyph">F<span>✦</span></span><span>FITMATCH<b> AI</b><small>THE SOLUTION EXPERIENCE</small></span></a>
+   <nav aria-label="Κύρια πλοήγηση"><a href="#problems">Τα προβλήματα</a><a href="#advisor">Ο σύμβουλος</a><a href="#how-it-works">Πώς λειτουργεί</a></nav>
+   <button className="headerPill" type="button" onClick={()=>document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}>Βρες τη λύση σου <ArrowUpRight size={17}/></button>
+  </header>
+  <main>
+   <section className="cinematicHero" aria-label="Λύσεις fitness για πραγματικά προβλήματα">
+    <div className="heroVideoLayer" role="img" aria-label="Κινηματογραφική ατμόσφαιρα γυμναστικής σε σύγχρονο διαμέρισμα"></div>
+    <div className="heroVignette"></div>
+    <div className="heroContent">
+     <div className="heroSignal"><span className="signalDot"></span> AI PAIN-GAP SOLVER <span className="signalDivider"></span> DESIGNED FOR REAL LIFE</div>
+     <h1>Δεν έχεις χώρο.<br/>Δεν θέλεις θόρυβο.<br/><em>Δεν θέλεις λάθος αγορά.</em></h1>
+     <p className="heroPitch">Δεν χρειάζεσαι περισσότερα προϊόντα. Χρειάζεσαι τη σωστή λύση για το σπίτι σου, τη ζωή σου και τα χρήματά σου.</p>
+     <div className="heroActions"><button className="cinematicBtn" type="button" onClick={()=>document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}>Βρες τη δική σου λύση <ArrowRight size={20}/></button><a className="heroSecondary" href="#problems">Αναγνώρισε το πρόβλημά σου <ChevronDown size={17}/></a></div>
+     <div className="heroFine"><span><Check size={14}/> 2 επιλογές & ελεύθερο κείμενο</span><span><Check size={14}/> Χωρίς εγγραφή</span><span><Check size={14}/> Πρώτα το fit, μετά η αγορά</span></div>
     </div>
-    <div className="heroArt" aria-label="Παράδειγμα διαμόρφωσης γυμναστικής σε σπίτι" role="img"><div className="artRing ring1"/><div className="artRing ring2"/><div className="artPlane"><div className="planeLines"/><div className="equipment"><div className="equipmentHandle"/><div className="equipmentBar"/><div className="equipmentBase"><div className="equipmentStripe"/></div></div><div className="miniLabel"><span className="labelDot"/> SMART SPACE FIT</div></div><div className="floatCard floatA"><Ruler size={17}/><span><b>Χώρος</b><small>Στα μέτρα σου</small></span><Check size={16}/></div><div className="floatCard floatB"><ShieldCheck size={17}/><span><b>Ελεγμένα κριτήρια</b><small>Χωρίς υποθέσεις</small></span></div></div>
-    </div></section>
-    <section className="trustStrip"><div className="trustInside"><span>ΠΡΩΤΑ Η ΑΝΑΓΚΗ ΣΟΥ. ΜΕΤΑ ΤΟ ΠΡΟΪΟΝ.</span><div><ShieldCheck size={18}/> Προσαρμόσιμες λύσεις</div><div><Eye size={18}/> Διαφανείς επιλογές</div><div><LockKeyhole size={18}/> Χωρίς υποχρεωτικό email</div></div></section>
-    <section id="how" className="section"><div className="sectionHead"><div className="overline">ΠΩΣ ΛΕΙΤΟΥΡΓΕΙ</div><h2>Από το «τι να πάρω;»<br/>στο <em>«αυτό είναι για μένα».</em></h2><p>Τρία βήματα που αφαιρούν την αβεβαιότητα — όχι προσθέτουν προϊόντα.</p></div>
-      <div className="stepsGrid"><div className="stepCard"><div className="stepTop"><span>01</span><Compass size={25}/></div><h3>Διάλεξε τον στόχο σου</h3><p>Ένα κλικ για τον στόχο σου. Μετά μόνο το budget και οι σημαντικοί περιορισμοί σου.</p><div className="stepPill">Κατανόηση ανάγκης <ChevronRight size={14}/></div></div><div className="stepCard"><div className="stepTop"><span>02</span><SlidersHorizontal size={25}/></div><h3>Βρίσκουμε τη σωστή κατηγορία</h3><p>Πρώτα αξιολογούμε τον τύπο εξοπλισμού. Ακόμη κι αν η σωστή απόφαση είναι να μην αγοράσεις τώρα.</p><div className="stepPill">Αιτιολογημένη επιλογή <ChevronRight size={14}/></div></div><div className="stepCard"><div className="stepTop"><span>03</span><PackageCheck size={25}/></div><h3>Συγκρίνεις με σιγουριά</h3><p>Μόνο πραγματικές και ελεγμένες προσφορές, όταν υπάρχουν. Με σαφή κριτήρια και απευθείας αγορά στο κατάστημα.</p><div className="stepPill">Έλεγχος πριν την αγορά <ChevronRight size={14}/></div></div></div>
-    </section>
-    <section id="why" className="purpose"><div className="purposeInner"><div><div className="overline">ΤΟ ΠΡΟΒΛΗΜΑ</div><h2>Μικρό σπίτι.<br/>Μεγάλες αποφάσεις.</h2><p>Ένας διάδρομος που δεν χωράει, ένα όργανο που καταλήγει στην αποθήκη, τεχνικά χαρακτηριστικά που δεν εξηγούνται. Εμείς ξεκινάμε από τον πραγματικό τρόπο ζωής σου.</p><button onClick={begin} className="btnWhite" type="button">Ξεκίνα το προσωπικό σου fit <ArrowRight size={18}/></button></div><div className="purposeVisual"><div className="statBlock"><span>01 / SPACE</span><b>Χωράει;</b><small>Με πραγματικές διαστάσεις</small></div><div className="statBlock"><span>02 / PURPOSE</span><b>Σε εξυπηρετεί;</b><small>Με κριτήρια χρήσης</small></div><div className="statBlock"><span>03 / VALUE</span><b>Αξίζει;</b><small>Με διαφανείς εναλλακτικές</small></div></div></div></section>
-    <section className="lastCTA"><div className="overline">ΕΙΣΑΙ ΕΤΟΙΜΟΣ;</div><h2>Μην μαντεύεις.<br/><em>Βρες το fit σου.</em></h2><p>Λιγότερες αμφιβολίες. Πιο σωστές επιλογές.</p><button onClick={begin} className="btnPrimary" type="button">Ξεκίνα δωρεάν <ArrowRight size={19}/></button></section>
-  </main>:<main className="quizShell"><div className="quizDecor"/><div className="quizLayout">
- <div className="quizTop"><button className="subtleBack" type="button" onClick={()=>{setStarted(false);setResult(null)}}><ArrowLeft size={17}/> Αρχική</button><span className="quizBrand">FITMATCH <b>AI</b></span></div>
- {!result?<div className="quizPanel">
-  <div className="quizProgress"><div className="progressTitle"><span>Ο ΕΞΥΠΝΟΣ ΣΥΜΒΟΥΛΟΣ ΣΟΥ</span><span>Ερώτηση {step+1} από 2</span></div><div className="progressBar"><span style={{width:step===0?"50%":"100%"}}/></div></div>
-  <div className="quizQuestion">
-   {step===0?<><div className="questionLabel">01 / Η ΑΝΑΓΚΗ ΣΟΥ</div>
-    <h2>Τι θέλεις να πετύχεις;</h2>
-    <p>Μόνο αυτό για αρχή. Μπορείς να μας πεις περισσότερα αργότερα με δικά σου λόγια.</p>
-    <div className="choices">
-     <Choice active={a.goal==="walking"} emoji="🚶" title="Να κινούμαι περισσότερο" detail="Περπάτημα μέσα ή έξω από το σπίτι" onClick={()=>patch({goal:"walking",activity:"walk"})}/>
-     <Choice active={a.goal==="cardio"} emoji="💚" title="Cardio & αντοχή" detail="Αερόβια άσκηση με τον τρόπο μου" onClick={()=>patch({goal:"cardio"})}/>
-     <Choice active={a.goal==="strength"} emoji="💪" title="Δύναμη & ενδυνάμωση" detail="Απλές ή πιο συστηματικές επιλογές" onClick={()=>patch({goal:"strength",activity:"walk"})}/>
-     <Choice active={a.goal==="mixed"} emoji="✨" title="Θέλω λίγο απ' όλα" detail="Δεν έχω αποφασίσει — πρότεινέ μου" onClick={()=>patch({goal:"mixed"})}/>
-    </div></>
-   :<><div className="questionLabel">02 / ΤΙ ΣΕ ΒΟΛΕΥΕΙ</div>
-    <h2>Τι να λάβουμε υπόψη;</h2>
-    <p>Budget και χώρος. Όλα τα υπόλοιπα είναι προαιρετικά — μπορείς να γράψεις με δικά σου λόγια.</p>
-    <div className="compactFields">
-     <label className="fieldLabel" htmlFor="budget">Μέχρι πόσα χρήματα σκέφτεσαι;</label>
-     <div className="budgetInline"><input id="budget" type="number" min="0" max="20000" step="10" value={a.budget} onChange={e=>patch({budget:Math.max(0,Math.min(20000,Number(e.target.value)||0))})}/><span>€</span></div>
-     <div className="budgetPresets">{[0,150,400,800].map(n=><button key={n} type="button" className={a.budget===n?"active":""} onClick={()=>patch({budget:n})}>{n===0?"Χωρίς αγορά":n+"€"}</button>)}</div>
-     <span className="fieldLabel">Ο χώρος σου</span>
-     <div className="quickOptions">{([["compact","Μικρός"],["medium","Κανονικός"],["large","Άνετος"]] as const).map(([key,txt])=><button key={key} type="button" aria-pressed={a.space===key} className={a.space===key?"picked":""} onClick={()=>patch({space:key})}>{txt}</button>)}</div>
-     <div className="quickToggles">
-      <label><input type="checkbox" checked={a.noise==="critical"} onChange={e=>patch({noise:e.target.checked?"critical":"normal"})}/> 🤫 Θέλω ησυχία</label>
-      <label><input type="checkbox" checked={a.fold} onChange={e=>patch({fold:e.target.checked})}/> 📦 Να αποθηκεύεται εύκολα</label>
-      {(a.goal==="walking"||a.goal==="cardio"||a.goal==="mixed")&&<label><input type="checkbox" checked={a.activity==="run"} onChange={e=>patch({activity:e.target.checked?"run":"walk"})}/> 🏃 Θέλω να τρέχω</label>}
+    <div className="sceneCaption"><span>01 / 03</span><span>YOUR SPACE. YOUR RULES.</span><span className="captionLine"></span></div>
+   </section>
+   <section id="problems" className="painChapter">
+    <div className="chapterEyebrow"><span className="purpleDash"></span> ΔΕΝ ΞΕΚΙΝΑΜΕ ΑΠΟ ΚΑΤΑΛΟΓΟ</div>
+    <div className="chapterLead"><h2>Ποιο είναι το <em>δικό σου</em><br/>πρόβλημα;</h2><p>Επιλέγεις αυτό που σε εκφράζει. Ο σύμβουλος διερευνά περιορισμούς, εναλλακτικές και την πραγματική αξία μιας αγοράς.</p></div>
+    <div className="painTiles">{problems.map((p,i)=><button type="button" key={p.id} onClick={()=>{preset(p);document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}} className={"painTile painTile"+i} aria-label={"Λύσε το πρόβλημα: "+p.title}>
+      <span className="painIndex">0{i+1} / {p.kicker}</span><span className="painBigIcon" aria-hidden="true">{p.icon}</span><strong>{p.title}</strong><span className="tileAction">Ας το λύσουμε <ArrowUpRight size={18}/></span>
+     </button>)}</div>
+   </section>
+   <section id="advisor" className="advisorChapter">
+    <div className="advisorIntro"><div className="chapterEyebrow"><span className="purpleDash"></span> YOUR PRIVATE BUYING ADVISOR</div><h2>Πες μας τι σε <em>δυσκολεύει.</em><br/>Τα υπόλοιπα είναι δική μας δουλειά.</h2><p>Μια πραγματική ανάγκη, ένας σύντομος έλεγχος και πολλοί δρόμοι προς τη λύση. Χωρίς ατελείωτο quiz.</p></div>
+    <div className="advisorGlass">
+     <div className="assistantHeader"><span className="aiAvatar"><Sparkles size={22}/></span><div><strong>FITMATCH INTELLIGENCE</strong><small>Σύμβουλος λύσεων για το σπίτι σου</small></div><span className="assistantLive"><i></i> LIVE ADVISOR</span></div>
+     <div className="assistantForm">
+      <label htmlFor="buyer-need" className="inputLabel">01 <span>/ ΠΕΣ ΤΟ ΠΡΟΒΛΗΜΑ ΜΕ ΔΙΚΑ ΣΟΥ ΛΟΓΙΑ</span></label>
+      <textarea id="buyer-need" maxLength={600} value={note} onChange={e=>{setNote(e.target.value);setResult(null);}} rows={3} placeholder="π.χ. Θέλω να περπατάω το βράδυ, αλλά είμαι σε διαμέρισμα και δεν θέλω θόρυβο..."/>
+      <div className="quickProblemRow">{problems.map(p=><button type="button" key={p.id} className={active===p.id?"on":""} onClick={()=>preset(p)}>{p.id==="space"?"◩ Μικρός χώρος":p.id==="noise"?"◉ Ησυχία":"↗ Value for money"}</button>)}</div>
+      <div className="smartInputs"><div><label className="inputLabel" htmlFor="purchaseBudget">02 <span>/ ΤΟ BUDGET ΣΟΥ</span></label><div className="cashInput"><input id="purchaseBudget" type="number" min={0} max={20000} step={10} value={budget} onChange={e=>setBudget(Math.max(0,Math.min(20000,Number(e.target.value)||0)))}/><b>€</b></div></div>
+       <div><span className="inputLabel">ΧΩΡΟΣ</span><div className="spaceSwitch">{([["compact","Μικρός"],["medium","Μέτριος"],["large","Άνετος"]] as const).map(([v,t])=><button type="button" key={v} aria-pressed={space===v} className={space===v?"on":""} onClick={()=>setSpace(v)}>{t}</button>)}</div></div>
+       <div><span className="inputLabel">ΣΗΜΑΝΤΙΚΟ ΓΙΑ ΣΕΝΑ</span><label className="quietControl"><input type="checkbox" checked={quiet} onChange={e=>setQuiet(e.target.checked)}/><Volume2 size={17}/> Χαμηλός θόρυβος</label></div>
+      </div>
+      <details className="advisorDetails"><summary>Περισσότερη εξατομίκευση (προαιρετική)</summary><label>Τι άσκηση σε ενδιαφέρει; <select value={goal} onChange={e=>setGoal(e.target.value as typeof goal)}><option value="walking">Περπάτημα</option><option value="cardio">Cardio & αντοχή</option><option value="strength">Δύναμη</option><option value="mixed">Συνδυασμός</option></select></label><label className="consentRow"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/> Επιτρέπω να χρησιμοποιηθεί εξωτερικό Hugging Face μοντέλο μόνο για την ανάλυση του κειμένου μου, εφόσον είναι διαθέσιμο.</label></details>
+      <button className="cinematicBtn formCta" type="button" disabled={loading} onClick={assess}>{loading?<><LoaderCircle className="spin" size={20}/> Αναζητούμε τη σωστή λύση...</>:<>Βρες τι πραγματικά μου ταιριάζει <ArrowRight size={20}/></>}</button>
+      {error&&<p className="cinematicError" role="alert">{error}</p>}
+      <p className="formNotice"><ShieldCheck size={14}/> Δεν ζητάμε στοιχεία επικοινωνίας. Δεν επινοούμε προϊόντα ή τιμές. Η αγορά γίνεται στον merchant.</p>
      </div>
-     <label className="fieldLabel" htmlFor="my-context">Κάτι άλλο που σε απασχολεί; <span>(προαιρετικό)</span></label>
-     <textarea id="my-context" rows={3} maxLength={600} value={note} onChange={e=>setNote(e.target.value)} placeholder="π.χ. Μένω σε πολυκατοικία, έχω μικρό χώρο, θέλω να κινούμαι χωρίς θόρυβο..."/>
-     <details className="aiDisclosure"><summary>Επιπλέον ανάλυση κειμένου με open-weight AI (προαιρετικά)</summary>
-      <label><input type="checkbox" checked={aiConsent} onChange={e=>setAiConsent(e.target.checked)}/> Επιτρέπω να σταλεί μόνο η προαιρετική περιγραφή μου στον πάροχο Hugging Face, αν είναι διαθέσιμος.</label>
-      <small>Η βασική ανάλυση λειτουργεί και χωρίς αυτό. Μην γράφεις προσωπικά ή ιατρικά δεδομένα.</small>
-     </details>
-    </div></>}
-  </div>
-  <div className="quizFooter"><button className="quizBack" type="button" onClick={()=>setStep(0)} disabled={step===0||loading}><ArrowLeft size={17}/> Πίσω</button>
-  <button className="btnPrimary" type="button" onClick={next} disabled={loading}>{loading?"Συνδυάζουμε τα δεδομένα σου...":step===0?"Συνέχεια":"Δες τις λύσεις μου"}{!loading&&<ArrowRight size={18}/>}</button></div>
-  {error&&<p className="errorMsg" role="alert">{error}</p>}
- </div>:<div className="resultsPanel">
-  <div className="resultBadge"><Check size={16}/> Έτοιμο! Βρήκαμε επιλογές για σένα</div>
-  <div className="questionLabel">Η ΚΑΤΑΛΛΗΛΟΤΕΡΗ ΠΡΟΣΕΓΓΙΣΗ</div>
-  <h2>{selectedPath.title}</h2><p className="resultIntro">{selectedPath.reason}</p>
-  <div className="solutionPathGrid" role="region" aria-label="Εναλλακτικές λύσεις">{paths.map((p,i)=><button type="button" key={p.id} aria-pressed={selected===i} className={"solutionPath"+(selected===i?" isSelected":"")} onClick={()=>setSelected(i)}>
-    <span className="solutionPathLabel">{i===0?"Κύρια πρόταση":p.kind==="no_purchase"?"Χωρίς αγορά":"Εναλλακτική λύση"}</span>
-    <strong>{p.title}</strong><small>{p.kind==="no_purchase"?"Δοκίμασε τώρα":"Κατηγορία προς διερεύνηση"}</small>
-  </button>)}</div>
-  <div className="whyCard"><div className="whyIcon"><Compass size={22}/></div><div><b>Γιατί το εξετάζουμε;</b><p>{selectedPath.reason}</p></div></div>
-  <div className="resultSection" style={{marginTop:18}}><div className="resultTitle"><Check size={19}/> Τρία πρακτικά βήματα</div>
-    <ul>{selectedPath.actions.map(t=><li key={t}><Check size={16}/>{t}</li>)}</ul>
-  </div>
-  <div className="resultSection" style={{marginTop:15}}><div className="resultTitle"><Sparkles size={18}/> Τι λάβαμε υπόψη</div>
-    <ul>{result.solutions.insights.map(t=><li key={t}><Check size={16}/>{t}</li>)}</ul>
-    <p className="contextMode">{result.aiStatus==="hf-assisted"?"Επιπλέον γλωσσική ανάλυση με Hugging Face.":"Προσαρμογή βάσει στόχου, περιορισμών και των δικών σου λέξεων."}</p>
-  </div>
-  <div className="offerArea"><div className="offerHead"><div><span className="overline">ΠΡΑΓΜΑΤΙΚΕΣ ΑΓΟΡΕΣ</span><h3>Επαληθευμένα προϊόντα</h3></div></div>
-   {selected===0&&selectedPath.kind==="equipment"&&result.offers.length>0?<div className="offerList">{result.offers.map(p=><div key={p.id} className="offerCard"><div><span className="offerTag">{p.tag}</span><h4>{p.title}</h4><p>{p.merchant} · {new Date(p.lastSeen).toLocaleDateString("el-GR")}</p></div><div className="offerPrice"><b>{p.price.toLocaleString("el-GR")}€</b><a href={"/api/out?id="+encodeURIComponent(p.id)} rel="nofollow sponsored noopener">Στο κατάστημα <ExternalLink size={15}/></a></div></div>)}</div>
-   :<div className="emptyOffers"><Search size={27}/><h4>Η λύση είναι διαθέσιμη ως πλάνο, όχι ακόμη ως επαληθευμένη προσφορά.</h4><p>Δεν θα επινοήσουμε προϊόντα, τιμές ή διαθεσιμότητα. Μπορείς να ακολουθήσεις τα πρακτικά βήματα και να δεις τις εναλλακτικές παραπάνω.</p><small>{result.catalogNote}</small></div>}
-  </div>
-  <div className="resultActions"><button className="btnPrimary" onClick={begin} type="button"><RotateCcw size={17}/> Δοκίμασε άλλον στόχο</button><a className="btnText" href="/methodology">Πώς αποφασίζουμε <MoveRight size={16}/></a></div>
-  <p className="disclosure">{result.disclosure} Δεν παρέχονται ιατρικές συμβουλές.</p>
- </div>}
- </div></main>}
-  <footer className="footer"><div className="footerInner"><div className="footerBrand"><span className="brandMark"><Activity size={19}/></span><b>FITMATCH <span>AI</span></b></div><p>Πρώτα ταιριάζουμε τις ανάγκες. Μετά εξετάζουμε προϊόντα.</p><div className="footerLinks"><a href="/methodology">Μεθοδολογία & affiliate disclosure</a><a href="/privacy">Απόρρητο</a></div><small>© 2026 FITMATCH AI · Staging / δοκιμαστική έκδοση</small></div></footer>
- </div>;
+    </div>
+   </section>
+   {result&&chosen&&<section id="your-solution" className="solutionChapter"><div className="chapterEyebrow"><span className="purpleDash"></span> YOUR SOLUTION / PERSONALIZED</div>
+    <div className="solutionTop"><div><h2>Από το πρόβλημα,<br/><em>στη λύση σου.</em></h2><p>Οι προτάσεις βασίζονται στην περιγραφή σου και στους περιορισμούς σου. Η διαθεσιμότητα εμπορικών προϊόντων ελέγχεται χωριστά.</p></div><span className="matchIndicator"><CheckCircle2 size={17}/> ΑΝΑΛΥΘΗΚΑΝ ΟΙ ΑΝΑΓΚΕΣ</span></div>
+    <div className="solutionChoices">{paths.map((p,i)=><button key={p.id} type="button" className={"solutionChoice"+(selected===i?" active":"")} aria-pressed={selected===i} onClick={()=>setSelected(i)}><span>{i===0?"01 / ΠΡΩΤΗ ΠΡΟΣΕΓΓΙΣΗ":i===1?"02 / ΕΝΑΛΛΑΚΤΙΚΗ":"03 / ΕΠΙΠΛΕΟΝ ΛΥΣΗ"}</span><strong>{p.title}</strong><small>{p.kind==="no_purchase"?"Εφικτή χωρίς άμεση αγορά":"Κατηγορία προς τεχνικό έλεγχο"}</small><MoveRight size={20}/></button>)}</div>
+    <div className="solutionAnalysis"><div><span className="inputLabel">ΓΙΑΤΙ ΑΥΤΗ Η ΛΥΣΗ;</span><h3>{chosen.title}</h3><p>{chosen.reason}</p></div><div><span className="inputLabel">ΤΑ ΕΠΟΜΕΝΑ ΒΗΜΑΤΑ</span>{chosen.actions.map((x,i)=><p className="solutionAction" key={i}><span>0{i+1}</span>{x}</p>)}</div></div>
+    <div className="merchantArea"><div className="merchantHead"><div><div className="chapterEyebrow"><span className="purpleDash"></span> MERCHANT MATCHING</div><h3>Η λύση είναι ξεκάθαρη.<br/><em>Η αγορά μόνο με αποδείξεις.</em></h3></div><span className="stockGate"><ShieldCheck size={16}/> VERIFIED OFFERS ONLY</span></div>
+    {selected===0&&chosen.category&&result.offers.length>0?<div className="merchantOffers">{result.offers.map(o=><article className="merchantOffer" key={o.id}><div><span className="offerLabel">{o.tag}</span><h4>{o.title}</h4><p>{o.merchant} · Ενημέρωση {new Date(o.lastSeen).toLocaleDateString("el-GR")}</p></div><div className="priceAndBuy"><b>{o.price.toLocaleString("el-GR")}€</b><a href={"/api/out?id="+encodeURIComponent(o.id)} rel="nofollow sponsored noopener">Στο κατάστημα <ExternalLink size={16}/></a></div></article>)}</div>
+    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Το feed του SocialMarket δεν διαθέτει αυτή τη στιγμή εγκεκριμένα, επίκαιρα SKU με τεχνικά στοιχεία και επιβεβαιωμένη affiliate προμήθεια ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small></div></div>}
+    <p className="affiliateDisclosure">{result.disclosure}</p></div>
+    <button type="button" className="resetSolution" onClick={()=>{setResult(null);document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}}><RotateCcw size={18}/> Εξερεύνησε διαφορετικό πρόβλημα</button>
+   </section>}
+   <section id="how-it-works" className="processChapter"><div className="chapterEyebrow"><span className="purpleDash"></span> THE FITMATCH METHOD</div><h2>Δεν πουλάμε το πρώτο προϊόν.<br/><em>Λύνουμε το σωστό πρόβλημα.</em></h2><div className="processGrid"><div><span>01 / UNDERSTAND</span><h3>Ακούμε την ανάγκη</h3><p>Χώρος, θόρυβος, συνήθειες, χρήματα. Όσα πραγματικά καθορίζουν τη σωστή αγορά.</p></div><div><span>02 / SOLVE</span><h3>Ελέγχουμε τη λύση</h3><p>Πρώτα αποφασίζουμε τι ταιριάζει, ακόμη κι αν η καλύτερη απάντηση είναι να μην αγοράσεις.</p></div><div><span>03 / VERIFY</span><h3>Μόνο πραγματικές προσφορές</h3><p>Συγκεκριμένος merchant, τιμή, απόθεμα, specs και επιβεβαιωμένοι affiliate όροι. Όχι κατασκευασμένες κάρτες.</p></div></div></section>
+  </main><footer className="cinematicFooter"><span>FITMATCH <b>AI</b></span><p>ΤΑ ΠΡΟΒΛΗΜΑΤΑ ΕΙΝΑΙ ΠΡΑΓΜΑΤΙΚΑ. ΟΙ ΛΥΣΕΙΣ ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΚΙ ΑΥΤΕΣ.</p><nav><a href="/methodology">Μεθοδολογία & affiliate disclosure</a><a href="/privacy">Απόρρητο</a><a href="/readiness">Διαφάνεια δεδομένων</a></nav><small>© 2026 · Staging preview</small></footer>
+ </div>
 }
