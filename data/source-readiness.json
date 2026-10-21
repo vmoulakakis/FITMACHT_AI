@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-21T09:48:08Z",
+  "source": "Supabase VMDB read-only audit",
+  "legacy_merchant_profiles": 16,
+  "merchant_commission_source_records": 334,
+  "merchant_rows_with_program_id": 17,
+  "merchant_rows_needing_program_crosswalk": 317,
+  "merchant_approved_in_legacy": 0,
+  "tracking_verified_in_legacy": 0,
+  "legacy_feed_rows": 3921,
+  "legacy_feed_last_seen": "2026-09-17T11:42:16Z",
+  "legacy_in_stock": 0,
+  "product_ai_candidates": 1441,
+  "product_facts": 6698,
+  "product_specifications": 0,
+  "fitmatch_merchant_source_candidates": 334,
+  "fitmatch_verified_offers": 0,
+  "release_gate": "BLOCKED",
+  "reasons": [
+    "legacy_merchant_approvals_missing",
+    "program_crosswalk_incomplete",
+    "no_fresh_stock",
+    "fitness_specs_missing",
+    "no_approved_fitmatch_offers"
+  ]
+}

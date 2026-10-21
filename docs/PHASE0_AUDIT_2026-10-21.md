@@ -37,3 +37,9 @@ MIT multilingual-e5-small model, Greek-supported and available from Hugging Face
 Need current fitness feed, verified category mapping, approved per-category Linkwise merchant terms, up-to-date price/stock, evidence of dimensions/specs, validated click tracking, reviewed isolated staging migration, security/privacy review, actual mobile/browser screenshot acceptance, owner production signoff.
 
 No SocialMarket records were changed by this audit; no production deployment was promoted.
+
+## Correction 2026-10-21 09:48 UTC
+
+Applied a strictly additive Supabase migration for private schema fitmatch (merchant_source_candidates, source_readiness, import_audits) and RLS-protected public.fitmatch_verified_offers. This supersedes the earlier statement that no migration was applied. No existing SocialMarket merchant eligibility flags or sources were overwritten. Confirmed private schema has no anon grants; published-offer table is under RLS. Candidate sources 334, program ID present 17, legacy merchant approvals 0, legacy specs 0, eligible offers 0.
+
+The Vercel build failure at f9f4609 was caused by import of lib/flow before its file existed. The corrected staging commit 6fba0ec passed GitHub Actions and Chromium E2E on desktop and mobile.

@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
-REQUIRED = {"product_id", "program_id", "product_name", "price", "tracking_url"}
+REQUIRED = {"product_id", "product_name", "price", "tracking_url"}
 TRUE = {"true", "1", "yes", "y", "in stock", "instock"}
 FALSE = {"false", "0", "no", "n", "out of stock", "outofstock"}
 CATALOG_SCHEMA = """
@@ -64,7 +64,29 @@ def url_status(value: str, hosts: set[str]) -> str:
     except ValueError:
         return "tracking_url_invalid"
 
-def ingest(source: Path, db: Path, report: Path, hosts: set[str]) -> dict:
+def load_verified_crosswalk(path: Path | None) -> dict[str, str]:
+    """Only explicit, evidenced human-approved program IDs can map merchant names."""
+    if path is None:
+        return {}
+    mapping: dict[str, str] = {}
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        if not {"program_name", "program_id", "approved", "evidence_url"}.issubset(set(reader.fieldnames or [])):
+            raise ValueError("invalid_crosswalk_columns")
+        for row in reader:
+            if str(row.get("approved") or "").strip().lower() not in TRUE:
+                continue
+            name = str(row.get("program_name") or "").strip().casefold()
+            program = str(row.get("program_id") or "").strip()
+            source = str(row.get("evidence_url") or "").strip()
+            if not name or not program or not source.startswith("https://"):
+                raise ValueError("crosswalk_requires_approved_source")
+            if name in mapping and mapping[name] != program:
+                raise ValueError("conflicting_program_mapping")
+            mapping[name] = program
+    return mapping
+
+def ingest(source: Path, db: Path, report: Path, hosts: set[str], program_map: dict[str, str] | None = None) -> dict:
     run_id = datetime.now(timezone.utc).isoformat()
     counts = Counter()
     db.parent.mkdir(parents=True, exist_ok=True)
@@ -89,6 +111,11 @@ def ingest(source: Path, db: Path, report: Path, hosts: set[str]) -> dict:
                 try:
                     pid = str(raw.get("product_id") or "").strip()
                     program = str(raw.get("program_id") or "").strip()
+                    if not program:
+                        merchant_name = str(raw.get("program_name") or raw.get("merchant_name") or "").strip().casefold()
+                        program = (program_map or {}).get(merchant_name, "")
+                        if not program:
+                            raise ValueError("unresolved_program_identity")
                     title = str(raw.get("product_name") or "").strip()
                     link = str(raw.get("tracking_url") or "").strip()
                     price = number(raw.get("price"))
@@ -152,9 +179,11 @@ def main() -> int:
     p.add_argument("--db", required=True, type=Path)
     p.add_argument("--report", required=True, type=Path)
     p.add_argument("--allowed-tracking-host", action="append", default=[])
+    p.add_argument("--approved-program-crosswalk", type=Path, default=None)
     args = p.parse_args()
     result = ingest(args.input, args.db, args.report,
-                    {x.lower() for x in args.allowed_tracking_host})
+                    {x.lower() for x in args.allowed_tracking_host},
+                    load_verified_crosswalk(args.approved_program_crosswalk))
     print(json.dumps(result, ensure_ascii=False))
     return 0
 

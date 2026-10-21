@@ -25,3 +25,10 @@ Audit actual Linkwise feed.csv taxonomy, merchant program terms per category, ex
 
 ## Release
 This repo is staging-only and deliberately NOINDEX. Do not publish production without source-data audit, acceptance tests, Linkwise compliance review, security/privacy and explicit owner signoff.
+## 2026-10-21 corrective release
+
+- Supabase private fitmatch schema applied with 334 source merchant commission candidates (17 ID-mappable, 317 require verified crosswalk). No merchant approval gate bypassed.
+- Public fitmatch_verified_offers table created with RLS; no approved offers are published until genuine stock, product evidence and terms satisfy all gates.
+- /readiness is a timestamped operational data-readiness dashboard; /api/readiness exposes snapshot vs live verified catalog separately.
+- CSV importer now quarantines records whose program ID is absent rather than rejecting the entire feed. Only an explicitly approved, attributed merchant crosswalk may resolve ambiguous names; still no monetization.
+- Historical Vercel failure on f9f4609 was a missing import path @/lib/flow; subsequent builds succeeded. Use atomic complete commits to avoid partial-build emails.

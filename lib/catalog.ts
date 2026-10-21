@@ -32,6 +32,7 @@ export async function catalog():Promise<{offers:Offer[];mode:string;reason?:stri
     imageUrl:str(p.image_url)||null,urlEvidence:str(p.spec_evidence_url)||null
    };
   });
+  if(offers.length===0)return {offers:[],mode:"no_approved_offers",reason:"Η βάση FITMATCH υπάρχει, αλλά δεν έχει καμία εγκεκριμένη, επίκαιρη προσφορά. Απαιτούνται οι έλεγχοι merchant, stock και product specs."};
   return {offers,mode:"reviewed",reason:"Μόνο πρόσφατες, επιβεβαιωμένες προσφορές FITMATCH μπορούν να προβληθούν."};
  }catch{return {offers:[],mode:"error",reason:"Η προστατευμένη υπηρεσία καταλόγου δεν απάντησε."};}
 }
