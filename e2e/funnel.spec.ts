@@ -67,3 +67,26 @@ test("merchant redirect is not enabled for unapproved catalog rows",async({page}
  expect(status.commissionPolicy).toContain(">20");
  expect(status.monetizedOffers).toBe(0);
 });
+
+
+test("minimal buyer funnel responds to goal, budget and space and outputs five real SKU cards",async({page},info)=>{
+ await page.goto("/");
+ await expect(page.locator(".fmQuizGoals button")).toHaveCount(4);
+ await page.getByRole("button",{name:/Θέλω δύναμη/}).click();
+ await expect(page.getByRole("heading",{name:/Ποιο είναι το budget/})).toBeVisible();
+ await page.locator("#fitmatch-quiz-budget").fill("500");
+ await page.getByRole("button",{name:/Μικρό διαμέρισμα/}).click();
+ await page.getByRole("button",{name:/Δες τις 5 επιλογές μου/}).click();
+ await expect(page.locator(".fmQuizMatchCard")).toHaveCount(5);
+ await expect(page.locator(".fmQuizMatchCard a[href^='/products/']")).toHaveCount(5);
+ await expect(page.locator(".fmQuizMatchCard a[href^='/api/out']")).toHaveCount(0);
+ await info.attach("final-fitness-quiz",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+});
+test("recovery produces explicit non-medical alternatives without fabricated purchase links",async({page})=>{
+ await page.goto("/");
+ await page.getByRole("button",{name:/Θέλω ήπια κίνηση/}).click();
+ await page.getByRole("button",{name:/Δες τις 5 επιλογές μου/}).click();
+ await expect(page.locator(".fmQuizMatchCard")).toHaveCount(5);
+ await expect(page.locator(".fmQuizMatchInfo p").first()).toContainText("ιατρική αποκατάσταση");
+ await expect(page.locator("a[href^='/api/out']")).toHaveCount(0);
+});

@@ -32,3 +32,41 @@ test("each SKU has unique buyer explanation with checks",()=>{
  const items=getStoreListings([],now);
  for(const item of items.slice(0,12)){const r=buyerReason(item);assert.ok(r.headline.length>10);assert.ok(r.check.length>0);assert.ok(r.caution);}
 });
+
+import {rankForBuyer,stableProductId,type BuyerAnswer} from "../lib/storefront";
+test("stable SKU routing is deterministic and independent of feed position",()=>{
+ const id=stableProductId("Mybrand.shoes","HMS exercise bike");
+ assert.match(id,/^snapshot-[0-9a-z]+$/);
+ assert.equal(id,stableProductId("mybrand.shoes","HMS exercise bike"));
+ assert.notEqual(id,stableProductId("Z-mall","HMS exercise bike"));
+ assert.notEqual(id,stableProductId("Mybrand.shoes","HMS another bike"));
+});
+test("AI matching always returns actual near alternatives for all fitness goals and budgets",()=>{
+ const products=getStoreListings([],now);
+ for(const goal of ["cardio","strength","home-gym","recovery"] as const)
+ for(const budget of [0,100,250,500,1000,2500,6000])
+ for(const space of ["compact","regular"] as const){
+  const match=rankForBuyer(products,{goal,budget,space});
+  assert.equal(match.length,5,JSON.stringify({goal,budget,space}));
+  assert.ok(match.every(r=>products.some(p=>p.id===r.product.id)));
+  assert.ok(match.every(r=>!r.product.affiliateEligible));
+  assert.ok(match.every(r=>r.reason.length>=20));
+  if(budget===0)assert.ok(match.every(r=>r.budgetGap>0&&r.reason.includes("budget")));
+ }
+});
+test("strength ranks genuine strength SKUs above unrelated cardio categories",()=>{
+ const p=getStoreListings([],now);
+ const selected=rankForBuyer(p,{goal:"strength",budget:800,space:"regular"});
+ assert.ok(selected.slice(0,2).every(i=>["adjustable-dumbbells","fixed-dumbbells","resistance-bands"].includes(i.product.kind)));
+});
+test("medical recovery alternative carries no unverified treatment promise",()=>{
+ const p=getStoreListings([],now);
+ const selected=rankForBuyer(p,{goal:"recovery",budget:200,space:"compact"});
+ assert.ok(selected.length===5);
+ assert.ok(selected.every(i=>i.reason.includes("ιατρική αποκατάσταση")));
+});
+test("audited >20 affiliate offer is preferred only as a fit tie-breaker",()=>{
+ const approved=getStoreListings([p],now);
+ const ranked=rankForBuyer(approved,{goal:"cardio",budget:650,space:"regular"});
+ assert.ok(ranked.some(i=>i.product.id==="approved-1"));
+});
