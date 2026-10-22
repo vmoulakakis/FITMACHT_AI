@@ -51,6 +51,7 @@ test("user search and budget remain interactive and data-grounded",async({page})
  await expect(page.getByText(/Μέχρι 200/)).toBeVisible();
 });
 test("mobile navigation and product cards are usable",async({page},info)=>{
+ test.skip(info.project.name!=="mobile-chromium","Mobile hamburger is intentionally hidden on desktop");
  await page.goto("/");
  await page.getByRole("button",{name:"Άνοιγμα μενού"}).click();
  await expect(page.locator(".fmNavLinks.open")).toBeVisible();
