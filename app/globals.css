@@ -457,3 +457,65 @@
 @media(max-width:700px){.fmNav{min-height:63px;padding:10px 16px}.fmNavCta{padding:10px;font-size:10px}.fmNavActions{gap:7px}.fmBrand{font-size:17px}.fmHeroInner{padding:40px 19px 37px}.fmHero h1{font-size:clamp(43px,10vw,65px);letter-spacing:-3px}.fmHero h2{font-size:25px}.fmTrustBar{display:grid;grid-template-columns:1fr 1fr}.fmTrustBar>div:last-child{grid-column:1/-1}.fmHeroSearch button{padding:10px}.fmHeroPreview{max-width:490px}.fmSection{padding:42px 17px}.fmSectionTitle{align-items:start;flex-direction:column}.fmCategoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.fmCategoryArt{height:125px}.fmHowSteps{grid-template-columns:repeat(2,1fr);row-gap:32px}.fmHowStep:last-child{grid-column:1/-1}.fmHowArrow{display:none}.fmProductGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.fmProductCard>.shopProductThumb{height:160px}.fmProductFilters{flex-direction:column;align-items:stretch}.fmLandingExplain{grid-template-columns:1fr}.fmDetailHero,.fmDetailChecks{grid-template-columns:1fr}.fmDetailHero{gap:18px}.fmDetailArt{min-height:330px}.fmDetailArt>img{height:310px}.fmDetailNav>div{gap:12px}.fmCheckGrid{grid-template-columns:1fr 1fr}.fmAltGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:460px){.fmNavActions>.fmSearchIcon{display:none}.fmHeroSearch{padding:5px 5px 5px 9px}.fmHeroSearch button{padding:9px;font-size:10px}.fmHeroSearch input{font-size:10px}.fmHeroButtons{gap:8px}.fmBigCta,.fmOutline{font-size:11px}.fmPreviewProducts{grid-template-columns:repeat(2,1fr)}.fmPreviewProducts>a{min-height:135px}.fmFloatingCommission{right:5px;top:-27px}.fmCategoryDetails strong{font-size:13px}.fmCategoryDetails small{font-size:10px}.fmProductGrid{grid-template-columns:1fr 1fr;gap:8px}.fmProductCard>.shopProductThumb{height:133px}.fmProductContent{padding:10px 7px}.fmProductCard h3{font-size:11px}.fmProductButton{font-size:9px}.fmProductPrice{font-size:15px}.fmCheckGrid,.fmAltGrid{grid-template-columns:1fr}.fmDetail{padding:0 16px}.fmDetailCopy h1{font-size:29px}.fmDetailNav{gap:7px}.fmDetailNav>div a{font-size:9px}.fmExplainShowcase{grid-template-columns:1fr}.fmExplainShowcase .shopProductThumb{height:190px}}
 @media(prefers-reduced-motion:reduce){.fmCategoryCard,.fmProductCard{transition:none}.fmCategoryCard:hover,.fmProductCard:hover{transform:none}}
+
+
+/* Two-step buyer matching and transparent Top Five — editorial design */
+.fmQuiz{max-width:1560px;margin:25px auto 35px;padding:37px max(4%,24px) 46px;scroll-margin-top:82px;background:radial-gradient(ellipse at 9% 12%,rgba(65,49,177,.25),transparent 44%),radial-gradient(ellipse at 92% 33%,rgba(15,130,230,.16),transparent 45%),#07152f;border:1px solid #355b9f;border-radius:21px;box-shadow:inset 0 0 35px rgba(27,61,136,.2)}
+.fmQuizIntro{display:flex;align-items:center;justify-content:space-between;gap:25px}
+.fmQuizIntro .fmMiniKicker,.fmQuizResults .fmMiniKicker{display:flex;align-items:center;gap:7px}
+.fmQuizIntro h2{font:900 clamp(26px,3.4vw,46px)/1.18 Manrope,sans-serif;letter-spacing:-1.5px;margin:13px 0}
+.fmQuizIntro h2 em{color:#c39bff;font-style:normal}
+.fmQuizIntro>div:first-child>p:last-child{font-size:13px;color:#b4c8eb;line-height:1.7}
+.fmQuizVisual{display:flex;align-items:center;gap:7px;background:#101d40;border:1px solid #5659a3;padding:21px;border-radius:16px;white-space:nowrap;color:#d7c9ff}
+.fmQuizVisual span{display:grid;place-items:center;width:41px;height:41px;border:1px solid #8686fb;border-radius:50%;font:900 15px Manrope,sans-serif;box-shadow:0 0 14px #5147a9}
+.fmQuizVisual strong{font:900 19px Manrope,sans-serif;color:#90f2f1}
+.fmQuizStepper{display:flex;align-items:center;justify-content:center;gap:14px;margin:29px 0 18px}
+.fmQuizStepper>div{display:flex;align-items:center;gap:8px;font-weight:800;font-size:12px;color:#99aacc}
+.fmQuizStepper>div.active{color:#e7d7ff}
+.fmQuizStepper>div span{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#17274e;border:1px solid #466eae;color:#9dadd1}
+.fmQuizStepper>div.active span{background:#9254f5;border-color:#d3afff;color:white;box-shadow:0 0 14px rgba(151,95,255,.62)}
+.fmQuizStepper>svg{color:#5776b0}
+.fmQuizPanel{border:1px solid #394d82;background:linear-gradient(145deg,rgba(14,28,62,.92),rgba(10,20,50,.87));border-radius:17px;padding:24px}
+.fmQuizPanel h3{font:900 21px Manrope,sans-serif;letter-spacing:-.5px;margin:0 0 18px}
+.fmQuizGoals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.fmQuizGoals button{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:13px;padding:21px;min-height:155px;background:linear-gradient(135deg,#132c5c,#1d164c);border:1px solid #456ebb;border-radius:14px;text-align:left;color:#fff}
+.fmQuizGoals button:hover,.fmQuizGoals button.selected{border-color:#b28aff;box-shadow:0 0 19px rgba(128,95,243,.26)}
+.fmQuizGoals button>svg:first-child{color:#9de0ff}
+.fmQuizGoals button>svg:last-child{position:absolute;right:14px;top:14px;color:#aa91e3}
+.fmQuizGoals strong{font:900 15px Manrope,sans-serif}
+.fmQuizGoals small{font-size:11px;line-height:1.5;color:#bbccec}
+.fmQuizChoices{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.fmQuizChoices h3{font-size:19px}
+.fmQuizChoices label{display:flex;align-items:center;justify-content:space-between;color:#bdd2ef;font-size:13px}
+.fmQuizChoices label b{font:900 26px Manrope,sans-serif;color:#d4b6ff}
+.fmQuizChoices input[type=range]{display:block;width:100%;accent-color:#a66efc;margin:20px 0}
+.fmQuizPresets{display:flex;flex-wrap:wrap;gap:7px}
+.fmQuizPresets button,.fmQuizSpace button,.fmQuizBack{background:#152c58;border:1px solid #5266a1;color:#dbe6ff;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:800}
+.fmQuizPresets button[aria-pressed=true],.fmQuizSpace button[aria-pressed=true]{border-color:#b492ff;background:#392981;color:white}
+.fmQuizSpace{display:flex;gap:10px;flex-wrap:wrap}
+.fmQuizSpace button{display:flex;align-items:center;gap:8px}
+.fmQuizChoices>div:nth-child(2)>p{color:#a6b9d8;font-size:11px;line-height:1.7;margin-top:15px}
+.fmQuizNext{display:flex;align-items:center;gap:13px;grid-column:1/-1;justify-content:flex-end;margin-top:10px}
+.fmQuizResultHeader{display:flex;align-items:center;justify-content:space-between;gap:22px}
+.fmQuizResultHeader p{font-size:12px;color:#aec3e5}
+.fmQuizResults .fmQuizResultHeader h3{margin:6px 0}
+.fmQuizProductGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+.fmQuizMatchCard{min-width:0;display:flex;flex-direction:column;overflow:hidden;border-radius:12px;border:1px solid #4e65ad;background:#ecf2fc;color:#1e2a47}
+.fmQuizMatchTop{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:10px;background:linear-gradient(110deg,#1f245b,#3c248b);color:#fff}
+.fmQuizMatchTop span:first-child{font:900 13px Manrope,sans-serif}
+.fmQuizMatchTop span:last-child{font-size:8px;font-weight:900;color:#e5d2ff}
+.fmQuizMatchVisual{height:142px;display:grid;place-items:center;background:radial-gradient(ellipse at center,#f8f9ff,#d3ddf3);color:#6178b2;overflow:hidden}
+.fmQuizMatchVisual img{width:100%;height:100%;object-fit:contain}
+.fmQuizMatchInfo{display:flex;flex-direction:column;flex:1;gap:7px;padding:12px}
+.fmQuizMatchInfo strong{font:900 12px/1.43 Manrope,sans-serif;min-height:54px}
+.fmQuizMatchInfo>span{font:900 17px Manrope,sans-serif;color:#4d278a}
+.fmQuizMatchInfo>span small{font-size:9px;color:#7180a0;font-weight:600}
+.fmQuizMatchInfo p{font-size:10px;line-height:1.6;color:#495877;flex:1}
+.fmQuizCommercial{color:#6c4b78;font-size:9px}
+.fmQuizMatchInfo a{display:flex;justify-content:space-between;align-items:center;gap:7px;padding:11px 9px;text-align:left;color:white;background:#7142dd;border-radius:8px;font-size:10px;font-weight:900}
+.fmQuizAssurance{display:flex;gap:10px;align-items:center;border:1px solid #378c9f;background:#0e2c43;border-radius:12px;color:#ade8ee;padding:13px 18px;margin-top:16px}
+.fmQuizAssurance svg{flex-shrink:0}
+.fmQuizAssurance p{font-size:11px;line-height:1.65;margin:0}
+@media(max-width:1150px){.fmQuizProductGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.fmQuizGoals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.fmQuiz{margin:15px 11px;padding:30px 15px}.fmQuizVisual{display:none}.fmQuizStepper{gap:5px;justify-content:space-between}.fmQuizStepper>div{gap:4px;font-size:10px}.fmQuizStepper>svg{width:13px}.fmQuizStepper>div span{width:24px;height:24px}.fmQuizPanel{padding:14px}.fmQuizChoices{grid-template-columns:1fr;gap:20px}.fmQuizNext{grid-column:1}.fmQuizProductGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.fmQuizResultHeader{align-items:start;flex-direction:column}.fmQuizGoals button{padding:15px;min-height:145px}}
+@media(max-width:430px){.fmQuizProductGrid{grid-template-columns:1fr}.fmQuizMatchCard{display:grid;grid-template-columns:110px 1fr}.fmQuizMatchTop{grid-column:1/-1}.fmQuizMatchVisual{height:auto;min-height:167px}.fmQuizMatchInfo strong{min-height:auto}}
