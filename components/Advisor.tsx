@@ -2,6 +2,8 @@
 import {useState} from "react";
 import {ArrowRight,ArrowUpRight,Check,ChevronDown,Activity,Sparkles,ShieldCheck,Home,Volume2,Wallet,RotateCcw,ExternalLink,CheckCircle2,ScanSearch,MoveRight,LoaderCircle} from "lucide-react";
 import type {Plan,Path} from "@/lib/solutions";
+import FitmatchStudio from "@/components/FitmatchStudio";
+import type {BuyerStudioProfile} from "@/lib/studio-ranking";
 type Offer={id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string;imageUrl?:string|null;evidenceUrl?:string|null;reason?:string;review?:"verified"};
 type AgentStage={id:string;title:string;detail:string;state:"done"|"review_needed"};
 type Result={solutions:Plan;offers:Offer[];matchesByPath?:Record<string,Offer[]>;agentStages?:AgentStage[];sourceStatus?:{verifiedMatches:number;purchaseReady:boolean};catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
@@ -35,13 +37,21 @@ export default function Advisor(){
    setResult(data);setSelected(0);requestAnimationFrame(()=>document.getElementById("your-solution")?.scrollIntoView({behavior:"smooth",block:"start"}));
   }catch(e){setError(e instanceof Error?e.message:"Σφάλμα επικοινωνίας.");}finally{setLoading(false);}
  }
+ function applyStudioProfile(profile:BuyerStudioProfile){
+  setGoal(profile.goal);setSpace(profile.space);setBudget(profile.budget);setQuiet(profile.noise==="critical");
+  setActive(profile.pain);setResult(null);setError("");
+  const goalLabel=profile.goal==="strength"?"δύναμη":profile.goal==="cardio"?"αντοχή":profile.goal==="walking"?"περπάτημα":"καθημερινή κίνηση";
+  const environment=profile.space==="compact"?"Μένω σε μικρό διαμέρισμα.":"";
+  setNote([environment,"Θέλω "+goalLabel+".",profile.noise==="critical"?"Δεν θέλω να ενοχλώ γείτονες.":"",profile.fold?"Με ενδιαφέρει η αποθήκευση.":""].filter(Boolean).join(" "));
+  requestAnimationFrame(()=>document.getElementById("advisor")?.scrollIntoView({behavior:"smooth",block:"start"}));
+ }
  const paths=result?[result.solutions.primary,...result.solutions.alternatives]:[];
  const chosen:Path|undefined=paths[selected];
  const selectedOffers:Offer[]=chosen?(result?.matchesByPath?.[chosen.id]??(selected===0?(result?.offers??[]):[])):[];
  return <div className="cinematicSite">
   <header className="cinematicHeader">
    <a className="cinematicLogo" href="/" aria-label="FITMATCH AI — αρχική"><span className="logoGlyph">F<span>✦</span></span><span>FITMATCH<b> AI</b><small>THE SOLUTION EXPERIENCE</small></span></a>
-   <nav aria-label="Κύρια πλοήγηση"><a href="#problems">Τα προβλήματα</a><a href="#advisor">Ο σύμβουλος</a><a href="#how-it-works">Πώς λειτουργεί</a></nav>
+   <nav aria-label="Κύρια πλοήγηση"><a href="#studio">AI Studio</a><a href="#problems">Τα προβλήματα</a><a href="#advisor">Ο σύμβουλος</a><a href="#how-it-works">Πώς λειτουργεί</a></nav>
    <button className="headerPill" type="button" onClick={()=>document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}>Βρες τη λύση σου <ArrowUpRight size={17}/></button>
   </header>
   <main>
@@ -57,6 +67,7 @@ export default function Advisor(){
     </div>
     <div className="sceneCaption"><span>01 / 03</span><span>YOUR SPACE. YOUR RULES.</span><span className="captionLine"></span></div>
    </section>
+   <FitmatchStudio onUseScenario={applyStudioProfile}/>
    <section id="problems" className="painChapter">
     <div className="chapterEyebrow"><span className="purpleDash"></span> ΔΕΝ ΞΕΚΙΝΑΜΕ ΑΠΟ ΚΑΤΑΛΟΓΟ</div>
     <div className="chapterLead"><h2>Ποιο είναι το <em>δικό σου</em><br/>πρόβλημα;</h2><p>Επιλέγεις αυτό που σε εκφράζει. Ο σύμβουλος διερευνά περιορισμούς, εναλλακτικές και την πραγματική αξία μιας αγοράς.</p></div>
