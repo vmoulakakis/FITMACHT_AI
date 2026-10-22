@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
-import {choose,type Answers} from "@/lib/decision";
-import {solve} from "@/lib/solutions";
+import {type Answers} from "@/lib/decision";
+import {runAdvisorAgent} from "@/lib/agent";
 import {optionalHF} from "@/lib/hf-context";
 import {catalog} from "@/lib/catalog";
 export const dynamic="force-dynamic";
@@ -20,10 +20,10 @@ export async function POST(request:Request){
  activity:(v.activity as Answers["activity"]|undefined)||"walk",fold:v.fold===true};
  const note=(v.note as string|undefined)||"";
  const context=await optionalHF(note,v.aiConsent===true);
- const solutions=solve(a,note,context??undefined);
  const c=await catalog();
- const offers=solutions.primary.category?choose(c.offers,a,solutions.primary.category):[];
- return NextResponse.json({solutions,offers,catalogState:c.mode,catalogNote:c.reason??"",
+ const agent=runAdvisorAgent(a,note,c.offers,c.mode,context??undefined);
+ const solutions=agent.plan,offers=agent.matchesByPath[solutions.primary.id]??[];
+ return NextResponse.json({solutions,offers,matchesByPath:agent.matchesByPath,agentStages:agent.stages,sourceStatus:agent.sourceStatus,agentVersion:agent.version,catalogState:c.mode,catalogNote:c.reason??"",
  aiStatus:context?"hf-assisted":"contextual-fallback",
  disclosure:"Τυχόν σύνδεσμοι αγοράς μπορεί να είναι affiliate. Οι πληρωμές γίνονται μόνο στο κατάστημα. Οι προτάσεις κατηγορίας δεν αποτελούν πραγματικές προσφορές."
  },{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
