@@ -19,14 +19,19 @@ export async function GET(){
   if(!response.ok)return NextResponse.json({accessible:false,...upstream},{headers});
   if(!response.body)return NextResponse.json({accessible:false,...upstream,reason:"empty_response"},{headers});
   const counts={scanned:0,withProgramName:0,stockConfirmed:0,fitnessKeywords:0,fitnessWithProgramName:0,fitnessStockConfirmed:0,fitnessWithPrice:0};
-  const categories=new Map<string,number>(),scanner=new JsonArrayObjectScanner();
+  const categories=new Map<string,number>(),allCategories=new Map<string,number>(),stockValues=new Map<string,number>(),scanner=new JsonArrayObjectScanner();
+  let firstFieldNames:string[]=[];
   let format="unknown",prefix="",totalBytes=0;
   const inspect=(row:Record<string,unknown>)=>{
    counts.scanned++;
+   if(counts.scanned===1)firstFieldNames=Object.keys(row).filter(k=>/^[a-z_]+$/i.test(k)).slice(0,40);
    const title=String(row.product_name??row.model_name??"").slice(0,300);
    const cat=String(row.category??"").slice(0,130);
    const merchant=String(row.program_name??"").trim();
-   const inStock=row.in_stock===true||row.in_stock===1||String(row.in_stock).toLowerCase()==="true";
+   const stockRaw=String(row.in_stock??"missing").toLowerCase();
+   stockValues.set(stockRaw,(stockValues.get(stockRaw)||0)+1);
+   allCategories.set(cat,(allCategories.get(cat)||0)+1);
+   const inStock=row.in_stock===true||row.in_stock===1||["true","1","yes","available"].includes(stockRaw);
    const price=Number(row.price),gym=gymProduct(title,cat);
    if(merchant)counts.withProgramName++;if(inStock)counts.stockConfirmed++;
    if(gym){
@@ -51,7 +56,9 @@ export async function GET(){
   }finally{await reader.cancel().catch(()=>{});}
   if(format==="json"){
    return NextResponse.json({accessible:true,format,...upstream,observedAt:new Date().toISOString(),
-    boundedSample:true,totalBytes,counts,programNameFieldObserved:counts.withProgramName>0,
+    boundedSample:true,totalBytes,counts,firstFieldNames,programNameFieldObserved:counts.withProgramName>0,
+    stockValues:[...stockValues.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6),
+    topCategoryNames:[...allCategories.entries()].sort((a,b)=>b[1]-a[1]).slice(0,12).map(([category,n])=>({category,n})),
     gymCategories:[...categories].sort((a,b)=>b[1]-a[1]).slice(0,7).map(([category,n])=>({category,n})),
     note:"Bounded sample of source feed, NOT full inventory and NOT verified affiliate offers."},{headers});
   }
