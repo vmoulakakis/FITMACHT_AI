@@ -29,7 +29,7 @@ test("real researched SKUs are found across the expanded 36 product feed",()=>{
  assert.ok(rs.every(i=>i.name&&i.merchant&&!i.buyPath));
 });
 test("soft near-budget range includes a close SKU but labels the overage precisely",()=>{
- const p={...base,goal:"cardio",space:"large",noise:"normal",budget:170};
+ const p:BuyerStudioProfile={...base,goal:"cardio",space:"large",noise:"normal",budget:170};
  const items=rankStudio(p,[],now).find(l=>l.id==="cardio")!.items;
  const near=items.filter(i=>i.type==="research"&&i.price!>170);
  assert.ok(near.length>0);
