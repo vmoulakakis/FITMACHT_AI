@@ -1,13 +1,14 @@
 import type {Answers,Offer,Category} from "./decision";
 import {eligible} from "./decision";
-import researchData from "../data/fitness-research-shortlist.json";
+import researchData from "../data/fitness-research-candidates.json";
 
 export type Persona="cardio"|"strength"|"compact";
 export type BuyerStudioProfile=Answers&{level:"beginner"|"intermediate"|"advanced";preference:"value"|"compact"|"balanced";pain:"space"|"budget"|"goal"|"noise"|"level"|"equipment"};
-export type StudioItem={id:string;type:"verified"|"research"|"guide";name:string;subtitle:string;merchant?:string;price?:number;image?:string;category:string;lastSeen?:string;reason:string;isAffiliate:boolean;buyPath?:string};
+export type MatchLevel="direct"|"near"|"alternative"|"action";
+export type StudioItem={id:string;type:"verified"|"research"|"guide";name:string;subtitle:string;merchant?:string;price?:number;image?:string;category:string;lastSeen?:string;reason:string;tradeoff?:string;matchLevel:MatchLevel;isAffiliate:boolean;buyPath?:string};
 export type StudioLane={id:Persona;title:string;subtitle:string;items:StudioItem[];verifiedCount:number;researchCount:number;rankVersion:string;selected:boolean};
-type SourceCandidate={id:number;title:string;merchant:string;price:number;image:string;at:string;kind:string;status:string};
-const research=researchData as SourceCandidate[];
+type SourceCandidate={id:number;title:string;merchant:string;price:number;image:string;at:string;kind:string;status:string;quality:string;productKind:string};
+const research:SourceCandidate[]=researchData.products.map((p,i)=>({id:i+1,title:p.name,merchant:p.merchant,price:p.price,image:p.image,at:p.observedAt,kind:p.kind==="treadmill"||p.kind==="exercise-bike"||p.kind==="walking-pad"?"cardio":"strength",status:"UNVERIFIED",quality:p.quality,productKind:p.kind}));
 const descriptors:Record<Persona,{title:string;subtitle:string;guide:[string,string][]}>={
  cardio:{title:"Cardio στο σπίτι",subtitle:"Κίνηση, περπάτημα και αντοχή",guide:[
  ["Walking pad vs διάδρομος","Ξεχώρισε περπάτημα από τρέξιμο πριν εξετάσεις μηχάνημα."],
@@ -36,19 +37,19 @@ const inputCategory:Record<Persona,Category[]>={
 const norm=(s:string)=>s.toLocaleLowerCase("el-GR").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const fitsResearch=(lane:Persona,c:SourceCandidate)=>{
  const t=norm(c.title);
- if(lane==="cardio")return /(treadmill|walking.?pad|bike|ποδηλατ|διαδρομος.{0,25}γυμναστ)/u.test(t);
- if(lane==="strength")return /(dumbbell|αλτηρ|βαρακ|παγκος.{0,22}γυμναστ|bench)/u.test(t);
- // Display only highly portable-looking research candidates and mark dimensions
- // explicitly UNVERIFIED; never assert the SKU fits a small home.
- return /(adjustable.?dumbbell|ρυθμιζ.{0,15}αλτηρ)/u.test(t);
+ if(c.productKind==="accessory"||c.productKind==="unknown")return false;
+ if(lane==="cardio")return ["treadmill","walking-pad","exercise-bike"].includes(c.productKind);
+ if(lane==="strength")return ["adjustable-dumbbells","fixed-dumbbells","resistance-bands","weight-bench"].includes(c.productKind);
+ // Flexible small-space discovery: do not claim any specific dimensions without evidence.
+ return ["resistance-bands","adjustable-dumbbells","fixed-dumbbells","walking-pad","exercise-bike"].includes(c.productKind);
 };
 const itemRank=(lane:Persona,product:SourceCandidate,profile:BuyerStudioProfile)=>{
  const t=norm(product.title);
  let score=60;
  // No unsupported specs inferred from the title: these are conservative RESEARCH screens.
  if(profile.level==="beginner"&&/(?:50|55|66) ?kg/u.test(t))return -999;
- if(profile.noise==="critical"&&/(treadmill|διαδρομος.{0,25}γυμναστ)/u.test(t))return -999;
- if(profile.space==="compact"&&/(bench|παγκος)/u.test(t))return -999;
+ if(profile.noise==="critical"&&/(treadmill|διαδρομος.{0,25}γυμναστ)/u.test(t))score-=38;
+ if(profile.space==="compact"&&/(bench|παγκος)/u.test(t))score-=29;
  if(profile.fold&&lane==="cardio"&&/treadmill/u.test(t))score-=14;
  if(profile.level==="beginner"&&/bike|ποδηλατ/u.test(t))score+=7;
  if(profile.level==="advanced"&&/dumbbell|αλτηρ|βαρακ/u.test(t))score+=8;
@@ -77,36 +78,40 @@ export function rankStudio(profile:BuyerStudioProfile,approved:Offer[],now=Date.
  return (["cardio","strength","compact"] as const).map(id=>{
   const d=descriptors[id],chosen=new Set<string>();
   const allowed=inputCategory[id],items:StudioItem[]=[];
-  const verified=approved.filter(p=>allowed.includes(p.category as Category))
-   .filter(p=>eligible(p,profile.budget,7,now).ok)
-   .filter(p=>!(profile.noise==="critical"&&p.category==="treadmill"))
-   .filter(p=>!(id==="compact"&&p.category==="walking-pad")) // no verified dimensions/noise field
-   .sort((a,b)=>a.price-b.price||Date.parse(b.lastSeen)-Date.parse(a.lastSeen));
+  // Budget and category are preference gradients. Commercial eligibility is still a hard gate.
+  const tolerance=Math.min(Math.max(profile.budget*0.35,12),120);
+  const verified=profile.budget>0?approved.filter(p=>allowed.includes(p.category as Category))
+   .filter(p=>p.price<=profile.budget+tolerance)
+   .filter(p=>eligible(p,Math.max(profile.budget,p.price),7,now).ok)
+   .sort((a,b)=>(a.price>profile.budget?1:0)-(b.price>profile.budget?1:0)||a.price-b.price):[];
   for(const p of verified){
    if(items.length>=5)break;
    const dedup=norm(p.title).replace(/[^a-z0-9α-ω]/g,"").slice(0,80);
    if(chosen.has(dedup))continue;chosen.add(dedup);
-   items.push({id:p.id,type:"verified",name:p.title,subtitle:"Ελεγμένα στοιχεία & εμπορικοί όροι",merchant:p.merchant,price:p.price,image:p.imageUrl??undefined,category:p.category,lastSeen:p.lastSeen,reason:"Περνά τους εμπορικούς ελέγχους και τα γνωστά φίλτρα.",isAffiliate:true,buyPath:"/api/out?id="+encodeURIComponent(p.id)});
+   items.push({id:p.id,type:"verified",name:p.title,subtitle:"Ελεγμένα στοιχεία & εμπορικοί όροι",merchant:p.merchant,price:p.price,image:p.imageUrl??undefined,category:p.category,lastSeen:p.lastSeen,reason:"Επαληθευμένη εμπορική προσφορά στην αντίστοιχη κατηγορία.",tradeoff:p.price>profile.budget?"Λίγο πάνω από το budget: "+(p.price-profile.budget).toFixed(2)+"€. Αποφασίζεις εσύ.":(profile.noise==="critical"?"Απαραίτητος έλεγχος πραγματικού θορύβου και διαστάσεων.":"Έλεγξε τη φυσική καταλληλότητα του SKU."),matchLevel:p.price>profile.budget?"near":"direct",isAffiliate:true,buyPath:"/api/out?id="+encodeURIComponent(p.id)});
   }
   const countVerified=items.length;
   if(profile.budget>0){
-   const candidates=research.filter(p=>fitsResearch(id,p)&&p.price<=profile.budget)
-    .filter(p=>Number.isFinite(Date.parse(p.at))&&(now-Date.parse(p.at))<=7*86400000&&(now-Date.parse(p.at))>=0)
+   const candidates=research.filter(p=>fitsResearch(id,p)&&p.price<=profile.budget+tolerance&&p.quality!=="needs_source_recheck")
+    .filter(p=>Number.isFinite(Date.parse(p.at))&&(now-Date.parse(p.at))<=30*86400000&&(now-Date.parse(p.at))>=0)
     .filter(p=>itemRank(id,p,profile)>-900)
-    .sort((a,b)=>itemRank(id,b,profile)-itemRank(id,a,profile)||a.price-b.price);
+    .sort((a,b)=>{const pa=a.price>profile.budget?22:0,pb=b.price>profile.budget?22:0;return (itemRank(id,b,profile)-pb)-(itemRank(id,a,profile)-pa)||a.price-b.price;});
    for(const p of candidates){
     if(items.length>=5)break;
     const dedup=norm(p.title).replace(/[^a-z0-9α-ω]/g,"").slice(0,80);
     if(chosen.has(dedup))continue;chosen.add(dedup);
-    items.push({id:"research-"+p.id,type:"research",name:p.title,subtitle:"Από πραγματικό feed · Όχι εγκεκριμένη προσφορά",merchant:p.merchant,price:p.price,image:p.image,category:p.kind,lastSeen:p.at,reason:"Απαιτούνται έλεγχοι τεχνικών specs, tracking και τρέχουσας προμήθειας.",isAffiliate:false});
+    const over=p.price>profile.budget;
+    const possible= id==="cardio"&&p.productKind==="exercise-bike"&&profile.activity==="run"?"Εναλλακτική για αντοχή, όχι ισοδύναμο με τρέξιμο.":id==="compact"&&["exercise-bike","walking-pad"].includes(p.productKind)?"Οι διαστάσεις/θόρυβος ΔΕΝ έχουν ελεγχθεί· ίσως δεν ταιριάζει στον χώρο.":id==="compact"&&profile.goal==="cardio"&&p.kind==="strength"?"Εναλλακτική ενδυνάμωσης, δεν υποκαθιστά το cardio.":"Παρόμοια λύση με γνωστό είδος εξοπλισμού· τα τεχνικά χαρακτηριστικά εκκρεμούν.";
+    const grade:MatchLevel=over||profile.noise==="critical"&&["treadmill","exercise-bike"].includes(p.productKind)?"near":id==="compact"&&p.kind==="strength"&&profile.goal==="cardio"?"alternative":"direct";
+    items.push({id:"research-"+p.id,type:"research",name:p.title,subtitle:"Πραγματικό feed · ΜΗ ΕΓΚΕΚΡΙΜΕΝΟ",merchant:p.merchant,price:p.price,image:p.image,category:p.productKind,lastSeen:p.at,reason:possible,tradeoff:(over?"Λίγο πάνω από το budget ("+(p.price-profile.budget).toFixed(2)+"€). ":"")+possible+" Επιβεβαίωσε stock, specs και εμπορικούς όρους.",matchLevel:grade,isAffiliate:false});
    }
   }
   const researchCount=items.length-countVerified;
   for(let i=0;items.length<5;i++){
    const [name,reason]=d.guide[i%d.guide.length];
    if(items.some(x=>x.name===name))continue;
-   items.push({id:id+"-guide-"+i,type:"guide",name,subtitle:"Πρακτική λύση · Χωρίς αγορά",category:id,reason,isAffiliate:false});
+   items.push({id:id+"-guide-"+i,type:"guide",name,subtitle:"Πρακτική λύση · Χωρίς αγορά",category:id,reason,matchLevel:"action",isAffiliate:false});
   }
-  return {id,title:d.title,subtitle:d.subtitle,items,verifiedCount:countVerified,researchCount,rankVersion:"top-five-r1-gated",selected:id===selectedPersona(profile)};
+  return {id,title:d.title,subtitle:d.subtitle,items,verifiedCount:countVerified,researchCount,rankVersion:"adaptive-near-match-v2",selected:id===selectedPersona(profile)};
  });
 }
