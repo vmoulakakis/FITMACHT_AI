@@ -46,7 +46,7 @@ const itemRank=(lane:Persona,product:SourceCandidate,profile:BuyerStudioProfile)
  const t=norm(product.title);
  let score=60;
  // No unsupported specs inferred from the title: these are conservative RESEARCH screens.
- if(profile.level==="beginner"&&/(?:50|55|66)s?kg/u.test(t))return -999;
+ if(profile.level==="beginner"&&/(?:50|55|66) ?kg/u.test(t))return -999;
  if(profile.noise==="critical"&&/(treadmill|διαδρομος.{0,25}γυμναστ)/u.test(t))return -999;
  if(profile.space==="compact"&&/(bench|παγκος)/u.test(t))return -999;
  if(profile.fold&&lane==="cardio"&&/treadmill/u.test(t))score-=14;
