@@ -19,5 +19,5 @@ export function assessPayout(r:Rule|null|undefined,o:Subject):Assessment{
  else return unknown("payout_kind_unknown");
  if(r.capEur!==undefined&&r.capEur!==null){if(!Number.isFinite(r.capEur)||r.capEur<0)return unknown("invalid_cap");payout=Math.min(payout,r.capEur);}
  payout=Math.floor((payout+Number.EPSILON)*100)/100;
- return {status:payout>=10?"ELIGIBLE":"INELIGIBLE",minPayoutEur:payout,reason:payout>=10?"verified_minimum":"commission_under_10"};
+ return {status:payout>20?"ELIGIBLE":"INELIGIBLE",minPayoutEur:payout,reason:payout>20?"verified_minimum":"commission_not_above_20"};
 }

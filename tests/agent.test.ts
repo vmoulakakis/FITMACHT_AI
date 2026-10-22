@@ -7,7 +7,7 @@ import type {Path} from "../lib/solutions";
 const now=Date.parse("2026-10-22T08:00:00Z");
 const a:Answers={goal:"walking",space:"compact",noise:"critical",activity:"walk",budget:500,fold:true};
 const path:Path={id:"walking-pad",category:"walking-pad",kind:"equipment",title:"Walking pad",reason:"test",actions:["a","b","c"]};
-function offer(v:Partial<Offer>={}):Offer{return{id:"item",title:"Verified walking pad",category:"walking-pad",merchant:"Greek merchant",price:320,currency:"EUR",trackingUrl:"https://affiliate.linkwi.se/a",inStock:true,lastSeen:"2026-10-22T07:00:00Z",verifiedCommissionEur:15,commissionEvidence:true,specsVerified:true,urlEvidence:"https://merchant.example/spec",imageUrl:null,...v};}
+function offer(v:Partial<Offer>={}):Offer{return{id:"item",title:"Verified walking pad",category:"walking-pad",merchant:"Greek merchant",price:320,currency:"EUR",trackingUrl:"https://affiliate.linkwi.se/a",inStock:true,lastSeen:"2026-10-22T07:00:00Z",verifiedCommissionEur:25,commissionEvidence:true,specsVerified:true,urlEvidence:"https://merchant.example/spec",imageUrl:null,...v};}
 test("catalog absence produces three useful paths and transparent state",()=>{
  const r=runAdvisorAgent(a,"Μικρό σπίτι και θόρυβος",[],"no_approved_offers");
  assert.equal(r.stages.length,3);assert.equal(r.sourceStatus.purchaseReady,false);
@@ -21,7 +21,7 @@ test("agent never bypasses commerce hard gates",()=>{
  assert.equal(matchPath(path,a,[offer(patch)],now).length,0);
 });
 test("commission size does not control buyer ranking",()=>{
- const res=matchPath(path,a,[offer({id:"big",price:410,verifiedCommissionEur:100}),offer({id:"best-price",price:299,verifiedCommissionEur:11})],now);
+ const res=matchPath(path,a,[offer({id:"big",price:410,verifiedCommissionEur:100}),offer({id:"best-price",price:299,verifiedCommissionEur:21})],now);
  assert.deepEqual(res.map(x=>x.id),["best-price","big"]);
 });
 test("all buyer goals and budgets return paths without fake sales",()=>{

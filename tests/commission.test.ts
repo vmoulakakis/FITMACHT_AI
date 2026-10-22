@@ -1,7 +1,8 @@
 import test from "node:test";import assert from "node:assert/strict";import {assessPayout,type Rule} from "../lib/commission";
 const r:Rule={programId:"42",categoryCode:"fitness",approved:true,marketingAllowed:true,evidenceUrl:"https://merchant.example/terms",verifiedAt:"2026-10-01T00:00:00Z",payoutKind:"percent",minPercent:5,base:"gross"};
 const o={programId:"42",categoryCode:"fitness",productId:"p1",priceEur:200,now:Date.parse("2026-10-21T00:00:00Z")};
-test("EUR10 exactly passes",()=>assert.equal(assessPayout(r,o).status,"ELIGIBLE"));
+test("EUR10 is below owner threshold",()=>assert.equal(assessPayout(r,o).status,"INELIGIBLE"));
+test("EUR20 exactly fails and EUR20.01 passes",()=>{assert.equal(assessPayout({...r,minPercent:10},o).status,"INELIGIBLE");assert.equal(assessPayout({...r,minPercent:10.01},o).status,"ELIGIBLE")});
 test("below threshold fails",()=>assert.equal(assessPayout({...r,minPercent:4},o).status,"INELIGIBLE"));
 test("no verified rate fails closed",()=>assert.equal(assessPayout({...r,minPercent:null},o).status,"UNVERIFIED"));
 test("VAT net basis is conservative",()=>assert.equal(assessPayout({...r,base:"net_ex_vat",vatPercent:24},o).status,"INELIGIBLE"));

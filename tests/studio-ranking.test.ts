@@ -3,7 +3,7 @@ import {rankStudio,suggestNearby,selectedPersona,type BuyerStudioProfile} from "
 import type {Offer} from "../lib/decision";
 const now=Date.parse("2026-10-22T08:00:00Z");
 const base:BuyerStudioProfile={goal:"mixed",space:"compact",budget:600,noise:"critical",activity:"walk",fold:true,level:"beginner",preference:"compact",pain:"space"};
-const offer=(override:Partial<Offer>={}):Offer=>({id:"real-1",title:"Walking pad example",category:"walking-pad",price:300,currency:"EUR",merchant:"Verified merchant",trackingUrl:"https://go.linkwi.se/z/99-0/CD104/",inStock:true,lastSeen:"2026-10-22T07:00:00Z",verifiedCommissionEur:12,commissionEvidence:true,specsVerified:true,...override});
+const offer=(override:Partial<Offer>={}):Offer=>({id:"real-1",title:"Walking pad example",category:"walking-pad",price:300,currency:"EUR",merchant:"Verified merchant",trackingUrl:"https://go.linkwi.se/z/99-0/CD104/",inStock:true,lastSeen:"2026-10-22T07:00:00Z",verifiedCommissionEur:25,commissionEvidence:true,specsVerified:true,...override});
 test("every goal x space x noise x budget x preference yields 3 distinct five-slot solution paths",()=>{
  for(const goal of ["walking","cardio","strength","mixed"] as const)
  for(const space of ["compact","medium","large"] as const)
