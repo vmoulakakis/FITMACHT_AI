@@ -2,8 +2,9 @@
 import {useState} from "react";
 import {ArrowRight,ArrowUpRight,Check,ChevronDown,Activity,Sparkles,ShieldCheck,Home,Volume2,Wallet,RotateCcw,ExternalLink,CheckCircle2,ScanSearch,MoveRight,LoaderCircle} from "lucide-react";
 import type {Plan,Path} from "@/lib/solutions";
-type Offer={id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string;imageUrl?:string|null};
-type Result={solutions:Plan;offers:Offer[];catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
+type Offer={id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string;imageUrl?:string|null;evidenceUrl?:string|null;reason?:string;review?:"verified"};
+type AgentStage={id:string;title:string;detail:string;state:"done"|"review_needed"};
+type Result={solutions:Plan;offers:Offer[];matchesByPath?:Record<string,Offer[]>;agentStages?:AgentStage[];sourceStatus?:{verifiedMatches:number;purchaseReady:boolean};catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
 const problems=[
  {id:"space",icon:"◩",kicker:"ΜΙΚΡΟ ΣΠΙΤΙ",title:"Δεν έχω χώρο για όργανα.",note:"Μένω σε μικρό διαμέρισμα. Θέλω να γυμνάζομαι χωρίς να γεμίζει ο χώρος με εξοπλισμό.",goal:"mixed" as const},
  {id:"noise",icon:"◉",kicker:"ΠΟΛΥΚΑΤΟΙΚΙΑ",title:"Δεν θέλω να ενοχλώ τους γείτονες.",note:"Μένω σε πολυκατοικία. Θέλω να κινούμαι μέσα στο σπίτι χωρίς θόρυβο.",goal:"walking" as const},
@@ -36,6 +37,7 @@ export default function Advisor(){
  }
  const paths=result?[result.solutions.primary,...result.solutions.alternatives]:[];
  const chosen:Path|undefined=paths[selected];
+ const selectedOffers=chosen?(result?.matchesByPath?.[chosen.id]??(selected===0?result?.offers:[])):[];
  return <div className="cinematicSite">
   <header className="cinematicHeader">
    <a className="cinematicLogo" href="/" aria-label="FITMATCH AI — αρχική"><span className="logoGlyph">F<span>✦</span></span><span>FITMATCH<b> AI</b><small>THE SOLUTION EXPERIENCE</small></span></a>
@@ -65,7 +67,7 @@ export default function Advisor(){
    <section id="advisor" className="advisorChapter">
     <div className="advisorIntro"><div className="chapterEyebrow"><span className="purpleDash"></span> YOUR PRIVATE BUYING ADVISOR</div><h2>Πες μας τι σε <em>δυσκολεύει.</em><br/>Τα υπόλοιπα είναι δική μας δουλειά.</h2><p>Μια πραγματική ανάγκη, ένας σύντομος έλεγχος και πολλοί δρόμοι προς τη λύση. Χωρίς ατελείωτο quiz.</p></div>
     <div className="advisorGlass">
-     <div className="assistantHeader"><span className="aiAvatar"><Sparkles size={22}/></span><div><strong>FITMATCH INTELLIGENCE</strong><small>Σύμβουλος λύσεων για το σπίτι σου</small></div><span className="assistantLive"><i></i> LIVE ADVISOR</span></div>
+     <div className="assistantHeader"><span className="aiAvatar"><Sparkles size={22}/></span><div><strong>FITMATCH INTELLIGENCE</strong><small>Σύμβουλος λύσεων για το σπίτι σου</small></div><span className="assistantLive"><i></i> PAIN-GAP ANALYST</span></div>
      <div className="assistantForm">
       <label htmlFor="buyer-need" className="inputLabel">01 <span>/ ΠΕΣ ΤΟ ΠΡΟΒΛΗΜΑ ΜΕ ΔΙΚΑ ΣΟΥ ΛΟΓΙΑ</span></label>
       <textarea id="buyer-need" maxLength={600} value={note} onChange={e=>{setNote(e.target.value);setResult(null);}} rows={3} placeholder="π.χ. Θέλω να περπατάω το βράδυ, αλλά είμαι σε διαμέρισμα και δεν θέλω θόρυβο..."/>
@@ -83,15 +85,22 @@ export default function Advisor(){
    </section>
    {result&&chosen&&<section id="your-solution" className="solutionChapter"><div className="chapterEyebrow"><span className="purpleDash"></span> YOUR SOLUTION / PERSONALIZED</div>
     <div className="solutionTop"><div><h2>Από το πρόβλημα,<br/><em>στη λύση σου.</em></h2><p>Οι προτάσεις βασίζονται στην περιγραφή σου και στους περιορισμούς σου. Η διαθεσιμότητα εμπορικών προϊόντων ελέγχεται χωριστά.</p></div><span className="matchIndicator"><CheckCircle2 size={17}/> ΑΝΑΛΥΘΗΚΑΝ ΟΙ ΑΝΑΓΚΕΣ</span></div>
+    <div className="agentEvidence" aria-label="Πορεία ανάλυσης του συμβούλου">
+      {(result.agentStages??[]).map((phase,i)=><div key={phase.id} className={"agentStep "+phase.state}><span className="agentStepIndex">0{i+1}</span><div><strong>{phase.title}</strong><p>{phase.detail}</p></div><span className="agentStepIcon">{phase.state==="done"?<CheckCircle2 size={20}/>:<ScanSearch size={20}/>}</span></div>)}
+     </div>
     <div className="solutionChoices">{paths.map((p,i)=><button key={p.id} type="button" className={"solutionChoice"+(selected===i?" active":"")} aria-pressed={selected===i} onClick={()=>setSelected(i)}><span>{i===0?"01 / ΠΡΩΤΗ ΠΡΟΣΕΓΓΙΣΗ":i===1?"02 / ΕΝΑΛΛΑΚΤΙΚΗ":"03 / ΕΠΙΠΛΕΟΝ ΛΥΣΗ"}</span><strong>{p.title}</strong><small>{p.kind==="no_purchase"?"Εφικτή χωρίς άμεση αγορά":"Κατηγορία προς τεχνικό έλεγχο"}</small><MoveRight size={20}/></button>)}</div>
     <div className="solutionAnalysis"><div><span className="inputLabel">ΓΙΑΤΙ ΑΥΤΗ Η ΛΥΣΗ;</span><h3>{chosen.title}</h3><p>{chosen.reason}</p></div><div><span className="inputLabel">ΤΑ ΕΠΟΜΕΝΑ ΒΗΜΑΤΑ</span>{chosen.actions.map((x,i)=><p className="solutionAction" key={i}><span>0{i+1}</span>{x}</p>)}</div></div>
     <div className="merchantArea"><div className="merchantHead"><div><div className="chapterEyebrow"><span className="purpleDash"></span> MERCHANT MATCHING</div><h3>Η λύση είναι ξεκάθαρη.<br/><em>Η αγορά μόνο με αποδείξεις.</em></h3></div><span className="stockGate"><ShieldCheck size={16}/> VERIFIED OFFERS ONLY</span></div>
-    {selected===0&&chosen.category&&result.offers.length>0?<div className="merchantOffers">{result.offers.map(o=><article className="merchantOffer" key={o.id}><div><span className="offerLabel">{o.tag}</span><h4>{o.title}</h4><p>{o.merchant} · Ενημέρωση {new Date(o.lastSeen).toLocaleDateString("el-GR")}</p></div><div className="priceAndBuy"><b>{o.price.toLocaleString("el-GR")}€</b><a href={"/api/out?id="+encodeURIComponent(o.id)} rel="nofollow sponsored noopener">Στο κατάστημα <ExternalLink size={16}/></a></div></article>)}</div>
-    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Το feed του SocialMarket δεν διαθέτει αυτή τη στιγμή εγκεκριμένα, επίκαιρα SKU με τεχνικά στοιχεία και επιβεβαιωμένη affiliate προμήθεια ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small></div></div>}
+    {chosen.category&&selectedOffers.length>0?<div className="merchantOffers">{selectedOffers.map(o=><article className="merchantOffer merchantOfferPro" key={o.id}>
+        {o.imageUrl&&o.imageUrl.startsWith("https://")&&<div className="merchantProductImage"><img src={o.imageUrl} alt={o.title} loading="lazy"/></div>}
+        <div className="merchantProductText"><span className="offerLabel">{o.tag} · Ελεγμένη προσφορά</span><h4>{o.title}</h4><p>{o.merchant} · Ενημέρωση τιμής/stock: {new Date(o.lastSeen).toLocaleDateString("el-GR")}</p>
+        {o.reason&&<p className="sourceReason">{o.reason}</p>}{o.evidenceUrl&&o.evidenceUrl.startsWith("https://")&&<a className="evidenceLink" href={o.evidenceUrl} target="_blank" rel="noopener noreferrer">Πρωτογενής πηγή προδιαγραφών <ExternalLink size={13}/></a>}</div>
+        <div className="priceAndBuy"><b>{o.price.toLocaleString("el-GR")}€</b><a href={"/api/out?id="+encodeURIComponent(o.id)} rel="nofollow sponsored noopener">Αγόρασε στον merchant <ExternalLink size={16}/></a></div></article>)}</div>
+    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Η τρέχουσα βάση δεν διαθέτει για αυτή τη λύση SKU που να περνά όλα τα υποχρεωτικά κριτήρια τεχνικών στοιχείων, διαθεσιμότητας και επαληθευμένης affiliate προμήθειας ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small></div></div>}
     <p className="affiliateDisclosure">{result.disclosure}</p></div>
     <button type="button" className="resetSolution" onClick={()=>{setResult(null);document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}}><RotateCcw size={18}/> Εξερεύνησε διαφορετικό πρόβλημα</button>
    </section>}
-   <section id="how-it-works" className="processChapter"><div className="chapterEyebrow"><span className="purpleDash"></span> THE FITMATCH METHOD</div><h2>Δεν πουλάμε το πρώτο προϊόν.<br/><em>Λύνουμε το σωστό πρόβλημα.</em></h2><div className="processGrid"><div><span>01 / UNDERSTAND</span><h3>Ακούμε την ανάγκη</h3><p>Χώρος, θόρυβος, συνήθειες, χρήματα. Όσα πραγματικά καθορίζουν τη σωστή αγορά.</p></div><div><span>02 / SOLVE</span><h3>Ελέγχουμε τη λύση</h3><p>Πρώτα αποφασίζουμε τι ταιριάζει, ακόμη κι αν η καλύτερη απάντηση είναι να μην αγοράσεις.</p></div><div><span>03 / VERIFY</span><h3>Μόνο πραγματικές προσφορές</h3><p>Συγκεκριμένος merchant, τιμή, απόθεμα, specs και επιβεβαιωμένοι affiliate όροι. Όχι κατασκευασμένες κάρτες.</p></div></div></section>
+   <section id="how-it-works" className="processChapter"><div className="chapterEyebrow"><span className="purpleDash"></span> THE FITMATCH METHOD</div><h2>Δεν πουλάμε το πρώτο προϊόν.<br/><em>Λύνουμε το σωστό πρόβλημα.</em></h2><div className="processGrid"><div><span>01 / UNDERSTAND</span><h3>Ακούμε την ανάγκη</h3><p>Χώρος, θόρυβος, συνήθειες, χρήματα. Όσα πραγματικά καθορίζουν τη σωστή αγορά.</p></div><div><span>02 / SOLVE</span><h3>Ελέγχουμε τη λύση</h3><p>Πρώτα αποφασίζουμε τι ταιριάζει, ακόμη κι αν η καλύτερη απάντηση είναι να μην αγοράσεις.</p></div><div><span>03 / VERIFY</span><h3>Μόνο πραγματικές προσφορές</h3><p>Συγκεκριμένος merchant, χρονικά τεκμηριωμένη τιμή, απόθεμα, specs και επιβεβαιωμένοι affiliate όροι. Μόνο όταν υπάρχουν πραγματικά δεδομένα.</p></div></div></section>
   </main><footer className="cinematicFooter"><span>FITMATCH <b>AI</b></span><p>ΤΑ ΠΡΟΒΛΗΜΑΤΑ ΕΙΝΑΙ ΠΡΑΓΜΑΤΙΚΑ. ΟΙ ΛΥΣΕΙΣ ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΚΙ ΑΥΤΕΣ.</p><nav><a href="/methodology">Μεθοδολογία & affiliate disclosure</a><a href="/privacy">Απόρρητο</a><a href="/readiness">Διαφάνεια δεδομένων</a></nav><small>© 2026 · Staging preview</small></footer>
  </div>
 }
