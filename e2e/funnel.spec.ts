@@ -30,3 +30,18 @@ test("noise pain changes quick setup, alternative selection still works",async({
  await page.locator(".solutionChoice").nth(1).click();
  await expect(page.locator(".solutionChoice").nth(1)).toHaveAttribute("aria-pressed","true");
 });
+
+
+test("research gallery shows real feed source evidence but no unverified affiliate buying links",async({page},info)=>{
+ await page.goto("/research");
+ await expect(page.getByRole("heading",{name:/Πραγματικά προϊόντα/})).toBeVisible();
+ await expect(page.locator(".sourceCard")).toHaveCount(10);
+ await expect(page.locator(".sourceCard a[href^='/api/out']")).toHaveCount(0);
+ await expect(page.getByText(/δεν υπάρχει ακόμα κουμπί αγοράς/i)).toBeVisible();
+ await page.getByRole("button",{name:"Cardio"}).click();
+ await expect(page.locator(".sourceCard").first()).toBeVisible();
+ expect(await page.locator(".sourceCard").count()).toBeGreaterThan(0);
+ await page.getByRole("button",{name:"Ενδυνάμωση"}).click();
+ await expect(page.locator(".sourceCard").first()).toBeVisible();
+ await info.attach("real-product-research",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+});
