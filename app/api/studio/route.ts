@@ -24,7 +24,7 @@ export async function POST(req:Request){
  const approved=lanes.reduce((n,l)=>n+l.verifiedCount,0);
  return NextResponse.json({
   lanes,verifiedOffers:approved,releaseReady:approved>0,
-  catalogMode:inventory.mode,rankingVersion:"top-five-r1-gated",
-  note:"Πάντα έως πέντε πραγματικά επαληθευμένα προϊόντα ανά διαδρομή. Τα μη εγκεκριμένα SKU είναι μόνο ευρήματα έρευνας χωρίς affiliate CTA. Όλες οι υπόλοιπες θέσεις είναι συμβουλές, όχι προϊόντα."
+  catalogMode:inventory.mode,rankingVersion:"adaptive-near-match-v2",
+  note:"Κάθε διαδρομή δίνει 5 λύσεις. Πρώτα τα επιτρεπτά και επαληθευμένα affiliate SKU, έπειτα κοντινά πραγματικά προϊόντα με συμβιβασμούς υπό έλεγχο, και μετά πρακτικές λύσεις. Κανένα μη εγκεκριμένο SKU δεν αποκτά σύνδεσμο αγοράς."
  },{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
 }

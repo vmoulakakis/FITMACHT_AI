@@ -41,6 +41,8 @@ function ResultRow({item,index}:{item:StudioItem;index:number}){
    <strong title={item.name}>{item.name}</strong>
    {item.price!==undefined?<span className="studioProductMoney">{item.price.toLocaleString("el-GR",{style:"currency",currency:"EUR"})} <small>στο feed</small></span>:<span className="studioProductGuide">Πρακτικό βήμα</span>}
    <small className="studioProductSource">{item.type==="verified"?item.merchant:item.type==="research"?"Πραγματικό SKU · έλεγχος εκκρεμεί":item.subtitle}</small>
+   {item.type!=="guide"&&<small className={"studioNearTag "+item.matchLevel} title={item.tradeoff||item.reason}>{item.matchLevel==="direct"?"Σχετική κατηγορία":item.matchLevel==="near"?"Κοντινή επιλογή": "Εναλλακτική λύση"}</small>}
+   {item.type==="research"&&item.tradeoff&&<span className="studioTradeoff" title={item.tradeoff}>{item.tradeoff}</span>}
    {item.type==="verified"&&item.buyPath?<a className="studioOfferLink" rel="nofollow sponsored noopener" href={item.buyPath}>Affiliate αγορά <ArrowUpRight size={11}/></a>:<span className={"studioOfferState "+(item.type==="research"?"pending":"advice")}>{item.type==="research"?"ΜΗ ΕΓΚΕΚΡΙΜΕΝΟ":"ΛΥΣΗ ΧΩΡΙΣ ΑΓΟΡΑ"}</span>}
   </div>
  </div>;

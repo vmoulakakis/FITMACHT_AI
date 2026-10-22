@@ -236,3 +236,9 @@
 .nearbyCard strong small{font-size:9px;color:#a7bad6;font-weight:500}
 .nearbyCard p{font-size:11px;color:#b6c5e0;line-height:1.7}
 .nearbyCard>div:last-child>small{font-size:10px;color:#e2ba9c}
+
+
+.studioNearTag{display:inline-block;align-self:start;font-size:7px;font-weight:900;color:#3b5884;letter-spacing:.1px;background:#dce9ff;padding:3px 4px;border-radius:4px}
+.studioNearTag.near{color:#6f4c21;background:#ffe7c2}
+.studioNearTag.alternative{color:#5c4592;background:#ebdfff}
+.studioTradeoff{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:8px;line-height:1.35;color:#516784}
