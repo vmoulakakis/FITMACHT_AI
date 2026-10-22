@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "title": "Half Human Curve Treadmill SFITPHH30010",
+    "merchant": "Mybrand.shoes",
+    "price": 5481.34,
+    "image": "https://cdn.mybrand.shoes/798759-thickbox_default/8166eefd-a473-ef11-b69d-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "cardio",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 2,
+    "title": "HMS Premium M1829i magnetic bike",
+    "merchant": "Mybrand.shoes",
+    "price": 590.52,
+    "image": "https://cdn.mybrand.shoes/626331-thickbox_default/3a114a24-f1dd-ec11-b619-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "cardio",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 3,
+    "title": "HMS LS3859 Ρυθμιζόμενος Πάγκος Γυμναστικής Γενικής Χρήσης με Ορθοστάτες",
+    "merchant": "Mybrand.shoes",
+    "price": 329.04,
+    "image": "https://cdn.mybrand.shoes/434714-thickbox_default/33cf8049-f0dd-ec11-b619-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "strength",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 4,
+    "title": "HMS M9239 white and green magnetic bike",
+    "merchant": "Mybrand.shoes",
+    "price": 277.49,
+    "image": "https://cdn.mybrand.shoes/626156-thickbox_default/233bff2a-f1dd-ec11-b619-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "cardio",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 5,
+    "title": "HMS LS3050 Ρυθμιζόμενος Πάγκος Γυμναστικής Γενικής Χρήσης",
+    "merchant": "Mybrand.shoes",
+    "price": 271.76,
+    "image": "https://cdn.mybrand.shoes/392383-thickbox_default/35cf8049-f0dd-ec11-b619-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "strength",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 6,
+    "title": "HMS Hex Pro 17-66-132 Βαράκι Εξάγωνο Λαστιχένιο 1 x 55kg",
+    "merchant": "Mybrand.shoes",
+    "price": 227.27,
+    "image": "https://cdn.mybrand.shoes/614484-thickbox_default/4624594c-db05-ed11-a286-aa0222a23d17.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "strength",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 7,
+    "title": "HMS M9239V Όρθιο Ποδήλατο Γυμναστικής Μαγνητικό με Ροδάκια",
+    "merchant": "Mybrand.shoes",
+    "price": 226.24,
+    "image": "https://cdn.mybrand.shoes/619056-thickbox_default/213bff2a-f1dd-ec11-b619-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "cardio",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 8,
+    "title": "Adjustable dumbbells Half Human 5kg SFITPHH30001",
+    "merchant": "Mybrand.shoes",
+    "price": 217.95,
+    "image": "https://cdn.mybrand.shoes/785833-thickbox_default/f8bbe379-a473-ef11-b69d-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "strength",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 9,
+    "title": "HMS HEX PRO 50 KG dumbbell",
+    "merchant": "Mybrand.shoes",
+    "price": 207.09,
+    "image": "https://cdn.mybrand.shoes/625436-thickbox_default/35c28f6f-482c-ed11-a29d-b6a534ba46e2.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "strength",
+    "status": "PENDING_TERMS_AND_SPECS"
+  },
+  {
+    "id": 10,
+    "title": "Body Sculpture C 1660 Όρθιο Ποδήλατο Γυμναστικής Μαγνητικό",
+    "merchant": "Mybrand.shoes",
+    "price": 187.87,
+    "image": "https://cdn.mybrand.shoes/434788-thickbox_default/ea71bc9d-e4dd-ec11-b619-a8a15986bd35.jpg",
+    "at": "2026-10-22 06:10:33.052121+00",
+    "kind": "cardio",
+    "status": "PENDING_TERMS_AND_SPECS"
+  }
+]

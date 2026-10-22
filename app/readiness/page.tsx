@@ -40,6 +40,12 @@ export default async function Page(){
  <li>Πρόσφατη επαλήθευση price/stock και Linkwise tracking compliance.</li>
  <li>Ανεξάρτητη έγκριση δημοσίευσης προϊόντος.</li>
  </ol></section></div>
+ <section style={{marginTop:30,padding:24,border:"1px solid #594675",borderRadius:15,background:"#201b32"}}>
+ <p style={{fontSize:11,color:"#d5bcff",letterSpacing:1.5}}>REAL PRODUCT RESEARCH</p>
+ <h2>10 συγκεκριμένα μοντέλα προς έλεγχο</h2>
+ <p style={{lineHeight:1.8,color:"#c0bfd2"}}>Φωτογραφίες προϊόντων από τους merchants, καταγεγραμμένες τιμές και κατάσταση εμπορικής επαλήθευσης. Δεν δημοσιεύουμε affiliate αγορές πριν ολοκληρωθούν οι έλεγχοι.</p>
+ <Link href="/research" style={{display:"inline-block",background:"#baa0ff",color:"#141526",fontWeight:800,padding:"12px 16px",borderRadius:10}}>Δες τα 10 πραγματικά προϊόντα ↗</Link>
+ </section>
  <section style={{marginTop:36,padding:24,border:"1px solid #293953",borderRadius:16}}>
  <h2 style={{fontSize:19}}>Υφιστάμενο SocialMarket</h2>
  <p style={{color:"#9facbc",lineHeight:1.8}}>Στιγμιότυπο {new Date(legacy.checked_at).toLocaleDateString("el-GR")}: {legacy.legacy_feed_rows.toLocaleString("el-GR")} παλαιότερες offer εγγραφές, {legacy.merchant_commission_source_records} merchant commission records και {legacy.product_specifications} επαληθευμένα specs. Δεν αλλάξαμε την eligibility logic του SocialMarket.</p>

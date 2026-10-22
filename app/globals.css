@@ -25,3 +25,38 @@
 .merchantProductText{flex:1}.merchantProductText h4{margin:8px 0 4px}.sourceReason{color:#bdcce4!important;max-width:640px}.evidenceLink{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#b0abff;text-decoration:underline}
 @media(max-width:940px){.agentEvidence{grid-template-columns:1fr}.agentStep{min-height:auto}}
 @media(max-width:600px){.merchantProductImage{width:100%;height:180px}}
+
+
+.sourcePage{min-height:100vh;background:#090e1b;color:#f4f6ff;padding:30px 5% 90px}
+.sourceNav{display:flex;justify-content:space-between;color:#cbaeff;font-size:12px;font-weight:800}
+.sourceLead{padding:75px 0 42px;border-bottom:1px solid #38405b}
+.sourceLead>p:first-child{letter-spacing:2px;font-size:10px;color:#b89cf9;font-weight:800}
+.sourceLead h1{font:800 clamp(32px,5vw,66px)/1.15 Manrope,Arial,sans-serif;letter-spacing:-2px}
+.sourceLead h1 em{font-style:normal;background:linear-gradient(90deg,#c58fff,#74bfff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sourceLead>p{max-width:800px;color:#adbbd1;line-height:1.9}
+.sourceFacts{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+.sourceFacts span{border:1px solid #3f4760;border-radius:11px;padding:11px 15px;background:#151d31;color:#c2b8da;font-size:11px}
+.sourceExplorer{margin-top:28px}
+.sourceControls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sourceControls>div{display:flex;gap:7px}
+.sourceControls button,.sourceControls input,.sourceControls select{border:1px solid #3a465c;background:#172033;color:#dae2f5;padding:11px 14px;border-radius:12px;font-size:12px}
+.sourceControls button.selected{color:#111525;background:#b4a1ff;border-color:#b4a1ff;font-weight:800}
+.sourceControls label{font-size:11px;color:#acb9cd}
+.sourceCount{margin:26px 0 16px;color:#92a0b9;font-size:12px}
+.sourceGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.sourceCard{background:linear-gradient(145deg,#1a2336,#101728);border:1px solid #36415c;border-radius:18px;overflow:hidden}
+.sourcePhoto{height:215px;position:relative;background:#f2f4f7}
+.sourcePhoto img{height:100%;width:100%;object-fit:contain;padding:12px}
+.sourcePhoto span{position:absolute;top:14px;left:14px;background:#dbcaff;color:#251938;border-radius:6px;padding:6px 9px;font-size:9px;font-weight:800;letter-spacing:.6px}
+.sourceBody{padding:23px}
+.sourceBody small{color:#bfa5ff;font-weight:800}
+.sourceBody h3{font:800 16px/1.48 Manrope,Arial,sans-serif;min-height:73px}
+.sourceBody strong{font:800 23px Manrope,Arial,sans-serif}
+.sourceBody p{color:#92a0b9;font-size:11px;line-height:1.7}
+.sourceWarning{border-top:1px solid #38415b;padding-top:13px;color:#e3be90;font-size:11px;line-height:1.8}
+.sourceNoMatch{padding:35px;border:1px dashed #405070;color:#acbad0;text-align:center;border-radius:15px}
+.sourceMethod{margin:56px 0 0;background:#151d30;border:1px solid #414b69;border-radius:17px;padding:26px}
+.sourceMethod h2{font:800 22px Manrope,Arial,sans-serif}
+.sourceMethod p{color:#aab7c9;line-height:1.95;max-width:900px;font-size:13px}
+@media(max-width:900px){.sourceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:590px){.sourceLead{padding:52px 0 30px}.sourceGrid{grid-template-columns:1fr}.sourceControls{align-items:stretch;flex-direction:column}.sourceControls input{width:100%}.sourcePhoto{height:240px}}
