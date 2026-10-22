@@ -2,6 +2,7 @@
 import {useMemo,useState} from "react";
 import {Activity,ArrowRight,ArrowUpRight,BarChart3,Bike,Check,CheckCircle2,ChevronRight,CircleAlert,Dumbbell,ExternalLink,Flower2,House,Search,ShieldCheck,ShoppingBag,SlidersHorizontal,Sparkles,TrendingUp,Wallet,X} from "lucide-react";
 import {storeCategories,topItems,merchantAudit,type Listing,type CategoryId} from "@/lib/storefront";
+import FitQuiz from "@/components/FitQuiz";
 
 const categoryIcons={cardio:Activity,strength:Dumbbell,"home-gym":House,recovery:Flower2,accessories:ShoppingBag};
 const money=(x:number)=>x.toLocaleString("el-GR",{style:"currency",currency:"EUR"});
@@ -34,7 +35,7 @@ export default function Storefront({products,catalogMode}:{products:Listing[];ca
    <a className="fmBrand" href="/" aria-label="FITMATCH AI Αρχική"><span className="fmBrandIcon">F<span>✦</span></span><strong>FITMATCH <em>AI</em></strong></a>
    <nav className={mobileMenu?"fmNavLinks open":"fmNavLinks"} aria-label="Κύριο μενού">
     <a href="#how" onClick={()=>setMobileMenu(false)}>Πώς λειτουργεί</a>
-    <a href="#categories" onClick={()=>setMobileMenu(false)}>Κατηγορίες</a>
+    <a href="#categories" onClick={()=>setMobileMenu(false)}>Κατηγορίες</a><a href="#fit-quiz" onClick={()=>setMobileMenu(false)}>AI Match</a>
     <a href="#products" onClick={()=>setMobileMenu(false)}>Προϊόντα</a>
     <a href="#merchants" onClick={()=>setMobileMenu(false)}>Merchants</a>
    </nav>
@@ -86,6 +87,7 @@ export default function Storefront({products,catalogMode}:{products:Listing[];ca
     })}</div>
    </section>
 
+   <FitQuiz products={products}/>
    <section id="how" className="fmSection fmHow"><div className="fmSectionTitle"><div><p className="fmMiniKicker">THE FITMATCH METHOD</p><h2>Πώς λειτουργεί το FITMATCH AI</h2><p>Μια ξεκάθαρη διαδρομή από την ανάγκη σου μέχρι την απόφαση αγοράς.</p></div></div>
     <div className="fmHowSteps">{[
      {Icon:Search,title:"Επιλογή κατηγορίας",desc:"Πες τι χρειάζεσαι."},
