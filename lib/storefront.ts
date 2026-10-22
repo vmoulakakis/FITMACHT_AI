@@ -37,7 +37,7 @@ export function getStoreListings(offers:Offer[],now=Date.now()):Listing[]{
   .filter(x=>Number.isFinite(x.price)&&x.price>0)
   .filter(x=>!known.has(x.merchant.toLowerCase()+"|"+x.name.toLowerCase()))
   .map(x=>({
-   id:stableProductId(x.merchant,x.name),name:x.name,merchant:x.merchant,price:x.price,image:safeImage(x.image),
+   id:stableProductId(x.merchant,x.sourceProductId),name:x.name,merchant:x.merchant,price:x.price,image:safeImage(x.image),
    category:kindCategory(x.kind),kind:x.kind,observedAt:x.observedAt,
    stockSignal:x.stockSignal,approved:false,affiliateEligible:false,source:"linkwise" as const,
    evidence:"pending" as const

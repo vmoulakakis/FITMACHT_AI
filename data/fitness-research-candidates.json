@@ -13,7 +13,8 @@
       "stockSignal": "in_stock",
       "kind": "exercise-bike",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-01-008"
     },
     {
       "id": "snapshot-2",
@@ -25,7 +26,8 @@
       "stockSignal": "in_stock",
       "kind": "exercise-bike",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-01-009"
     },
     {
       "id": "snapshot-3",
@@ -37,7 +39,8 @@
       "stockSignal": "in_stock",
       "kind": "exercise-bike",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-01-023"
     },
     {
       "id": "snapshot-4",
@@ -49,7 +52,8 @@
       "stockSignal": "in_stock",
       "kind": "weight-bench",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-53-302"
     },
     {
       "id": "snapshot-5",
@@ -61,7 +65,8 @@
       "stockSignal": "in_stock",
       "kind": "weight-bench",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-53-400"
     },
     {
       "id": "snapshot-6",
@@ -73,7 +78,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-59-123"
     },
     {
       "id": "snapshot-7",
@@ -85,7 +91,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-66-131"
     },
     {
       "id": "snapshot-8",
@@ -97,7 +104,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "17-66-132"
     },
     {
       "id": "snapshot-9",
@@ -109,7 +117,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "needs_source_recheck",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "274654"
     },
     {
       "id": "snapshot-10",
@@ -121,7 +130,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW108D6KG"
     },
     {
       "id": "snapshot-11",
@@ -133,7 +143,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW1313KG"
     },
     {
       "id": "snapshot-12",
@@ -145,7 +156,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW13316KG"
     },
     {
       "id": "snapshot-13",
@@ -157,7 +169,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW13318KG"
     },
     {
       "id": "snapshot-14",
@@ -169,7 +182,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW5132KG"
     },
     {
       "id": "snapshot-15",
@@ -181,7 +195,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW5133KG"
     },
     {
       "id": "snapshot-16",
@@ -193,7 +208,8 @@
       "stockSignal": "in_stock",
       "kind": "adjustable-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "BW780L10KG"
     },
     {
       "id": "snapshot-17",
@@ -205,7 +221,8 @@
       "stockSignal": "in_stock",
       "kind": "exercise-bike",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "C1660V2"
     },
     {
       "id": "snapshot-18",
@@ -217,7 +234,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "EX035"
     },
     {
       "id": "snapshot-19",
@@ -229,7 +247,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "HS-TNK-000011189"
     },
     {
       "id": "snapshot-20",
@@ -241,7 +260,8 @@
       "stockSignal": "in_stock",
       "kind": "adjustable-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "SFIT-P-HH30001"
     },
     {
       "id": "snapshot-21",
@@ -253,7 +273,8 @@
       "stockSignal": "in_stock",
       "kind": "treadmill",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "SFIT-P-HH30010"
     },
     {
       "id": "snapshot-22",
@@ -265,7 +286,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "SPK-943106"
     },
     {
       "id": "snapshot-23",
@@ -277,7 +299,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "SPK-944049"
     },
     {
       "id": "snapshot-24",
@@ -289,7 +312,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "TI-HW0015BOX"
     },
     {
       "id": "snapshot-25",
@@ -301,7 +325,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "TI-OB00005"
     },
     {
       "id": "snapshot-26",
@@ -313,7 +338,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "TI-OB00010"
     },
     {
       "id": "snapshot-27",
@@ -325,7 +351,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "TI-WHPU0050"
     },
     {
       "id": "snapshot-28",
@@ -337,7 +364,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "TI-WHPU0075"
     },
     {
       "id": "snapshot-29",
@@ -349,7 +377,8 @@
       "stockSignal": "in_stock",
       "kind": "accessory",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "TI-WZ0001"
     },
     {
       "id": "snapshot-30",
@@ -361,7 +390,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "061052-GREEN"
     },
     {
       "id": "snapshot-31",
@@ -373,7 +403,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "061053-ORANGE"
     },
     {
       "id": "snapshot-32",
@@ -385,7 +416,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "061055-ORANGE"
     },
     {
       "id": "snapshot-33",
@@ -397,7 +429,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "061056-PEACH"
     },
     {
       "id": "snapshot-34",
@@ -409,7 +442,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "611018-0071"
     },
     {
       "id": "snapshot-35",
@@ -421,7 +455,8 @@
       "stockSignal": "in_stock",
       "kind": "resistance-bands",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "611022-0081"
     },
     {
       "id": "snapshot-36",
@@ -433,7 +468,8 @@
       "stockSignal": "in_stock",
       "kind": "fixed-dumbbells",
       "quality": "candidate_unverified",
-      "source": "linkwise-feed-snapshot"
+      "source": "linkwise-feed-snapshot",
+      "sourceProductId": "611043-0071"
     }
   ]
 }
