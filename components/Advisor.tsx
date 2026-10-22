@@ -37,7 +37,7 @@ export default function Advisor(){
  }
  const paths=result?[result.solutions.primary,...result.solutions.alternatives]:[];
  const chosen:Path|undefined=paths[selected];
- const selectedOffers=chosen?(result?.matchesByPath?.[chosen.id]??(selected===0?result?.offers:[])):[];
+ const selectedOffers:Offer[]=chosen?(result?.matchesByPath?.[chosen.id]??(selected===0?(result?.offers??[]):[])):[];
  return <div className="cinematicSite">
   <header className="cinematicHeader">
    <a className="cinematicLogo" href="/" aria-label="FITMATCH AI — αρχική"><span className="logoGlyph">F<span>✦</span></span><span>FITMATCH<b> AI</b><small>THE SOLUTION EXPERIENCE</small></span></a>
