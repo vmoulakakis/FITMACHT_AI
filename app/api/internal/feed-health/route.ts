@@ -4,6 +4,9 @@ export const dynamic="force-dynamic";
 export const runtime="nodejs";
 /** Preview-only source introspection. Never returns private feed URLs, tracking links or raw rows. */
 export async function GET(request:Request){
+ const diagnosticToken=process.env.FITMATCH_DIAGNOSTIC_TOKEN;
+ if(!diagnosticToken||diagnosticToken.length<24||request.headers.get("x-fitmatch-diagnostic-key")!==diagnosticToken)
+  return NextResponse.json({error:"not_found"},{status:404});
  if(process.env.VERCEL_ENV!=="preview"||process.env.FITMATCH_LINKWISE_PROBE!=="1")
   return NextResponse.json({error:"not_found"},{status:404});
  const source=process.env.FITMATCH_LINKWISE_FEED_URL;

@@ -10,6 +10,9 @@ const categoryIds=new Set(["3","27","67","29","33","81","73","87","103","105","1
  * The merchant terms, real stock and tech specs remain UNVERIFIED until separate review.
  */
 export async function GET(req:Request){
+ const diagnosticToken=process.env.FITMATCH_DIAGNOSTIC_TOKEN;
+ if(!diagnosticToken||diagnosticToken.length<24||req.headers.get("x-fitmatch-diagnostic-key")!==diagnosticToken)
+  return NextResponse.json({error:"not_found"},{status:404});
  if(process.env.VERCEL_ENV!=="preview"||process.env.FITMATCH_LINKWISE_PROBE!=="1")
   return NextResponse.json({error:"not_found"},{status:404});
  const id=new URL(req.url).searchParams.get("category")||"119";
