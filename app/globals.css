@@ -63,3 +63,14 @@
 
 .researchFromAgent{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(110deg,#b8a1ff,#83bffd);border-radius:11px;padding:12px 17px;color:#171326;font-weight:800;font-size:12px}
 .researchFromAgent:hover{filter:brightness(1.08)}
+
+/* Use a premium visual placeholder until each merchant image actually loads. */
+.sourcePhoto{background:radial-gradient(ellipse at 65% 15%,#433b72 0%,#232c48 44%,#121c2d 85%);isolation:isolate}
+.sourceVisual{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:17px;color:#d6baff;z-index:0}
+.sourceVisual svg{filter:drop-shadow(0 10px 28px rgba(191,148,255,.42))}
+.sourceVisualGlow{position:absolute;inset:20px;background:radial-gradient(circle,rgba(140,100,255,.28),transparent 68%);z-index:-1}
+.sourceVisual small{letter-spacing:2px;font-size:8px;color:#b6badc;font-weight:800}
+.sourcePhoto img{position:relative;z-index:1;opacity:0;transition:opacity .4s ease;background:#f4f5f8}
+.sourcePhoto.photoReady img{opacity:1}
+.sourcePhoto>span{z-index:2}
+@media(prefers-reduced-motion:reduce){.sourcePhoto img{transition:none}}

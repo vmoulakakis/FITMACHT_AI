@@ -45,3 +45,12 @@ test("research gallery shows real feed source evidence but no unverified affilia
  await expect(page.locator(".sourceCard").first()).toBeVisible();
  await info.attach("real-product-research",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
 });
+
+test("product research preserves premium imagery when retailer CDN is unreachable",async({page})=>{
+ await page.route("https://cdn.mybrand.shoes/**",route=>route.abort());
+ await page.goto("/research");
+ await expect(page.locator(".sourceCard")).toHaveCount(10);
+ await expect(page.locator(".sourcePhoto.photoFallback").first()).toBeVisible();
+ await expect(page.locator(".sourceVisual").first()).toBeVisible();
+ await expect(page.locator(".sourcePhoto.photoReady")).toHaveCount(0);
+});
