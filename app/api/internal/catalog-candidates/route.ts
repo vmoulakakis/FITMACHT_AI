@@ -25,6 +25,7 @@ export async function GET(req:Request){
   const scanner=new JsonArrayObjectScanner(),decoder=new TextDecoder(),reader=response.body.getReader();
   const items:{source_product_id:string;program_name:string;product_title:string;category_raw:string;price_eur:number;availability_raw:string;image_url:string;tracking_url:string}[]=[];
   let scanned=0,totalBytes=0,fitnessClassified=0,missingPrice=0,missingMerchant=0,missingProductId=0;
+  let programKeys:string[]=[];
   const samplePriceStrings:string[]=[];
   try{
    while(scanned<12000&&totalBytes<16000000&&items.length<40){
@@ -33,7 +34,9 @@ export async function GET(req:Request){
      scanned++;
      if(items.length>=40)return;
      const title=String(row.product_name??"").trim().slice(0,250),category=String(row.category??"").slice(0,300);
-     const merchant=String(row.program??row.program_name??"").trim().slice(0,130);
+     const programObj=row.program&&typeof row.program==="object"&&!Array.isArray(row.program)?row.program as Record<string,unknown>:null;
+     if(programObj&&programKeys.length===0)programKeys=Object.keys(programObj).slice(0,20);
+     const merchant=String(row.program_name??programObj?.name??programObj?.program_name??(typeof row.program==="string"?row.program:"")).trim().slice(0,130);
      const id=String(row.product_id??"").trim().slice(0,130),price=parseFeedEur(row.price);
      if(!gymProduct(title,category))return;
      fitnessClassified++;
@@ -49,6 +52,6 @@ export async function GET(req:Request){
    }
   }finally{await reader.cancel().catch(()=>{});}
   return NextResponse.json({scan:"bounded",categoryFilter:id,scanned,totalBytes,candidateCount:items.length,
-   status:"UNVERIFIED",fitnessClassified,missingPrice,missingMerchant,missingProductId,samplePriceStrings,candidates:items,note:"Merchant terms and specs are NOT approved. Do not display as product recommendations or send users to tracking URLs."},{headers});
+   status:"UNVERIFIED",fitnessClassified,missingPrice,missingMerchant,missingProductId,programKeys,samplePriceStrings,candidates:items,note:"Merchant terms and specs are NOT approved. Do not display as product recommendations or send users to tracking URLs."},{headers});
  }catch{return NextResponse.json({error:"upstream_timeout_or_error"},{status:502,headers});}
 }
