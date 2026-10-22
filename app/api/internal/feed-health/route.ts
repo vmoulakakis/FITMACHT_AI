@@ -27,10 +27,16 @@ export async function GET(){
     if(sample.includes("\n"))break;
    }
   }finally{await reader.cancel().catch(()=>{});}
+  if(summary.contentType.includes("json")||sample.trimStart().startsWith("{")||sample.trimStart().startsWith("[")){
+   const prefix=sample.trimStart(),jsonShape=prefix.startsWith("[")?"array":prefix.startsWith("{")?"object":"unknown";
+   const keys=Array.from(prefix.slice(0,500).matchAll(/"([a-zA-Z_][a-zA-Z_0-9]{1,45})"\s*:/g)).slice(0,12).map(x=>x[1]);
+   return NextResponse.json({accessible:true,...summary,format:"json",jsonShape,sampledBytes:bytes,firstKeys:keys,
+    note:"Schema-only JSON probe. No rows, tracking URLs, or merchant terms returned; not imported."},{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
+  }
   const header=sample.split(/\r?\n/,1)[0].replace(/^\uFEFF/,"");
   const columns=header.split(",").map(x=>x.replace(/^"|"$/g,"").trim());
   const recognized=["product_id","product_name","price","tracking_url","in_stock","category","program_id","program_name"].filter(x=>columns.includes(x));
-  return NextResponse.json({accessible:true,...summary,sampledBytes:bytes,numberOfFields:columns.length,recognizedFieldNames:recognized,
+  return NextResponse.json({accessible:true,...summary,format:"csv",sampledBytes:bytes,numberOfFields:columns.length,recognizedFieldNames:recognized,
    hasProductIdentity:columns.includes("product_id"),hasProgramIdentity:columns.includes("program_id"),hasMerchantName:columns.includes("program_name"),
    note:"Read-only schema sample, no feed import or commercial approval performed."},{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
  }catch{return NextResponse.json({accessible:false,reason:"upstream_error_or_timeout"},{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});}
