@@ -60,3 +60,6 @@
 .sourceMethod p{color:#aab7c9;line-height:1.95;max-width:900px;font-size:13px}
 @media(max-width:900px){.sourceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:590px){.sourceLead{padding:52px 0 30px}.sourceGrid{grid-template-columns:1fr}.sourceControls{align-items:stretch;flex-direction:column}.sourceControls input{width:100%}.sourcePhoto{height:240px}}
+
+.researchFromAgent{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(110deg,#b8a1ff,#83bffd);border-radius:11px;padding:12px 17px;color:#171326;font-weight:800;font-size:12px}
+.researchFromAgent:hover{filter:brightness(1.08)}

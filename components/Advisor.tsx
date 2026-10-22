@@ -96,7 +96,10 @@ export default function Advisor(){
         <div className="merchantProductText"><span className="offerLabel">{o.tag} · Ελεγμένη προσφορά</span><h4>{o.title}</h4><p>{o.merchant} · Ενημέρωση τιμής/stock: {new Date(o.lastSeen).toLocaleDateString("el-GR")}</p>
         {o.reason&&<p className="sourceReason">{o.reason}</p>}{o.evidenceUrl&&o.evidenceUrl.startsWith("https://")&&<a className="evidenceLink" href={o.evidenceUrl} target="_blank" rel="noopener noreferrer">Πρωτογενής πηγή προδιαγραφών <ExternalLink size={13}/></a>}</div>
         <div className="priceAndBuy"><b>{o.price.toLocaleString("el-GR")}€</b><a href={"/api/out?id="+encodeURIComponent(o.id)} rel="nofollow sponsored noopener">Αγόρασε στον merchant <ExternalLink size={16}/></a></div></article>)}</div>
-    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Η τρέχουσα βάση δεν διαθέτει για αυτή τη λύση SKU που να περνά όλα τα υποχρεωτικά κριτήρια τεχνικών στοιχείων, διαθεσιμότητας και επαληθευμένης affiliate προμήθειας ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small></div></div>}
+    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Η τρέχουσα βάση δεν διαθέτει για αυτή τη λύση SKU που να περνά όλα τα υποχρεωτικά κριτήρια τεχνικών στοιχείων, διαθεσιμότητας και επαληθευμένης affiliate προμήθειας ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small><div style={{marginTop:20}}>
+ <a href="/research" className="researchFromAgent" aria-label="Δες πραγματικά υποψήφια προϊόντα υπό εμπορικό έλεγχο">Δες τα 10 πραγματικά προϊόντα που ελέγχουμε <ExternalLink size={16}/></a>
+ <p style={{marginTop:10,fontSize:11,color:"#b7b2cc"}}>Τα προϊόντα έρευνας δεν είναι ακόμη διαθέσιμες εγκεκριμένες affiliate προσφορές.</p>
+ </div></div></div>}
     <p className="affiliateDisclosure">{result.disclosure}</p></div>
     <button type="button" className="resetSolution" onClick={()=>{setResult(null);document.getElementById("advisor")?.scrollIntoView({behavior:"smooth"})}}><RotateCcw size={18}/> Εξερεύνησε διαφορετικό πρόβλημα</button>
    </section>}
