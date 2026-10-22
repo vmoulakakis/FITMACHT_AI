@@ -87,3 +87,26 @@ test("studio never exposes purchase buttons for research-only items",async({page
  await expect(page.locator(".studioProduct a[href^='/api/out']")).toHaveCount(0);
  await expect(page.locator(".studioProduct.research")).not.toHaveCount(0);
 });
+
+
+test("contextual AI explains real nearby candidate products instead of returning an empty buying journey",async({page})=>{
+ await page.goto("/");
+ await page.getByRole("button",{name:/Λύσε το πρόβλημα: Δεν έχω χώρο/}).click();
+ await page.locator("#purchaseBudget").fill("450");
+ await page.getByRole("button",{name:/Βρες τι πραγματικά μου ταιριάζει/}).click();
+ await expect(page.locator(".solutionChoice")).toHaveCount(3);
+ await expect(page.locator(".nearbyResults")).toBeVisible();
+ await expect(page.locator(".nearbyCard").first()).toBeVisible();
+ await expect(page.locator(".nearbyCard a[href^='/api/out']")).toHaveCount(0);
+ await expect(page.getByText(/Βρήκαμε .* κοντινές λύσεις από πραγματικά προϊόντα/)).toBeVisible();
+});
+test("adaptive Top Five shows source-backed cheap strength alternatives without fake purchase links",async({page})=>{
+ await page.goto("/");
+ await page.getByRole("button",{name:"200€",exact:true}).click();
+ await page.getByRole("combobox",{name:"Studio στόχος"}).selectOption("strength");
+ await expect(page.locator(".studioLane")).toHaveCount(3);
+ await expect(page.locator(".studioProduct")).toHaveCount(15);
+ await expect(page.locator(".studioProduct.research").first()).toBeVisible();
+ await expect(page.locator(".studioProduct.research .studioNearTag").first()).toBeVisible();
+ await expect(page.locator(".studioProduct.research a[href^='/api/out']")).toHaveCount(0);
+});
