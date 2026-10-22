@@ -45,6 +45,14 @@ const fitsResearch=(lane:Persona,c:SourceCandidate)=>{
 const itemRank=(lane:Persona,product:SourceCandidate,profile:BuyerStudioProfile)=>{
  const t=norm(product.title);
  let score=60;
+ // No unsupported specs inferred from the title: these are conservative RESEARCH screens.
+ if(profile.level==="beginner"&&/(?:50|55|66)s?kg/u.test(t))return -999;
+ if(profile.noise==="critical"&&/(treadmill|διαδρομος.{0,25}γυμναστ)/u.test(t))return -999;
+ if(profile.space==="compact"&&/(bench|παγκος)/u.test(t))return -999;
+ if(profile.fold&&lane==="cardio"&&/treadmill/u.test(t))score-=14;
+ if(profile.level==="beginner"&&/bike|ποδηλατ/u.test(t))score+=7;
+ if(profile.level==="advanced"&&/dumbbell|αλτηρ|βαρακ/u.test(t))score+=8;
+ if(profile.preference==="value")score+=Math.max(0,20-(product.price/Math.max(1,profile.budget))*20);
  if(lane==="cardio"){
   if(/bike|ποδηλατ/u.test(t))score+=profile.noise==="critical"?12:6;
   if(/treadmill|διαδρομος/u.test(t))score+=profile.activity==="run"&&profile.noise!=="critical"?15:-17;
@@ -84,6 +92,7 @@ export function rankStudio(profile:BuyerStudioProfile,approved:Offer[],now=Date.
   if(profile.budget>0){
    const candidates=research.filter(p=>fitsResearch(id,p)&&p.price<=profile.budget)
     .filter(p=>Number.isFinite(Date.parse(p.at))&&(now-Date.parse(p.at))<=7*86400000&&(now-Date.parse(p.at))>=0)
+    .filter(p=>itemRank(id,p,profile)>-900)
     .sort((a,b)=>itemRank(id,b,profile)-itemRank(id,a,profile)||a.price-b.price);
    for(const p of candidates){
     if(items.length>=5)break;

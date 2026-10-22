@@ -45,3 +45,14 @@ test("persona selection respects meaningful goal and space",()=>{
  assert.equal(selectedPersona({...base,goal:"walking",space:"large"}),"cardio");
  assert.equal(selectedPersona({...base,goal:"mixed",space:"compact"}),"compact");
 });
+
+test("fitness experience, fold and noise genuinely alter the research candidates",()=>{
+ const beginner=rankStudio({...base,goal:"strength",budget:1500,level:"beginner",space:"large"},[],now);
+ const advanced=rankStudio({...base,goal:"strength",budget:1500,level:"advanced",space:"large"},[],now);
+ const beginnerProducts=beginner.find(x=>x.id==="strength")!.items.filter(i=>i.type==="research").map(i=>i.name);
+ const advancedProducts=advanced.find(x=>x.id==="strength")!.items.filter(i=>i.type==="research").map(i=>i.name);
+ assert.equal(beginnerProducts.some(x=>/(50|55|66)\s?kg/i.test(x)),false);
+ assert.ok(advancedProducts.some(x=>/(50|55|66)\s?kg/i.test(x)));
+ const quiet=rankStudio({...base,goal:"cardio",budget:10000,noise:"critical",space:"large"},[],now).find(x=>x.id==="cardio")!;
+ assert.equal(quiet.items.filter(i=>i.type==="research").some(i=>/treadmill/i.test(i.name)),false);
+});
