@@ -61,8 +61,12 @@ export function buyerReason(item:Listing):{headline:string;why:string;check:stri
 export function topItems(list:Listing[],category:CategoryId|"all",query="",budget=5000){
  const q=query.trim().toLocaleLowerCase("el-GR").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
  const normal=(s:string)=>s.toLocaleLowerCase("el-GR").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
- return list.filter(x=>category==="all"||x.category===category).filter(x=>!q||normal(x.name+" "+x.merchant+" "+x.kind).includes(q))
- .map(x=>({x,score:(x.affiliateEligible?100:0)+(x.price<=budget?18:0)+(x.stockSignal==="in_stock"?8:0)+(x.price<=budget?Math.max(0,10-10*x.price/Math.max(budget,1)):0)}))
+ const tolerance=budget>=1e7?Number.MAX_SAFE_INTEGER:Math.min(Math.max(budget*0.35,12),120);
+ return list.filter(x=>category==="all"||x.category===category)
+ .filter(x=>!q||normal(x.name+" "+x.merchant+" "+x.kind).includes(q))
+ .filter(x=>x.price<=budget+tolerance)
+ // Product value and high-ticket research relevance first; no merchant payout is inferred or displayed.
+ .map(x=>({x,score:(x.affiliateEligible?200:0)+(x.price<=budget?22:0)+(x.stockSignal==="in_stock"?8:0)+Math.min(35,x.price/14)}))
  .sort((a,b)=>b.score-a.score||a.x.price-b.x.price||a.x.name.localeCompare(b.x.name,"el-GR")).map(r=>r.x);
 }
 export function merchantAudit(list:Listing[]){

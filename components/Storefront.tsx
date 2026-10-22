@@ -24,7 +24,7 @@ export default function Storefront({products,catalogMode}:{products:Listing[];ca
  const visible=useMemo(()=>topItems(products,category,query,budget),[products,category,query,budget]);
  const shown=visible.slice(0,showAll?24:5);
  const verified=products.filter(x=>x.affiliateEligible);
- const featured=products.filter(p=>p.category!=="accessories").sort((a,b)=>a.price-b.price).slice(0,4);
+ const featured=products.filter(p=>p.category!=="accessories").sort((a,b)=>b.price-a.price).filter((p,i,arr)=>arr.findIndex(x=>x.kind===p.kind)===i).slice(0,4);
  function navigateProducts(next:CategoryId|"all"="all"){
   setCategory(next);setShowAll(false);
   requestAnimationFrame(()=>document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"}));
