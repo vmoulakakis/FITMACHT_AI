@@ -53,14 +53,17 @@ export function solve(a:Answers,note="",remote?:Signals):Plan{
   strength:["adjustable-dumbbells","resistance-bands"],
   mixed:["resistance-bands","adjustable-dumbbells","walking-pad","exercise-bike","treadmill"]
  };
- const order=allowed[a.goal].filter(c=>score[c]>0&&a.budget>=minBudget[c]).sort((x,y)=>score[y]-score[x]);
+ // Price thresholds are guidance, NOT a veto on searching nearby categories.
+ const allRelevant=allowed[a.goal].filter(c=>score[c]>-12).sort((x,y)=>score[y]-score[x]);
+ const affordable=allRelevant.filter(c=>a.budget>=minBudget[c]);
+ const order=affordable.length?affordable:allRelevant;
  const equipment=order.map((c):Path=>({
   id:c,kind:"equipment",category:c,title:label[c],
-  reason:"Ταιριάζει προς διερεύνηση με βάση στόχο, χώρο και προτιμήσεις. Πρέπει να επαληθευτούν οι προδιαγραφές κάθε συγκεκριμένου προϊόντος.",
+  reason:a.budget<minBudget[c]?"Σχετική κατηγορία για την ανάγκη σου, αλλά ενδέχεται να μην υπάρχει προϊόν στο budget. Θα εξεταστούν κοντινές λύσεις με σαφή συμβιβασμό.":"Σχετική κατηγορία προς διερεύνηση. Θα αναζητηθούν επίσης κοντινές εναλλακτικές και θα αναφερθούν οι συμβιβασμοί.",
   actions:actions[c]
  }));
  const free=freePlans(a,run);
- const chooseFree=!!signals.noBuy || order.length===0 || (run&&noise==="critical"&&space==="compact"&&a.goal!=="strength");
+ const chooseFree=!!signals.noBuy || a.budget===0 || order.length===0 || (run&&noise==="critical"&&space==="compact"&&a.goal!=="strength");
  const primary=chooseFree?free[0]:equipment[0];
  const alternatives=chooseFree
   ? (signals.noBuy?[free[1],free[2]]:[equipment[0]??free[1],free[2]])

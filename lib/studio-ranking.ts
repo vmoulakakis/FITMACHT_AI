@@ -115,3 +115,18 @@ export function rankStudio(profile:BuyerStudioProfile,approved:Offer[],now=Date.
   return {id,title:d.title,subtitle:d.subtitle,items,verifiedCount:countVerified,researchCount,rankVersion:"adaptive-near-match-v2",selected:id===selectedPersona(profile)};
  });
 }
+
+/** Nearby buyer-relevant research SKUs for any solution category, with clear compromises.
+ * These objects NEVER carry affiliate outbound URLs.
+ */
+export function suggestNearby(a:Answers,category:Category|null,now=Date.now()):StudioItem[]{
+ if(a.budget<=0)return [];
+ const profile:BuyerStudioProfile={...a,level:"beginner",preference:a.space==="compact"?"compact":"balanced",pain:"goal"};
+ const lane:Persona=category==="walking-pad"||category==="treadmill"||category==="exercise-bike"?"cardio":"strength";
+ const group=rankStudio(profile,[],now).find(x=>x.id===lane);
+ if(!group)return [];
+ return group.items.filter(p=>p.type==="research").sort((x,y)=>{
+  const xMatch=x.category===category?1:0,yMatch=y.category===category?1:0;
+  return yMatch-xMatch||(x.matchLevel==="direct"?-1:1)-(y.matchLevel==="direct"?-1:1);
+ }).slice(0,5);
+}

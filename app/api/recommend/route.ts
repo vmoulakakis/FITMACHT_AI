@@ -23,7 +23,7 @@ export async function POST(request:Request){
  const c=await catalog();
  const agent=runAdvisorAgent(a,note,c.offers,c.mode,context??undefined);
  const solutions=agent.plan,offers=agent.matchesByPath[solutions.primary.id]??[];
- return NextResponse.json({solutions,offers,matchesByPath:agent.matchesByPath,agentStages:agent.stages,sourceStatus:agent.sourceStatus,agentVersion:agent.version,catalogState:c.mode,catalogNote:c.reason??"",
+ return NextResponse.json({solutions,offers,matchesByPath:agent.matchesByPath,researchByPath:agent.researchByPath,agentStages:agent.stages,sourceStatus:agent.sourceStatus,agentVersion:agent.version,catalogState:c.mode,catalogNote:c.reason??"",
  aiStatus:context?"hf-assisted":"contextual-fallback",
  disclosure:"Τυχόν σύνδεσμοι αγοράς μπορεί να είναι affiliate. Οι πληρωμές γίνονται μόνο στο κατάστημα. Οι προτάσεις κατηγορίας δεν αποτελούν πραγματικές προσφορές."
  },{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});

@@ -219,3 +219,20 @@
 @media(max-width:720px){.fitStudio{padding:32px 12px}.fitStudioGrid{display:flex;flex-direction:column}.fitStudioTop{justify-content:flex-start}.fitStudioMonogram{display:none}.fitStudioTop h2>span{display:block;margin:6px 0 0}.fitStudioLive{display:none}.studioPain{min-height:135px}.studioBrainContent{grid-template-columns:1fr 1fr}.studioFunnelVisual{min-height:490px}.studioLaneGrid{gap:7px}.studioProductImg{width:36px;height:48px}.studioProductInfo>strong{font-size:9px}.studioAgentRail{grid-template-columns:repeat(4,1fr)}.studioBottomState{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.studioPanelHead{height:68px}.studioLaneGrid{grid-template-columns:1fr}.studioLane{display:grid;grid-template-columns:1fr}.studioLanePhoto{height:100px}.studioProduct{min-height:75px;padding:9px}.studioProductImg{width:55px;height:52px}.studioProductInfo>strong{font-size:11px}.studioProductInfo>small{font-size:9px}.studioProductMoney{font-size:11px}.studioOfferState{font-size:8px}.studioBrainContent{grid-template-columns:48% 52%}.studioEngineStep{min-height:64px}.studioEngineStep strong{font-size:9px}.studioEngineStep small{font-size:8px}.studioEngineIndex{width:17px;height:17px;font-size:9px}.studioFunnelVisual{min-height:490px}.studioFunnelLayer{height:66px}.studioFunnelLayer.layer2{height:57px}.studioFunnelLayer.layer3{height:54px}.studioFunnelLayer.layer4{height:53px}.studioFunnelLayer strong{font-size:8px}.studioFunnelLayer small{font-size:7px}.studioBottomState{grid-template-columns:1fr}.studioBottomTitle{flex-wrap:wrap}.studioBottomTitle h3{font-size:15px}.studioBottomTitle small{width:100%;margin-left:45px}.studioLevel button{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.studioPain{transition:none}}
+
+
+/* Adaptive nearby candidates — distinct from purchasable offers */
+.nearbyResults{margin-top:27px;padding:18px;border:1px solid #404b70;border-radius:16px;background:#0c182e}
+.nearbyResults h4{font:800 20px Manrope,sans-serif;letter-spacing:-.5px;margin:0 0 5px}
+.nearbyResults>p{font-size:12px;color:#b6c2de;line-height:1.6}
+.nearbyGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px;margin-top:15px}
+.nearbyCard{min-width:0;background:#16213a;border:1px solid #3c4968;border-radius:13px;overflow:hidden;color:#e7edff}
+.nearbyPhoto{height:143px;background:radial-gradient(circle,#263259,#141a2c);display:grid;place-items:center}
+.nearbyPhoto img{width:100%;height:100%;object-fit:contain}
+.nearbyCard>div:last-child{padding:14px}
+.nearbyGrade{display:inline-block;color:#d9bdff;border:1px solid #53457e;padding:4px 7px;border-radius:5px;font-size:9px;font-weight:900}
+.nearbyCard h5{font:800 13px/1.5 Manrope,sans-serif;color:white;min-height:50px;margin:10px 0}
+.nearbyCard strong{display:block;font:800 17px Manrope,sans-serif}
+.nearbyCard strong small{font-size:9px;color:#a7bad6;font-weight:500}
+.nearbyCard p{font-size:11px;color:#b6c5e0;line-height:1.7}
+.nearbyCard>div:last-child>small{font-size:10px;color:#e2ba9c}

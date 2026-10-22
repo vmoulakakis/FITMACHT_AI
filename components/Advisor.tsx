@@ -6,7 +6,8 @@ import FitmatchStudio from "@/components/FitmatchStudio";
 import type {BuyerStudioProfile} from "@/lib/studio-ranking";
 type Offer={id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string;imageUrl?:string|null;evidenceUrl?:string|null;reason?:string;review?:"verified"};
 type AgentStage={id:string;title:string;detail:string;state:"done"|"review_needed"};
-type Result={solutions:Plan;offers:Offer[];matchesByPath?:Record<string,Offer[]>;agentStages?:AgentStage[];sourceStatus?:{verifiedMatches:number;purchaseReady:boolean};catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
+type Nearby={id:string;type:"research"|"guide";name:string;subtitle:string;merchant?:string;price?:number;image?:string;reason:string;tradeoff?:string;matchLevel:"direct"|"near"|"alternative"|"action"};
+type Result={solutions:Plan;offers:Offer[];researchByPath?:Record<string,Nearby[]>;matchesByPath?:Record<string,Offer[]>;agentStages?:AgentStage[];sourceStatus?:{verifiedMatches:number;purchaseReady:boolean};catalogState:string;catalogNote:string;aiStatus:string;disclosure:string};
 const problems=[
  {id:"space",icon:"◩",kicker:"ΜΙΚΡΟ ΣΠΙΤΙ",title:"Δεν έχω χώρο για όργανα.",note:"Μένω σε μικρό διαμέρισμα. Θέλω να γυμνάζομαι χωρίς να γεμίζει ο χώρος με εξοπλισμό.",goal:"mixed" as const},
  {id:"noise",icon:"◉",kicker:"ΠΟΛΥΚΑΤΟΙΚΙΑ",title:"Δεν θέλω να ενοχλώ τους γείτονες.",note:"Μένω σε πολυκατοικία. Θέλω να κινούμαι μέσα στο σπίτι χωρίς θόρυβο.",goal:"walking" as const},
@@ -48,6 +49,7 @@ export default function Advisor(){
  const paths=result?[result.solutions.primary,...result.solutions.alternatives]:[];
  const chosen:Path|undefined=paths[selected];
  const selectedOffers:Offer[]=chosen?(result?.matchesByPath?.[chosen.id]??(selected===0?(result?.offers??[]):[])):[];
+ const nearby:Nearby[]=chosen?(result?.researchByPath?.[chosen.id]??[]):[];
  return <div className="cinematicSite">
   <header className="cinematicHeader">
    <a className="cinematicLogo" href="/" aria-label="FITMATCH AI — αρχική"><span className="logoGlyph">F<span>✦</span></span><span>FITMATCH<b> AI</b><small>THE SOLUTION EXPERIENCE</small></span></a>
@@ -107,8 +109,19 @@ export default function Advisor(){
         <div className="merchantProductText"><span className="offerLabel">{o.tag} · Ελεγμένη προσφορά</span><h4>{o.title}</h4><p>{o.merchant} · Ενημέρωση τιμής/stock: {new Date(o.lastSeen).toLocaleDateString("el-GR")}</p>
         {o.reason&&<p className="sourceReason">{o.reason}</p>}{o.evidenceUrl&&o.evidenceUrl.startsWith("https://")&&<a className="evidenceLink" href={o.evidenceUrl} target="_blank" rel="noopener noreferrer">Πρωτογενής πηγή προδιαγραφών <ExternalLink size={13}/></a>}</div>
         <div className="priceAndBuy"><b>{o.price.toLocaleString("el-GR")}€</b><a href={"/api/out?id="+encodeURIComponent(o.id)} rel="nofollow sponsored noopener">Αγόρασε στον merchant <ExternalLink size={16}/></a></div></article>)}</div>
-    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Η τρέχουσα βάση δεν διαθέτει για αυτή τη λύση SKU που να περνά όλα τα υποχρεωτικά κριτήρια τεχνικών στοιχείων, διαθεσιμότητας και επαληθευμένης affiliate προμήθειας ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small><div style={{marginTop:20}}>
- <a href="/research" className="researchFromAgent" aria-label="Δες πραγματικά υποψήφια προϊόντα υπό εμπορικό έλεγχο">Δες τα 10 πραγματικά προϊόντα που ελέγχουμε <ExternalLink size={16}/></a>
+    :<div className="stockEmpty"><ScanSearch size={27}/><div><strong>Δεν έχουμε ακόμη επαληθευμένο προϊόν για ασφαλή σύσταση.</strong><p>Ο συγκεκριμένος τύπος λύσης έχει προσδιοριστεί. Η τρέχουσα βάση δεν διαθέτει για αυτή τη λύση SKU που να περνά όλα τα υποχρεωτικά κριτήρια τεχνικών στοιχείων, διαθεσιμότητας και επαληθευμένης affiliate προμήθειας ≥10€. Δεν παρουσιάζουμε πλασματικές προσφορές.</p><small>{result.catalogNote}</small>
+ {nearby.length>0&&<section className="nearbyResults" aria-label="Κοντινές πραγματικές λύσεις">
+  <h4>Βρήκαμε {nearby.length} κοντινές λύσεις από πραγματικά προϊόντα</h4>
+  <p>Είναι επιλογές προς αξιολόγηση, όχι εγκεκριμένες affiliate αγορές.</p>
+  <div className="nearbyGrid">{nearby.map(p=><article className="nearbyCard" key={p.id}>
+   {p.image&&<div className="nearbyPhoto"><img src={p.image} alt="" loading="lazy"/></div>}
+   <div><span className="nearbyGrade">{p.matchLevel==="direct"?"Σχετική κατηγορία":p.matchLevel==="near"?"Πολύ κοντινή":"Λειτουργική εναλλακτική"}</span>
+   <h5>{p.name}</h5>{p.price!==undefined&&<strong>{p.price.toLocaleString("el-GR",{style:"currency",currency:"EUR"})} <small>τιμή feed</small></strong>}
+   <p>{p.tradeoff||p.reason}</p><small>{p.merchant} · Έλεγχος specs και affiliate όρων σε εκκρεμότητα</small></div>
+  </article>)}</div>
+ </section>}
+ <div style={{marginTop:20}}>
+ <a href="/research" className="researchFromAgent" aria-label="Δες πραγματικά υποψήφια προϊόντα υπό εμπορικό έλεγχο">Δες επιπλέον πραγματικά προϊόντα προς έλεγχο <ExternalLink size={16}/></a>
  <p style={{marginTop:10,fontSize:11,color:"#b7b2cc"}}>Τα προϊόντα έρευνας δεν είναι ακόμη διαθέσιμες εγκεκριμένες affiliate προσφορές.</p>
  </div></div></div>}
     <p className="affiliateDisclosure">{result.disclosure}</p></div>
