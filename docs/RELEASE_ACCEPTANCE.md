@@ -14,7 +14,7 @@ Last verified: 2026-10-21 UTC.
 ## Required green gates
 1. Canonical fresh fitness feed with program ID or explicit approved merchant crosswalk and count reconciliation.
 2. Current stock, EUR price and validated thumbnail + tracking host on a per-SKU basis.
-3. Merchant program, channel permission, payout base, minimum expected commission >=10 EUR, caps and exclusions with source provenance.
+3. Merchant program, channel permission, payout base, minimum expected commission >20 EUR, caps and exclusions with source provenance.
 4. Fitness taxonomy mapping for walking pads, treadmills, indoor bikes, adjustable dumbbells, resistance bands.
 5. Product technical specs with source URLs and review timestamps; do not infer specs from model prose.
 6. Independently reviewed and approved SKU records in public.fitmatch_verified_offers.

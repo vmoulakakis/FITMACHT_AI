@@ -24,7 +24,7 @@ export default async function Page(){
  <p style={{color:"#ecc28e",letterSpacing:2,fontSize:11,fontWeight:800,margin:"0 0 8px"}}>PUBLICATION GATE — BLOCKED</p>
  <h2 style={{fontSize:23,margin:"4px 0 8px"}}>Agent έτοιμος για αξιολόγηση. Commerce υπό έλεγχο.</h2>
  <p style={{color:"#b9bed0",lineHeight:1.8}}>Live published catalog: <b>{c.mode}</b> · Εγκεκριμένα SKU: <b>{c.offers.length}</b>. Τα 36 υποψήφια προϊόντα είναι πραγματικές εγγραφές του feed, αλλά δεν έχουν επαληθευμένο affiliate program ID και πλήρη specs.</p>
- <p style={{color:"#a9b3c9",fontSize:12}}>Οι 10 υψηλότερης αξίας ενδείξεις προμήθειας είναι ιστορικοί υπολογισμοί, όχι εγκεκριμένα κέρδη ή πωλήσεις.</p>
+ <p style={{color:"#a9b3c9",fontSize:12}}>Μόνο 3 από τα ερευνημένα SKU έχουν ιστορική ενδεικτική προμήθεια πάνω από 20€, χωρίς επαλήθευση συμβολαίου. Κανένα δεν είναι εγκεκριμένο για affiliate αγορά.</p>
  </section>
  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:22,marginTop:36}}>
  <section style={{padding:23,background:"#111929",border:"1px solid #293953",borderRadius:16}}>

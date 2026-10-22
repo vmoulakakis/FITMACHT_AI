@@ -38,5 +38,8 @@
       "approved_program_id": false
     }
   ],
-  "program_hint_note": "The values come from consistent go.linkwi.se/z/{number}-.../CD104/ path segments; neither official Linkwise program ID nor joined/approved publisher status has been authenticated."
+  "program_hint_note": "The values come from consistent go.linkwi.se/z/{number}-.../CD104/ path segments; neither official Linkwise program ID nor joined/approved publisher status has been authenticated.",
+  "indicative_commission_gt_20_eur": 3,
+  "verified_commission_gt_20_eur": 0,
+  "commerce_hard_gate": "strictly greater than EUR 20 verified net eligible payout; historical indicative rates are NOT evidence"
 }
