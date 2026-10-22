@@ -23,5 +23,20 @@
     "Filtered feeds include fashion and unrelated categories; product-level fitness taxonomy must be reviewed.",
     "Candidate items have not passed actual program approval, payout terms or product specs."
   ],
-  "state": "STAGING_REVIEW_ONLY"
+  "state": "STAGING_REVIEW_ONLY",
+  "tracking_program_hints": [
+    {
+      "merchant": "Mybrand.shoes",
+      "link_number_candidate": "11706",
+      "product_evidence_rows": 29,
+      "approved_program_id": false
+    },
+    {
+      "merchant": "Z-mall",
+      "link_number_candidate": "100",
+      "product_evidence_rows": 7,
+      "approved_program_id": false
+    }
+  ],
+  "program_hint_note": "The values come from consistent go.linkwi.se/z/{number}-.../CD104/ path segments; neither official Linkwise program ID nor joined/approved publisher status has been authenticated."
 }

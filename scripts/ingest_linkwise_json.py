@@ -94,6 +94,17 @@ def classify(title,category):
             return kind
     return None
 
+
+def tracking_program_hint(link: str, publisher: str = "CD104") -> str | None:
+    """Extract unverified numeric hint only from exact Linkwise paths.
+    Does NOT prove program ID, advertiser participation or valid commissions.
+    """
+    parsed=urlparse(link)
+    if parsed.scheme!="https" or parsed.hostname!="go.linkwi.se" or parsed.username or parsed.password or parsed.port:
+        return None
+    match=re.match(r"^/z/([0-9]{1,12})-[0-9]+/"+re.escape(publisher)+r"/(?:$|[^/?#])",parsed.path)
+    return match.group(1) if match else None
+
 def run(src:Path,db_path:Path,report_path:Path,allowed_hosts:set[str]):
     conn=sqlite3.connect(db_path)
     conn.execute("""CREATE TABLE IF NOT EXISTS source_fitness_candidates(
@@ -104,6 +115,8 @@ def run(src:Path,db_path:Path,report_path:Path,allowed_hosts:set[str]):
     PRIMARY KEY(source,program_name,source_product_id))""")
     counts=collections.Counter()
     categories=collections.Counter()
+    # Track consistency by merchant from source-generated links, not inferred from product titles.
+    program_hints: dict[str,collections.Counter[str]] = collections.defaultdict(collections.Counter)
     try:
         with conn:
             for row in stream_array(src):
@@ -125,6 +138,9 @@ def run(src:Path,db_path:Path,report_path:Path,allowed_hosts:set[str]):
                 image=str(row.get("image_url") or "").strip()
                 image=image if image.startswith("https://") else None
                 availability=stock(row.get("in_stock",row.get("availability")))
+                hint=tracking_program_hint(link)
+                if hint:
+                    program_hints[name][hint]+=1
                 conn.execute("""INSERT INTO source_fitness_candidates(
                     source,program_name,source_product_id,title,source_category,normalized_category,
                     price_eur,stock_status,image_url,tracking_url,review_status
@@ -140,7 +156,20 @@ def run(src:Path,db_path:Path,report_path:Path,allowed_hosts:set[str]):
                 categories[mapped]+=1
     finally:
         conn.close()
-    result={"source_rows":counts["source_rows"],"fitness_detected":counts["fitness_detected"],
+    # Every hint is explicitly UNVERIFIED: even a unique code per merchant requires
+    # Linkwise program API/dashboard confirmation and an approved publisher property.
+    identities={}
+    for merchant,hints in sorted(program_hints.items()):
+        identities[merchant]={
+            "link_number_candidates":dict(hints),
+            "consistent_in_sample":len(hints)==1,
+            "program_id_confirmed":False,
+            "terms_verified":False,
+            "required_evidence":"Linkwise authenticated program details + joined publisher status + current applicable commission"
+        }
+    result={"program_identity_candidates":identities,
+            "program_ids_approved":0,
+            "source_rows":counts["source_rows"],"fitness_detected":counts["fitness_detected"],
         "staged_rows":counts["staged_rows"],"quarantined":counts["quarantined"],
         "published_offers":0,"normalized_categories":dict(categories),"status":"STAGING_ONLY_UNVERIFIED"}
     report_path.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
