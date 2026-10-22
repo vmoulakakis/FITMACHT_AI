@@ -17,6 +17,13 @@ const kindCategory=(kind:string):CategoryId=>{
  return "accessories";
 };
 const safeImage=(x:string|null|undefined):string|null=>typeof x==="string"&&/^https:\/\//.test(x)?x:null;
+/** Stable public slug per source merchant + model, independent of feed ordering.
+ * This is a routing identifier, not a secret, tracking link or quality proof. */
+export function stableProductId(merchant:string,name:string):string{
+ const key=(merchant.trim()+"\u0000"+name.trim()).normalize("NFKC").toLocaleLowerCase("el-GR");
+ let h=2166136261;for(const c of key){h=Math.imul(h^c.charCodeAt(0),16777619);}
+ return "snapshot-"+(h>>>0).toString(36);
+}
 
 export function getStoreListings(offers:Offer[],now=Date.now()):Listing[]{
  const verified=offers.filter(x=>eligible(x,Number.MAX_SAFE_INTEGER,7,now).ok).map(x=>({
@@ -30,7 +37,7 @@ export function getStoreListings(offers:Offer[],now=Date.now()):Listing[]{
   .filter(x=>Number.isFinite(x.price)&&x.price>0)
   .filter(x=>!known.has(x.merchant.toLowerCase()+"|"+x.name.toLowerCase()))
   .map(x=>({
-   id:x.id,name:x.name,merchant:x.merchant,price:x.price,image:safeImage(x.image),
+   id:stableProductId(x.merchant,x.name),name:x.name,merchant:x.merchant,price:x.price,image:safeImage(x.image),
    category:kindCategory(x.kind),kind:x.kind,observedAt:x.observedAt,
    stockSignal:x.stockSignal,approved:false,affiliateEligible:false,source:"linkwise" as const,
    evidence:"pending" as const
@@ -73,4 +80,43 @@ export function merchantAudit(list:Listing[]){
  const groups=new Map<string,{name:string,count:number,approved:number,observed:number}>();
  for(const l of list){let x=groups.get(l.merchant);if(!x){x={name:l.merchant,count:0,approved:0,observed:0};groups.set(l.merchant,x)}x.count++;if(l.affiliateEligible)x.approved++;if(l.stockSignal==="in_stock")x.observed++;}
  return [...groups.values()].sort((a,b)=>b.approved-a.approved||b.count-a.count);
+}
+
+
+export type BuyerGoal="cardio"|"strength"|"home-gym"|"recovery";
+export type BuyerAnswer={goal:BuyerGoal;budget:number;space:"compact"|"regular"};
+export type BuyerRank={product:Listing;fit:"direct"|"near"|"alternative";reason:string;budgetGap:number;score:number};
+/** Simple evidence-aware buyer matching.
+ * Never infer payout, specs or stock from product names. Every result is a real SKU.
+ * Relevance comes BEFORE commission; verified status is a tie-breaker only.
+ */
+export function rankForBuyer(products:Listing[],answers:BuyerAnswer,maxResults=5):BuyerRank[]{
+ const budget=Math.max(0,Math.min(Number.isFinite(answers.budget)?answers.budget:0,20000));
+ const wanted:Record<BuyerGoal,Record<string,number>>={
+  cardio:{"exercise-bike":100,"walking-pad":98,"treadmill":92,"resistance-bands":25,"adjustable-dumbbells":20},
+  strength:{"adjustable-dumbbells":100,"fixed-dumbbells":93,"resistance-bands":88,"weight-bench":71,"exercise-bike":34},
+  "home-gym":{"weight-bench":100,"adjustable-dumbbells":93,"fixed-dumbbells":86,"resistance-bands":74,"treadmill":70,"exercise-bike":64},
+  recovery:{"resistance-bands":55,"exercise-bike":35,"fixed-dumbbells":23,"walking-pad":20}
+ };
+ const scores=wanted[answers.goal];
+ const ranked=products.filter(p=>p.price>0&&Number.isFinite(p.price)&&p.kind!=="unknown"&&p.kind!=="accessory")
+  .map(product=>{
+   let fitScore=scores[product.kind]??0;
+   if(answers.space==="compact"&&["treadmill","weight-bench","exercise-bike"].includes(product.kind))fitScore-=25;
+   if(answers.space==="compact"&&["resistance-bands","adjustable-dumbbells"].includes(product.kind))fitScore+=10;
+   if(answers.goal==="recovery"&&product.kind==="fixed-dumbbells")fitScore-=15;
+   const gap=Math.max(0,product.price-budget);
+   const overPenalty=gap===0?0:Math.min(70,16+Math.log1p(gap)*8);
+   // An unverified "in stock" feed signal does not prove live availability.
+   const score=fitScore-overPenalty+(product.affiliateEligible?0.15:0);
+   const fit:"direct"|"near"|"alternative"=fitScore>=84?"direct":fitScore>=55?"near":"alternative";
+   let reason=fit==="direct"?"Η κατηγορία αντιστοιχεί άμεσα στον στόχο σου.":fit==="near"?"Κοντινή επιλογή που αξίζει σύγκριση.":"Διαφορετικός τύπος εξοπλισμού — ενδέχεται να μην καλύπτει τον αρχικό σου στόχο.";
+   if(answers.goal==="recovery")reason="Δεν αποτελεί ιατρική αποκατάσταση ή θεραπευτική σύσταση. Χρειάζεται αξιολόγηση της ασφαλούς χρήσης.";
+   if(answers.space==="compact"&&["treadmill","weight-bench","exercise-bike"].includes(product.kind))reason+=" Οι διαστάσεις για μικρό χώρο δεν έχουν επιβεβαιωθεί.";
+   if(gap>0)reason+=" Υπερβαίνει το budget κατά "+gap.toLocaleString("el-GR",{style:"currency",currency:"EUR"})+".";
+   return {product,fit,reason,budgetGap:gap,score};
+  }).sort((a,b)=>b.score-a.score||a.budgetGap-b.budgetGap||a.product.price-b.product.price||a.product.id.localeCompare(b.product.id));
+ // Return an honest nearby product rather than an empty card grid when the user
+ // chooses a category with limited supply or an unrealistic budget.
+ return ranked.slice(0,Math.max(1,Math.min(5,maxResults)));
 }
