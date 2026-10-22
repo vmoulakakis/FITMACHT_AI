@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-22T06:10:33Z",
+  "source": "Live Linkwise JSON feed / selected category scopes",
+  "source_http_status": 200,
+  "source_format": "json",
+  "candidate_rows": 36,
+  "merchant_count": 2,
+  "merchant_names": [
+    "Mybrand.shoes",
+    "Z-mall"
+  ],
+  "candidate_rows_with_stock_signal": 36,
+  "high_ticket_price_ge_150_eur": 10,
+  "illustrative_commission_ge_10_eur": 10,
+  "illustrative_term_basis": "Historical program terms imported 2026-09-17 and assumed 24% VAT-excluded base. NOT proof of actual commission.",
+  "unmapped_program_ids": 36,
+  "verified_specs": 0,
+  "approved_offers": 0,
+  "original_legacy_feed_rows": 3921,
+  "diagnostics": [
+    "The canonical short feed.csv endpoint returned 404; the owner-provided full JSON feed returned 200.",
+    "The program field contains structured metadata with name; availability is merchant-specific ('y', 'in stock', etc).",
+    "Filtered feeds include fashion and unrelated categories; product-level fitness taxonomy must be reviewed.",
+    "Candidate items have not passed actual program approval, payout terms or product specs."
+  ],
+  "state": "STAGING_REVIEW_ONLY"
+}

@@ -3,7 +3,7 @@
 Greek-language evidence-first buying advisor for fitness equipment in small homes. Not an e-shop.
 
 ## Implemented
-- Mobile-first landing; interactive six-stage adaptive-style consultation; category-first rules
+- Cinematic Greek pain-gap landing; concise context-first consultation; category-first rules
 - Cautious explanations, safety checks, no-login and no-email flow
 - API recommendation route, status route, allowlisted outbound redirect
 - Offer gates: real stock, real current price, verified product specs, verified EUR10 minimum commission, exact fitness taxonomy
@@ -21,7 +21,7 @@ SocialMarket ingestion currently uses an EUR15 source-gate and a commission calc
 The bridge reads only with an approved public/read-only credential if RLS allows it. All records start UNVERIFIED pending manual source and terms audit. No direct database writes occur.
 
 ## Next stage before real offers
-Audit actual Linkwise feed.csv taxonomy, merchant program terms per category, exclusions, approval rules and tracking URLs. Use the already-created private fitmatch review views and public.fitmatch_verified_offers RLS table; add validated refresh and approval workers. Map real verified specs and prices. Add documented ETL count/idempotence tests, full RAG evidence, consent-respecting analytics and attribution.
+Audit actual reachable Linkwise JSON feed taxonomy, merchant program terms per category, exclusions, approval rules and tracking URLs. Use the already-created private fitmatch review views and public.fitmatch_verified_offers RLS table; add validated refresh and approval workers. Map real verified specs and prices. Add documented ETL count/idempotence tests, full RAG evidence, consent-respecting analytics and attribution.
 
 ## Release
 This repo is staging-only and deliberately NOINDEX. Do not publish production without source-data audit, acceptance tests, Linkwise compliance review, security/privacy and explicit owner signoff.
@@ -39,3 +39,13 @@ This repo is staging-only and deliberately NOINDEX. Do not publish production wi
 - Local Greek/Greeklish contextual matching and category scoring operate without paid inference.
 - Optional environment HF_TOKEN supports explicit-consent Qwen/Qwen3-4B-Instruct-2507 for contextual cue extraction only. Open weights do not guarantee free provider quota; failure gracefully falls back.
 - ML does not determine stock, price, medical advice or commercial eligibility. Release remains blocked until verified products exist.
+
+
+## Oct 22 — cinematic buyer agent and real sourcing
+- Original HD filmic hero on stable CDN; GitHub Actions desktop/mobile screenshot evidence.
+- Agent stages: buyer intent, three practical solution paths, verified merchant matching per path. Historical/unknown commission terms are not used to increase buyer-fit ranking.
+- Full owner-provided Linkwise JSON feed verified reachable on staging (short /feed.csv returned 404).
+- 36 genuine private QA candidates; 2 merchants. 10 above indicative EUR10 gross commission on historical rates, all 36 still unapproved. No fabricated purchase links.
+- Program is a structured object; availability uses varied strings. Feed parsing and EUR normalization covered by tests.
+- /readiness and /api/readiness expose timestamped audit context; /api/internal/* is staging-only for diagnostics.
+- See docs/BUILD_STATUS_2026-10-22.md and docs/RELEASE_ACCEPTANCE.md. Production unchanged.
