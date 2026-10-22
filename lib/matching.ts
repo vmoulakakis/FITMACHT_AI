@@ -6,7 +6,7 @@ export function matchPath(path:Path,a:Answers,offers:Offer[],now=Date.now()):Mat
  if(path.kind!=="equipment"||!path.category)return [];
  return offers.filter(o=>o.category===path.category && eligible(o,a.budget,7,now).ok)
   .sort((x,y)=>x.price-y.price||Date.parse(y.lastSeen)-Date.parse(x.lastSeen))
-  .slice(0,3).map((o,i)=>({
+  .slice(0,5).map((o,i)=>({
    id:o.id,title:o.title,merchant:o.merchant,price:o.price,lastSeen:o.lastSeen,
    imageUrl:o.imageUrl??null,evidenceUrl:o.urlEvidence??null,category:o.category,review:"verified",
    tag:i===0?"Επαληθευμένη οικονομικότερη":i===1?"Εναλλακτική":"Επιπλέον ελεγμένη",

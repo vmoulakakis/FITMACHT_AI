@@ -37,3 +37,12 @@ Migration executed on VMDB: fitmatch_isolated_source_review_and_verified_offer_r
 - Shopper paths are not live purchasable SKUs: commerce stays gated by the existing verified-offer RLS table.
 - Release is still blocked pending genuine merchant approval, specs and current stock; this funnel UI can be previewed independently.
 - Regression suite exhausts budget=0, low budget, 4 goals, 3 spaces, 2 noise states, 2 storage preferences and free-text cues.
+
+
+## Image-approved October 22 Top Five studio (owner override of PRD v1.0)
+- The latest user-approved reference specifies three parallel Top Five context lanes: cardio, strength and compact-space, with six buyer pains and an agent workflow.
+- Original PRD limited monetized results to a maximum of three. The new user direction explicitly tests up to five eligible offers per context lane, while retaining hard evidence criteria.
+- A five-slot lane contains at most five verified purchasable offers; if insufficient, genuine researched source candidates remain visually distinguished as UNVERIFIED, and the remaining positions are practical no-purchase advice. Never label those substitutes affiliate-ready.
+- All goal x space x noise x budget x preference combinations have five distinct useful slots. No claim that five current SKUs pass a constrained environment without verified fit/dimensions.
+- CI must include 390px mobile and 1440px desktop screenshot acceptance and tests for budget 0, research-only cards, payout hard gate, live user controls, and no /api/out link for unverified items.
+- GitHub agent + skills definitions in .github/agents and .github/skills are repository instructions, NOT provisioned/active cloud agents. GitHub default-branch and entitlement controls govern activation.

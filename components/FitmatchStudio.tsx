@@ -64,7 +64,8 @@ export default function FitmatchStudio({onUseScenario}:{onUseScenario:(profile:B
     if(!controller.signal.aborted){setLanes(data.lanes);setCatalogStatus(data.catalogMode);setStatus("ready");}
    }catch{if(!controller.signal.aborted){setLanes(rankStudio(profile,[]));setStatus("error");}}
   }
-  load();return()=>controller.abort();
+  const delay=setTimeout(load,180); // Avoid a network request for every slider tick.
+  return()=>{clearTimeout(delay);controller.abort();};
  },[profile]);
  const chosen=selectedPersona(profile);
  return <section className="fitStudio" id="studio" aria-label="FITMATCH AI — Pain Gap to Top Five">

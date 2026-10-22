@@ -38,8 +38,9 @@ const fitsResearch=(lane:Persona,c:SourceCandidate)=>{
  const t=norm(c.title);
  if(lane==="cardio")return /(treadmill|walking.?pad|bike|ποδηλατ|διαδρομος.{0,25}γυμναστ)/u.test(t);
  if(lane==="strength")return /(dumbbell|αλτηρ|βαρακ|παγκος.{0,22}γυμναστ|bench)/u.test(t);
- // There is no verified dimensional evidence, so no merchant SKU is labeled "fits small space".
- return false;
+ // Display only highly portable-looking research candidates and mark dimensions
+ // explicitly UNVERIFIED; never assert the SKU fits a small home.
+ return /(adjustable.?dumbbell|ρυθμιζ.{0,15}αλτηρ)/u.test(t);
 };
 const itemRank=(lane:Persona,product:SourceCandidate,profile:BuyerStudioProfile)=>{
  const t=norm(product.title);
