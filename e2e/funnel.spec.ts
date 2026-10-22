@@ -54,3 +54,36 @@ test("product research preserves premium imagery when retailer CDN is unreachabl
  await expect(page.locator(".sourceVisual").first()).toBeVisible();
  await expect(page.locator(".sourcePhoto.photoReady")).toHaveCount(0);
 });
+
+
+test("image-inspired agent studio renders six interactive pain gaps, six reasoning stages and three top-five lanes",async({page},info)=>{
+ await page.goto("/");
+ await expect(page.getByRole("heading",{name:/FITMATCH AI.*Pain-Gap/})).toBeVisible();
+ await expect(page.locator(".studioPain")).toHaveCount(6);
+ await expect(page.locator(".studioEngineStep")).toHaveCount(6);
+ await expect(page.locator(".studioLane")).toHaveCount(3);
+ await expect(page.locator(".studioProduct")).toHaveCount(15);
+ await page.locator("#studio-budget").scrollIntoViewIfNeeded();
+ await page.getByRole("button",{name:"0€",exact:true}).click();
+ await expect(page.getByText("0€", {exact:true}).first()).toBeVisible();
+ await expect(page.locator(".studioProduct.verified")).toHaveCount(0);
+ await expect(page.locator(".studioProduct.research")).toHaveCount(0);
+ await page.getByRole("button",{name:"500€",exact:true}).click();
+ await expect(page.locator(".studioProduct")).toHaveCount(15);
+ await info.attach("agentic-studio",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+});
+test("studio visual pain choices change buyer inputs and can be carried into the actual advisor",async({page})=>{
+ await page.goto("/");
+ await page.locator(".studioPain").filter({hasText:"Θόρυβος"}).click();
+ await expect(page.locator(".studioSwitches input[type=checkbox]").first()).toBeChecked();
+ await page.getByRole("button",{name:/Δες τη δική μου λύση/}).click();
+ await expect(page.locator("#buyer-need")).toContainText("Δεν θέλω να ενοχλώ γείτονες");
+ await page.getByRole("button",{name:/Βρες τι πραγματικά μου ταιριάζει/}).click();
+ await expect(page.locator(".solutionChoice")).toHaveCount(3);
+});
+test("studio never exposes purchase buttons for research-only items",async({page})=>{
+ await page.goto("/");
+ await expect(page.locator(".studioProduct.research a[href^='/api/out']")).toHaveCount(0);
+ await expect(page.locator(".studioProduct a[href^='/api/out']")).toHaveCount(0);
+ await expect(page.locator(".studioProduct.research")).not.toHaveCount(0);
+});
