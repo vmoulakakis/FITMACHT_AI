@@ -11,3 +11,8 @@ test("fitness taxonomy avoids arbitrary fashion sports keyword",()=>{
  assert.equal(gymProduct("Running shoes","Women's Fashion"),false);
  assert.equal(gymProduct("Padel racket","sports"),false);
 });
+
+test("Greek route service is never misclassified as fitness treadmill",()=>{
+ assert.equal(gymProduct("ΥΠΗΡΕΣΙΑ ΕΓΚΑΤΑΣΤΑΣΗΣ ΘΕΡΜΟΣΙΦΩΝΑ ΔΙΑΔΡΟΜΗ","Υπηρεσίες"),false);
+ assert.equal(gymProduct("Ηλεκτρικός Διάδρομος Γυμναστικής","Αθλητικά"),true);
+});

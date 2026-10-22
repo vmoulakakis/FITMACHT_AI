@@ -18,5 +18,7 @@ export class JsonArrayObjectScanner {
 }
 export const gymProduct=(t:string,category:string)=>{
  const s=(t+" "+category).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
- return /walking.?pad|treadmill|dumbbells?|ρυθμιζομεν.{0,10}αλτη|αλτηρ|βαρακ|διαδρομ|ποδηλατ.{0,30}γυμναστ|exercise.?bike|spin.?bike|resistance.?band|λαστιχ.{0,25}αντιστασ|home gym|multi.?gym|παγκο.{0,18}γυμναστ/.test(s);
+ const hasGymContext=/(fitness|γυμναστ|αθλητ|αθλητικ|sport|treadmill|running|τρεξ)/u.test(s);
+ const treadmill=/διαδρομ(?:ος|ου|οι|ο)/u.test(s)&&hasGymContext;
+ return treadmill||/walking.?pad|treadmill|dumbbells?|ρυθμιζομεν.{0,10}αλτη|αλτηρ|βαρακ|ποδηλατ.{0,30}γυμναστ|exercise.?bike|spin.?bike|resistance.?band|λαστιχ.{0,25}αντιστασ|home gym|multi.?gym|παγκο.{0,18}γυμναστ/u.test(s);
 };
