@@ -1,4 +1,5 @@
 import {NextResponse} from "next/server";
+import {JsonArrayObjectScanner,gymProduct} from "@/lib/feed-stream";
 export const dynamic="force-dynamic";
 export const runtime="nodejs";
 /** Preview-only bounded, read-only feed schema connectivity check.
@@ -33,6 +34,39 @@ export async function GET(){
    return NextResponse.json({accessible:true,...summary,format:"json",jsonShape,sampledBytes:bytes,firstKeys:keys,
     note:"Schema-only JSON probe. No rows, tracking URLs, or merchant terms returned; not imported."},{headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
   }
+  // Aggregate a bounded prefix of the owner-provided JSON feed; never return raw rows/URLs.
+  if(summary.contentType.includes("json")||sample.trimStart().startsWith("[")){
+   const counts={scanned:0,withProgramName:0,stockConfirmed:0,fitnessKeywords:0,
+    fitnessWithProgramName:0,fitnessStockConfirmed:0,fitnessWithPrice:0};
+   const categories=new Map<string,number>(),scanner=new JsonArrayObjectScanner();
+   const inspect=(row:Record<string,unknown>)=>{
+    counts.scanned++;
+    const title=String(row.product_name??row.model_name??"").slice(0,300),category=String(row.category??"").slice(0,130);
+    const program=String(row.program_name??"").trim();
+    const stocked=row.in_stock===true||row.in_stock===1||String(row.in_stock).toLowerCase()==="true";
+    const price=Number(row.price);
+    const isGym=gymProduct(title,category);
+    if(program)counts.withProgramName++;
+    if(stocked)counts.stockConfirmed++;
+    if(isGym){counts.fitnessKeywords++;if(program)counts.fitnessWithProgramName++;if(stocked)counts.fitnessStockConfirmed++;if(price>0&&Number.isFinite(price))counts.fitnessWithPrice++;
+     categories.set(category,(categories.get(category)||0)+1);
+    }
+   };
+   scanner.parseChunk(sample,inspect);
+   let totalBytes=bytes;
+   while(counts.scanned<2800&&totalBytes<7000000){
+    const next=await reader.read();if(next.done)break;
+    totalBytes+=next.value.byteLength;
+    scanner.parseChunk(decoder.decode(next.value,{stream:true}),inspect);
+   }
+   await reader.cancel().catch(()=>{});
+   return NextResponse.json({accessible:true,...summary,format:"json",observedAt:new Date().toISOString(),
+    boundedSample:true,bytesRead:totalBytes,counts,
+    gymCategoryNames:[...categories.entries()].sort((a,b)=>b[1]-a[1]).slice(0,7).map(([category,n])=>({category,n})),
+    note:"Source counts are an observed JSON prefix, not a full import; zero affiliate approvals were inferred."},
+    {headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
+  }
+
   const header=sample.split(/\r?\n/,1)[0].replace(/^\uFEFF/,"");
   const columns=header.split(",").map(x=>x.replace(/^"|"$/g,"").trim());
   const recognized=["product_id","product_name","price","tracking_url","in_stock","category","program_id","program_name"].filter(x=>columns.includes(x));
