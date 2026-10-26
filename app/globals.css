@@ -63,7 +63,11 @@
 @media(max-width:900px){.shell>.header{flex-basis:65px}.heroArt{max-width:420px}}
 @media(max-width:720px){
  .shell{height:100dvh;min-height:0}
- .shell>.footer{display:none}
+ .shell>.footer{display:block;flex:0 0 auto}
+ .shell .footerInner{display:flex;align-items:center;justify-content:center;min-height:48px;padding:6px 10px;gap:10px}
+ .shell .footerBrand,.shell .footerInner>small{display:none}
+ .shell .footerLinks{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0}
+ .shell .footerLinks a{font-size:11px}
  .shell>.header{flex-basis:62px}
  .shell>main{overflow:hidden}
  .homeWorkspace>.hero,.homeWorkspace>.section,.homeWorkspace>.purpose{overflow-y:auto}
