@@ -89,3 +89,12 @@
 }
 @media(prefers-reduced-motion:reduce){.spatialMount{display:none}.sceneButton{display:none}}
 @media(max-height:690px){.homeWorkspace>.hero,.homeWorkspace>.section,.homeWorkspace>.purpose{overflow:auto}.quizPanel,.resultsPanel{overflow-y:auto}.quizQuestion{overflow-y:auto}.shell>.footer{display:none}}
+
+.mobileSections{display:none}
+@media(max-width:720px){
+ .homeWorkspace{display:flex;flex-direction:column}
+ .mobileSections{display:flex;flex:0 0 44px;gap:5px;padding:6px 10px;background:#f8faf5;border-bottom:1px solid var(--line)}
+ .mobileSections button{min-width:0;flex:1;border:0;border-radius:9px;font-size:11px;font-weight:800;background:transparent;color:#536c57;min-height:32px}
+ .mobileSections button[aria-pressed="true"]{background:var(--green);color:#fff}
+ .homeWorkspace>.hero,.homeWorkspace>.section,.homeWorkspace>.purpose{flex:1;min-height:0;height:auto}
+}
