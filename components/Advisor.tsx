@@ -36,6 +36,7 @@ export default function Advisor(){
     <button className="headerCTA" onClick={begin} type="button">Βρες τον εξοπλισμό σου <ArrowRight size={16}/></button>
   </div></header>
   {!started?<main className="homeWorkspace">
+    <div className="mobileSections" role="group" aria-label="Ενότητες FITMATCH"><button type="button" aria-pressed={homeView==="intro"} onClick={()=>setHomeView("intro")}>Αρχική</button><button type="button" aria-pressed={homeView==="how"} onClick={()=>setHomeView("how")}>Πώς λειτουργεί</button><button type="button" aria-pressed={homeView==="why"} onClick={()=>setHomeView("why")}>Γιατί FitMatch</button></div>
     {homeView==="intro"&&<section className="hero"><div className="heroInner"><div className="heroText">
       <div className="eyebrow"><Sparkles size={14}/> AI BUYING ADVISOR · ΕΛΛΑΔΑ</div>
       <h1>Ο σωστός εξοπλισμός.<br/><span className="accent">Για τον δικό σου χώρο.</span></h1>
