@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {advise,choose,type Answers} from "@/lib/decision";
 import {catalog} from "@/lib/catalog";
+import {approvedTrackingHosts,validatedTrackingUrl} from "@/lib/tracking";
 export const dynamic="force-dynamic";
 const goals=["walking","cardio","strength","mixed"], spaces=["compact","medium","large"], noises=["critical","normal"], activities=["walk","run","both"];
 export async function POST(req:Request){
@@ -11,6 +12,8 @@ export async function POST(req:Request){
  const answers=v as Answers;
  const decision=advise(answers);
  const c=await catalog();
- const offers=choose(c.offers,answers,decision.category);
+ const hosts=approvedTrackingHosts(process.env.FITMATCH_LINKWISE_HOSTS);
+ const outboundSafe=c.offers.filter(o=>validatedTrackingUrl(o.trackingUrl,hosts)!==null);
+ const offers=choose(outboundSafe,answers,decision.category);
  return NextResponse.json({decision,offers,catalogState:c.mode,catalogNote:c.reason??"",disclosure:"Οι σύνδεσμοι αγοράς μπορεί να είναι affiliate. Καμία παραγγελία δεν ολοκληρώνεται στο FITMATCH AI."},{headers:{"Cache-Control":"no-store"}});
 }
