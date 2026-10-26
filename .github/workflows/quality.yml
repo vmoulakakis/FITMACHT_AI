@@ -1,0 +1,28 @@
+name: FitMatch quality gates
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # Follow-up: commit a lockfile and replace with npm ci for reproducible resolution.
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Unit security and decision tests
+        run: npm test
+      - name: TypeScript
+        run: npm run typecheck
+      - name: Production build (staging, no secrets)
+        run: npm run build
