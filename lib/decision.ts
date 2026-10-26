@@ -1,3 +1,4 @@
+export const MIN_VERIFIED_COMMISSION_EUR = 10;
 export type Goal = "walking" | "cardio" | "strength" | "mixed";
 export type Space = "compact" | "medium" | "large";
 export type Noise = "critical" | "normal";
@@ -29,7 +30,7 @@ export function eligible(o:Offer,budget:number,cutoffDays=7,now=Date.now()):Elig
  if(!o.inStock)return {ok:false,reason:"out_of_stock"};
  if(!Number.isFinite(o.price)||o.price<=0||o.price>budget)return {ok:false,reason:"budget_or_price"};
  if(!o.commissionEvidence||o.verifiedCommissionEur===null)return {ok:false,reason:"pending_commission"};
- if(o.verifiedCommissionEur<10)return {ok:false,reason:"commission_under_10"};
+ if(o.verifiedCommissionEur<MIN_VERIFIED_COMMISSION_EUR)return {ok:false,reason:"commission_under_10"};
  if(!o.specsVerified)return {ok:false,reason:"specifications_unverified"};
  const age=(now-new Date(o.lastSeen).getTime())/86400000;
  if(!Number.isFinite(age)||age<0||age>cutoffDays)return {ok:false,reason:"stale_offer"};
