@@ -54,7 +54,11 @@ export async function catalog():Promise<{offers:Offer[];mode:string;reason?:stri
     // Never use the service-role key or query commerce_feed_eligible_offers.
     const select="id,title,merchant_name,normalized_category,price_eur,currency,tracking_url,image_url,in_stock,last_seen_at,verified_commission_eur,terms_source_url,terms_verified_at,spec_evidence_url,specs_verified,approved";
     const url=base+"/rest/v1/fitmatch_verified_offers?select="+select+"&approved=eq.true&limit=200";
-    const response=await fetch(url,{headers:{"apikey":key,"Authorization":"Bearer "+key},cache:"no-store",signal:AbortSignal.timeout(4500)});
+    // Modern publishable keys are API keys, not JWT Bearer tokens. Preserve legacy anon compatibility.
+    if(key.startsWith("sb_secret_"))return {offers:[],mode:"error",reason:"Δεν επιτρέπεται προνομιούχο κλειδί για δημόσιο κατάλογο."};
+    const headers:Record<string,string>={"apikey":key};
+    if(!key.startsWith("sb_publishable_"))headers.Authorization="Bearer "+key;
+    const response=await fetch(url,{headers,cache:"no-store",signal:AbortSignal.timeout(4500)});
     if(!response.ok)return {offers:[],mode:"restricted",reason:"Η ασφαλής ανάγνωση εγκεκριμένων προσφορών δεν είναι διαθέσιμη."};
     const rows:unknown=await response.json();
     if(!Array.isArray(rows))return {offers:[],mode:"error",reason:"Μη έγκυρη απάντηση του καταλόγου."};
