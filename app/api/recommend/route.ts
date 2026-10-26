@@ -13,6 +13,7 @@ export async function POST(req:Request){
  const decision=advise(answers);
  const c=await catalog();
  const hosts=approvedTrackingHosts(process.env.FITMATCH_LINKWISE_HOSTS);
- const offers=choose(c.offers,answers,decision.category).filter(o=>validatedTrackingUrl(o.trackingUrl,hosts)!==null);
+ const outboundSafe=c.offers.filter(o=>validatedTrackingUrl(o.trackingUrl,hosts)!==null);
+ const offers=choose(outboundSafe,answers,decision.category);
  return NextResponse.json({decision,offers,catalogState:c.mode,catalogNote:c.reason??"",disclosure:"Οι σύνδεσμοι αγοράς μπορεί να είναι affiliate. Καμία παραγγελία δεν ολοκληρώνεται στο FITMATCH AI."},{headers:{"Cache-Control":"no-store"}});
 }
