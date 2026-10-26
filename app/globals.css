@@ -88,7 +88,7 @@
  .resultActions{align-items:center;flex-direction:row;flex-wrap:wrap}
 }
 @media(prefers-reduced-motion:reduce){.spatialMount{display:none}.sceneButton{display:none}}
-@media(max-height:690px){.homeWorkspace>.hero,.homeWorkspace>.section,.homeWorkspace>.purpose{overflow:auto}.quizPanel,.resultsPanel{overflow-y:auto}.quizQuestion{overflow-y:auto}.shell>.footer{display:none}}
+@media(max-height:690px){.homeWorkspace>.hero,.homeWorkspace>.section,.homeWorkspace>.purpose{overflow:auto}.quizPanel,.resultsPanel{overflow-y:auto}.quizQuestion{overflow-y:auto}}
 
 .mobileSections{display:none}
 @media(max-width:720px){
