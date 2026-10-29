@@ -55,3 +55,8 @@ test("corrupt or truncated large feeds fail instead of completing a partial revi
   await assert.rejects(async()=>{for await(const _ of streamJsonObjects(bytes('[{"product_id":"x"}',4))){}},/truncated/);
   await assert.rejects(async()=>{for await(const _ of streamJsonObjects(bytes('[{"product_name":"'.concat("X".repeat(100),'"}]'),16),25)){}},/too_large/);
 });
+
+test("rejects wrong title even when merchant category resembles fitness",()=>{
+ assert.equal(classifyFitness({...base,product_name:"Βαμβακερή μπλούζα",category:"Διάδρομοι γυμναστικής"}),null);
+ assert.equal(classifyFitness({...base,product_name:"Σεντόνι με λάστιχο",category:"Λάστιχα αντίστασης"}),null);
+});
