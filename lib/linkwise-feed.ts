@@ -47,17 +47,20 @@ const trueStock=(v:unknown):boolean => v===true||v===1||["true","yes","y","1","i
 const rejectedParts=/ανταλλακτικ|θήκη|κάλυμμα|λιπαντικ|accessor|replacement|spare part|charger|φορτισ|πατάκι|χαλάκι|mat\b|καλώδιο|τηλεχειριστ|συντήρησ|belt only/i;
 
 /** Conservative candidate taxonomy: never equate text matching with verified specs. */
-export function classifyFitness(row:SourceRow):Category|null {
-  const product=str(row.product_name).toLocaleLowerCase("el-GR");
-  const category=str(row.category).toLocaleLowerCase("el-GR");
-  if(!product||rejectedParts.test(product))return null;
-  const s=(product+" "+category).normalize("NFC");
+function inferCategory(s:string):Category|null{
   if(/walking[\s-]*pad|διάδρομ.{0,16}περπατ|διάδρομος βάδισης/i.test(s))return "walking-pad";
   if(/treadmill|διάδρομ.{0,16}(γυμναστικ|τρεξίμ|τρεξιμ)/i.test(s))return "treadmill";
   if(/exercise[\s-]*bike|spin[\s-]*bike|ποδήλατ.{0,18}(γυμναστικ|στατικ)|στατικ.{0,14}ποδήλατ/i.test(s))return "exercise-bike";
   if(/adjustable[\s-]*dumbbell|ρυθμιζόμεν.{0,14}αλτήρ|ρυθμιζομεν.{0,14}αλτηρ/i.test(s))return "adjustable-dumbbells";
   if(/resistance[\s-]*bands?|λάστιχ.{0,15}αντίστασ|λαστιχ.{0,15}αντιστασ|ιμάντ.{0,15}αντίστασ/i.test(s))return "resistance-bands";
   return null;
+}
+export function classifyFitness(row:SourceRow):Category|null {
+  const product=str(row.product_name).toLocaleLowerCase("el-GR").normalize("NFC");
+  const category=str(row.category).toLocaleLowerCase("el-GR").normalize("NFC");
+  if(!product||rejectedParts.test(product))return null;
+  // Product-specific text outranks a stale or over-broad merchant category.
+  return inferCategory(product) ?? inferCategory(category);
 }
 
 export function normalizeLinkwise(row:unknown,observedAt:string):LinkwiseCandidate|null {
