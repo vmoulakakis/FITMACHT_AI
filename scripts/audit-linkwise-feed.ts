@@ -11,6 +11,7 @@ import {dirname,resolve} from "node:path";
 import {once} from "node:events";
 import {finished} from "node:stream/promises";
 import {normalizeLinkwise,streamJsonObjects,validateFeedUrl} from "../lib/linkwise-feed";
+import {streamCsvObjects} from "../lib/linkwise-csv";
 
 async function main():Promise<void>{
 const url=validateFeedUrl(process.env.LINKWISE_FITMATCH_FEED_URL||"");
@@ -21,14 +22,15 @@ if(!Number.isSafeInteger(maxCandidates)||maxCandidates<1||maxCandidates>500000)t
 const r=await fetch(url,{redirect:"error",headers:{"Accept":"application/json"},signal:AbortSignal.timeout(3_600_000),cache:"no-store"});
 if(!r.ok||!r.body)throw new Error("linkwise_feed_http_"+r.status);
 const contentType=r.headers.get("content-type")||"";
-if(!/json|octet-stream|text\/plain/i.test(contentType))throw new Error("linkwise_unexpected_content_type");
+if(!/json|csv|octet-stream|text\/plain/i.test(contentType))throw new Error("linkwise_unexpected_content_type");
 await mkdir(dirname(path),{recursive:true,mode:0o700});
 const temp=path+".tmp-"+process.pid;
 const file=createWriteStream(temp,{mode:0o600,flags:"wx"});
 const seenKeys=new Set<string>();
 const counts={rowsSeen:0,candidates:0,stored:0,duplicates:0,invalidOrOutOfScope:0,outOfStock:0,missingProgram:0,missingImage:0,missingTrackingUrl:0,truncated:0,byCategory:{} as Record<string,number>,sourceCategorySample:{} as Record<string,number>};
 try{
-  for await(const row of streamJsonObjects(r.body)){
+  const products=url.pathname.endsWith("/feed.csv")?streamCsvObjects(r.body):streamJsonObjects(r.body);
+  for await(const row of products){
     counts.rowsSeen++;
     if(row && typeof row==="object" && !Array.isArray(row) && counts.rowsSeen<=100000){
       const cat=String((row as Record<string,unknown>).category??"").slice(0,140);
@@ -55,7 +57,7 @@ try{
   file.end();
   await finished(file);
   await rename(temp,path);
-  await writeFile(path+".meta.json",JSON.stringify({source:"linkwise_cd104",observedAt,complete:true,verified:false,scope:"only configured category filter in source URL",counts},null,2),{mode:0o600});
+  await writeFile(path+".meta.json",JSON.stringify({source:"linkwise_cd104",observedAt,complete:true,verified:false,scope:"only configured category filter in source URL",format:url.pathname.endsWith(".csv")?"csv":"json",counts},null,2),{mode:0o600});
   console.log(JSON.stringify({ok:true,stagingOnly:true,output:path,observedAt,counts},null,2));
 }catch(e){
   file.destroy();
