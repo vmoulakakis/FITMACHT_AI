@@ -6,9 +6,9 @@ test("conservative payout scenario requires about 183 EUR retail at old 8% under
  assert.equal(commissionScenario(0),null);
  assert.equal(commissionScenario(-10),null);
  assert.equal(commissionScenario(100),5.48);
- assert.equal(commissionScenario(155)<10,true);
- assert.equal(commissionScenario(182)<10,true);
- assert.equal(commissionScenario(183)>=10,true);
+ assert.equal((commissionScenario(155)??Infinity)<10,true);
+ assert.equal((commissionScenario(182)??Infinity)<10,true);
+ assert.equal((commissionScenario(183)??-Infinity)>=10,true);
  assert.equal(rateScenario.targetNetEur,10);
 });
 test("all six newly observed merchant examples pass hypothetical EUR 10 payout but none passes approval",()=>{
