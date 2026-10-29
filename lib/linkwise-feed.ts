@@ -179,7 +179,7 @@ export async function* streamJsonObjects(
 export function validateFeedUrl(raw:string):URL {
   const u=new URL(raw);
   if(u.protocol!=="https:"||u.hostname!=="affiliate.linkwi.se"||u.username||u.password||u.port||
-    !u.pathname.startsWith("/feeds/1.2/CD104/")||!u.pathname.endsWith("/feed.json"))
+    !u.pathname.startsWith("/feeds/1.2/CD104/")||!(/\/feed\.(?:json|csv)$/.test(u.pathname)))
     throw new Error("unsupported_linkwise_feed_url");
   return u;
 }
