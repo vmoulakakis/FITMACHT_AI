@@ -1,0 +1,32 @@
+name: FITMATCH staging QA
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'lib/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'tsconfig.json'
+      - '.github/workflows/fitmatch-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Build staging
+        run: npm run build

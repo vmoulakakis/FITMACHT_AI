@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test": "tsx --test tests/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "linkwise:audit": "tsx scripts/audit-linkwise-feed.ts"
   },
   "dependencies": {
     "next": "15.5.28",
