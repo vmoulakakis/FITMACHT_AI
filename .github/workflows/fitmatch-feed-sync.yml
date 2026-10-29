@@ -38,10 +38,11 @@ jobs:
           test -n "$LINKWISE_FITMATCH_FEED_URL" || { echo "::error::FITMATCH_LINKWISE_FEED_URL secret is missing"; exit 1; }
           test -n "$FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY" || { echo "::error::FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY secret is missing"; exit 1; }
           test -n "$FITMATCH_IMPORT_SUPABASE_URL" || { echo "::error::FITMATCH_IMPORT_SUPABASE_URL variable is missing"; exit 1; }
+          [[ "$LINKWISE_FITMATCH_FEED_URL" == https://affiliate.linkwi.se/feeds/1.2/CD104/* ]] || { echo "::error::Incorrect CD104 source host or path"; exit 1; }
           echo "Feed configuration detected; values will not be printed."
       - name: Install
         run: npm install --no-audit --no-fund
-      - name: Stream and audit the original feed
+      - name: Stream and audit the original CSV or JSON feed
         run: npm run linkwise:audit
       - name: Publish sanitized unverified fitness previews
         run: npm run linkwise:publish-previews
