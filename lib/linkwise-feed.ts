@@ -53,8 +53,8 @@ function inferCategory(s:string):Category|null{
   if(/exercise[\s-]*bike|spin[\s-]*bike|ποδήλατ.{0,18}(γυμναστικ|στατικ)|στατικ.{0,14}ποδήλατ/i.test(s))return "exercise-bike";
   if(/adjustable[\s-]*dumbbell|ρυθμιζόμεν.{0,14}αλτήρ|ρυθμιζομεν.{0,14}αλτηρ/i.test(s))return "adjustable-dumbbells";
   if(/resistance[\s-]*bands?|λάστιχ.{0,15}αντίστασ|λαστιχ.{0,15}αντιστασ|ιμάντ.{0,15}αντίστασ/i.test(s))return "resistance-bands";
-  if(/πάγκος γυμναστικής|παγκος γυμναστικ|adjustable[\\s-]*weight[\\s-]*bench|weight[\\s-]*bench/i.test(s))return "weight-bench";
-  if(/dumbbell|βαράκ|αλτήρ|αλτηρ/i.test(s) && !/(ρυθμιζόμεν|adjustable|κολάρα|μανταλάκια|100[\\s-]*kg|άκρων)/i.test(s))return "fixed-dumbbells";
+  if(/πάγκος γυμναστικής|παγκος γυμναστικ|adjustable[\s-]*weight[\s-]*bench|weight[\s-]*bench/i.test(s))return "weight-bench";
+  if(/dumbbell|βαράκ|αλτήρ|αλτηρ/i.test(s) && !/(ρυθμιζόμεν|adjustable|κολάρα|μανταλάκια|100[\s-]*kg|άκρων)/i.test(s))return "fixed-dumbbells";
   return null;
 }
 export function classifyFitness(row:SourceRow):Category|null {
