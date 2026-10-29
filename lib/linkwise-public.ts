@@ -28,7 +28,7 @@ export async function publicLinkwisePreviews(category:Category,budget:number,fet
  query.searchParams.set("order","price_eur.asc");
  query.searchParams.set("limit","15");
  try{
-   const r=await fetcher(query,{headers:{"apikey":key,"Authorization":"Bearer "+key},signal:AbortSignal.timeout(3000),cache:"no-store"});
+   const r=await fetcher(query,{headers:{"apikey":key},signal:AbortSignal.timeout(3000),cache:"no-store"});
    if(!r.ok)return [];
    const data:unknown=await r.json();
    if(!Array.isArray(data))return [];
