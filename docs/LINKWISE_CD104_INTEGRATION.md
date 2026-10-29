@@ -74,3 +74,22 @@ No secret values are presently confirmed as configured for this GitHub workflow,
 
 ### What is still required for true 10+ EUR monetized offers
 Current Linkwise membership per merchant, program ID, category terms, exclusions, VAT/commission basis, fresh stock/price and product dimensions/weight specifications must be verified. A tracked link alone is not proof of an approved commission. The user-facing /api/out stays closed to unapproved products.
+
+
+## CD104 coverage root-cause audit — 2026-10-29
+
+**Existing 14/32/36 records are a sample, not the full fitness catalog. The true product count in the owner's current source feed remains unknown until full traversal.**
+
+**Legacy ingest problem:** The shared Supabase linkwise-feed-ingest v17 has a hardcoded EUR 120 minimum item price, a 2000-item checkpoint window and a running record stuck since September 17 at skip=34000. Its 3921 cached offers (mostly furnishings) are NOT a complete fitness inventory. Leave that unrelated shared SocialMarket pipeline unchanged.
+
+**FitMatch importer problem:** The initial classifier matched only seven equipment types and ignored precise merchant taxonomy; also the dedicated audit could time out after four minutes or refuse sources exceeding 50000 candidates.
+
+**Repair:** Support 15 evidence-based categories, including elliptical, rowing, multi-gyms, kettlebells, yoga mats, Pilates gear, pull-up bars and steppers. Title evidence takes priority; use only precise category fallback and exclude apparel, linens and spare parts. Do not filter products by retail price before classification.
+
+**Full scan:** Dedicated Actions runner may traverse source up to 60 minutes; the per-category and source-category counts are included in an auditable meta file, with explicit refusal on incomplete/empty scans. Candidate cap configured 250000, hard cap 500000; publisher accepts private JSONL up to 1GB.
+
+**Feed selector caveat:** Owner's supplied URL contains /catinc-3/, an include-category selector. Linkwise's official dynamic feeds support category filters. No authoritative mapping from ID 3 to home-fitness coverage has been confirmed; verify product category coverage before claiming all merchants are present.
+
+**Commission and publication:** Historical estimates >=10 EUR are screening indicators, not evidence that a commission is approved or payable. Merchant program identity, live program terms, stock and product specs must be verified before outbound affiliate links can be activated.
+
+**Deployment caveat:** The GitHub workflow requires encrypted FITMATCH_LINKWISE_FEED_URL and FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY and variable FITMATCH_IMPORT_SUPABASE_URL. This patch does not assert those are configured and does not claim that a complete live feed was imported.
