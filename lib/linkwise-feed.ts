@@ -92,6 +92,8 @@ function inferCategory(title:string,merchantCategory:string):Category|null{
 export function classifyFitness(row:SourceRow):Category|null {
  const name=str(row.product_name)||str(row.model_name);
  if(!name||rejectedParts.test(fold(name)))return null;
+ // Cross-category hygiene: a merchant's fitness bucket can contain misfiled items.
+ if(/(?:σεντον|κουρτιν|κλινοσκεπ|κοσμημ|βραχιολ|μπλουζ|παντελον|t[\\s-]*shirt|jacket|bed[\\s-]*sheet|linen[\\s-]*sheet)/.test(fold(name)))return null;
  return inferCategory(name,str(row.category));
 }
 
