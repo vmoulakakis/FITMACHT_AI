@@ -25,3 +25,5 @@ Audit actual Linkwise feed.csv taxonomy, merchant program terms per category, ex
 
 ## Release
 This repo is staging-only and deliberately NOINDEX. Do not publish production without source-data audit, acceptance tests, Linkwise compliance review, security/privacy and explicit owner signoff.
+## Linkwise CD104 feed (review-only)
+A server-side streaming JSON importer is available for the **owner-supplied CD104 feed**. Run `npm run linkwise:audit` with the private `LINKWISE_FITMATCH_FEED_URL` configured, then inspect the local candidate previews in staging. This does not automatically approve products or connect the separate live ChatGPT Site. See [integration and verification instructions](docs/LINKWISE_CD104_INTEGRATION.md). No Awin integration is included.
