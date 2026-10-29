@@ -27,7 +27,8 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
  const selected=painGroups.find(g=>g.id===pain)||painGroups[0];
  const match=useMemo(()=>matchTargets(pain,compact?"compact":"flexible",quiet),[pain,compact,quiet]);
  const filtered=useMemo(()=>targetItems.filter(t=>(group==="all"||t.group===group)&&t.name.toLocaleLowerCase("el-GR").includes(query.toLocaleLowerCase("el-GR"))),[group,query]);
- const relevant=examples.filter(e=>selected.categories.includes(e.category));
+ const budgetCeiling=budget==="έως 100"?100:budget==="100-300"?300:Infinity;
+ const relevant=examples.filter(e=>selected.categories.includes(e.category)&&e.price<=budgetCeiling);
  const toggle=(id:string)=>setSaved(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
  const show=(next:Mode)=>{setMode(next);setShowSources(false)};
  const saveText=()=>{const names=targetItems.filter(t=>saved.includes(t.id)).map(t=>t.id+" — "+t.name).join("\n");if(names&&typeof navigator!=="undefined"&&navigator.clipboard)void navigator.clipboard.writeText("MIKRO/MOVE · shortlist προς έρευνα\n"+names);};
@@ -56,7 +57,7 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
         <h1>ΛΙΓΟΣ<br/>ΧΩΡΟΣ<span className="mm-period">.</span><br/><em>ΠΟΛΛΗ</em><br/>ΖΩΗ<span className="mm-period">.</span></h1>
         <p>Πιο πολλή κίνηση. Καλύτερη καθημερινότητα. Λιγότερες άσκοπες αγορές. <strong>Δεν πουλάμε προϊόντα στην τύχη — βρίσκουμε λύσεις που ταιριάζουν στη ζωή σου.</strong></p>
         <div className="mm-actions"><button onClick={()=>{setStep(0);show("match")}} className="mm-primary">Ξεκίνα με το πρόβλημά σου <ArrowUpRight size={19}/></button><button className="mm-secondary" onClick={()=>show("library")}>Ανακάλυψε 100 ιδέες <ArrowRight size={17}/></button></div>
-        <div className="mm-hero-bottom"><span><ShieldCheck size={15}/> Χωρίς εγγραφή</span><span><Database size={15}/> Πηγές με ημερομηνίες</span><span><Command size={15}/> Ελληνικό AI matching</span></div>
+        <div className="mm-hero-bottom"><span><ShieldCheck size={15}/> Χωρίς εγγραφή</span><span><Database size={15}/> Πηγές με ημερομηνίες</span><span><Command size={15}/> Matching πραγματικών αναγκών</span></div>
       </div>
       <div className="mm-art" role="img" aria-label="Αφηρημένη τρισδιάστατη εικαστική σύνθεση μικρού χώρου και καθημερινής κίνησης">
        <div className="mm-art-grid"/><div className="mm-halo h1"/><div className="mm-halo h2"/>
@@ -71,7 +72,7 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
    </main>}
    {mode==="match"&&<main className="mm-workspace">
     <div className="mm-work-left">
-     <div className="mm-section-tag">01 / SMART MATCH ENGINE</div>
+     <div className="mm-section-tag">01 / NEEDS MATCH ENGINE</div>
      <h2>Δεν χρειάζεται<br/><em>να ψάχνεις στα τυφλά.</em></h2>
      <p>Τρεις μικρές επιλογές. Μια προσωπική διαδρομή για λύσεις με πραγματικό νόημα.</p>
      <div className="mm-steps" aria-label="Πρόοδος">{[0,1,2].map(i=><button key={i} aria-label={"Βήμα "+(i+1)} className={i===step?"active":i<step?"done":""} onClick={()=>setStep(i)}>{i<step?<Check size={15}/>:String(i+1).padStart(2,"0")}</button>)}</div>
@@ -87,10 +88,10 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
      <div className="mm-wizard-footer"><button disabled={step===0} onClick={()=>setStep(s=>Math.max(0,s-1))}><ArrowLeft size={17}/> Πίσω</button>{step<2?<button className="mm-next" onClick={()=>setStep(s=>s+1)}>Συνέχεια <ArrowRight size={17}/></button>:<button className="mm-next" onClick={()=>{setStep(0);setShowSources(false)}}><RotateCcw size={17}/> Από την αρχή</button>}</div>
     </div>
     <div className="mm-work-right"><div className="mm-right-head"><span>EDITED BY NEED, NOT BY ADS</span><span>MIKRO/MOVE · FIT INTELLIGENCE</span></div>
-     <div className="mm-recommendations"><h3>{step===2?selected.short+" / Δυνατές λύσεις":"Η πρόταση αλλάζει καθώς επιλέγεις"}</h3><div className="mm-top3">{match.slice(0,3).map((t,i)=>itemCard(t,i))}</div>
-      {showSources&&<div className="mm-sourced"><div className="mm-sourced-head"><h4>Αληθινές εγγραφές της βάσης</h4><button onClick={()=>setShowSources(false)} aria-label="Κλείσιμο"><X size={19}/></button></div>{relevant.length?relevant.slice(0,6).map(x=><div key={x.category+"-"+x.id} className="mm-source-row"><div>{x.imageUrl?<img src={x.imageUrl} loading="lazy" alt={x.title}/>:<Dumbbell size={18}/>}</div><span>{x.title}<small>{sourceGroups[x.category]} · 22/10/2026 · μη επιβεβαιωμένη διαθεσιμότητα</small></span><b>{currency(x.price)}</b></div>):<p>Δεν βρέθηκε συναφής εγγραφή στην τρέχουσα δημόσια βάση. Δεν θα επινοήσουμε προϊόν ή τιμή.</p>}</div>}
+     <div className="mm-recommendations"><h3>{step===2?selected.short+" / Δυνατές λύσεις":"Οι στόχοι αλλάζουν καθώς επιλέγεις"}</h3><div className="mm-top3">{match.slice(0,3).map((t,i)=>itemCard(t,i))}</div>
+      {showSources&&<div className="mm-sourced"><div className="mm-sourced-head"><h4>Αληθινές εγγραφές της βάσης</h4><button onClick={()=>setShowSources(false)} aria-label="Κλείσιμο"><X size={19}/></button></div>{relevant.length?relevant.slice(0,6).map(x=><div key={x.category+"-"+x.id} className="mm-source-row"><div>{x.imageUrl?<img src={x.imageUrl} loading="lazy" alt={x.title}/>:<Dumbbell size={18}/>}</div><span>{x.title}<small>{sourceGroups[x.category]} · {new Date(x.observedAt).toLocaleDateString("el-GR")} · μη επιβεβαιωμένη διαθεσιμότητα</small></span><b>{currency(x.price)}</b></div>):<p>Δεν βρέθηκε συναφής εγγραφή στην τρέχουσα δημόσια βάση. Δεν θα επινοήσουμε προϊόν ή τιμή.</p>}</div>}
      </div>
-     <p className="mm-side-note">Σημείωση: δεν κάνουμε ιατρικές διαγνώσεις ή υποσχέσεις θεραπείας. Η καταλληλότητα οργάνων εξαρτάται και από τις προσωπικές σου ανάγκες.</p>
+     <p className="mm-side-note">Σημείωση: δεν κάνουμε ιατρικές διαγνώσεις ή υποσχέσεις θεραπείας. Το budget φιλτράρει μόνο τις ιστορικές τιμές προϊόντων, όχι τους στόχους χωρίς επαληθευμένη τιμή. Η καταλληλότητα οργάνων εξαρτάται από τις προσωπικές σου ανάγκες.</p>
     </div>
    </main>}
    {mode==="library"&&<main className="mm-library"><div className="mm-library-head"><div><span className="mm-section-tag">02 / OPPORTUNITY ATLAS</span><h2>100 ΔΥΣΚΟΛΕΣ<br/><em>ΑΛΛΑ ΧΡΗΣΙΜΕΣ</em> ΛΥΣΕΙΣ<span className="mm-period">.</span></h2><p>100 ακριβή προφίλ προϊόντων για αναζήτηση και αξιολόγηση. <b>Δεν είναι 100 εγκεκριμένα affiliate SKU.</b> Η κατάταξη ξεκινά από το πρόβλημα, όχι την προμήθεια.</p></div><div className="mm-count-ring"><b>100</b><span>SOURCING<br/>TARGETS</span></div></div>
