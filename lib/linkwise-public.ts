@@ -9,7 +9,7 @@ import type {CandidatePreview} from "./linkwise-preview";
 type Row={
  source_product_id:unknown; product_name:unknown; brand_name:unknown;
  price_eur:unknown; image_url:unknown; observed_at:unknown;
- category:unknown;
+ category:unknown; preview_state:unknown;
 };
 const httpsImage=(raw:unknown):string|null=>{
  if(typeof raw!=="string")return null;
@@ -23,7 +23,7 @@ export async function publicLinkwisePreviews(category:Category,budget:number,fet
  const key=process.env.FITMATCH_PUBLIC_CATALOG_KEY;
  if(!base||!key||!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(base))return [];
  const query=new URL("/rest/v1/fitmatch_feed_candidates",base);
- query.searchParams.set("select","source_product_id,product_name,brand_name,price_eur,image_url,observed_at,category");
+ query.searchParams.set("select","source_product_id,product_name,brand_name,price_eur,image_url,observed_at,category,preview_state");
  query.searchParams.set("category","eq."+category);
  query.searchParams.set("order","price_eur.asc");
  query.searchParams.set("limit","15");
@@ -39,13 +39,15 @@ export async function publicLinkwisePreviews(category:Category,budget:number,fet
      const p=item as Row;
      const price=Number(p.price_eur),observedAt=String(p.observed_at??"");
      const age=now-Date.parse(observedAt);
+     const historical=p.preview_state==="historical";
+     const recent=p.preview_state==="preview" || p.preview_state===undefined;
      if(String(p.category)!==category || typeof p.source_product_id!=="string" ||
        typeof p.product_name!=="string" || !p.product_name.trim() ||
        !Number.isFinite(price) || price<=0 || price>budget ||
-       !Number.isFinite(age) || age<0 || age>48*3600_000)continue;
+       !Number.isFinite(age) || age<0 || (historical?age>30*24*3600_000:age>48*3600_000) || (!recent && !historical))continue;
      candidates.push({
        id:p.source_product_id,title:p.product_name,brand:typeof p.brand_name==="string"?p.brand_name:null,
-       price,imageUrl:httpsImage(p.image_url),observedAt,status:"unverified_feed_preview"
+       price,imageUrl:httpsImage(p.image_url),observedAt,status:historical?"historical_feed_preview":"unverified_feed_preview"
      });
    }
    return candidates.slice(0,3);
