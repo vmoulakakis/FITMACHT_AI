@@ -1,4 +1,4 @@
-# FITMATCH AI — staging first
+# FITMATCH AI — deployed advisor, verified commerce gated
 
 Greek-language evidence-first buying advisor for fitness equipment in small homes. Not an e-shop.
 
@@ -27,3 +27,6 @@ Audit actual Linkwise feed.csv taxonomy, merchant program terms per category, ex
 This repo is staging-only and deliberately NOINDEX. Do not publish production without source-data audit, acceptance tests, Linkwise compliance review, security/privacy and explicit owner signoff.
 ## Linkwise CD104 feed (review-only)
 A server-side streaming JSON importer is available for the **owner-supplied CD104 feed**. Run `npm run linkwise:audit` with the private `LINKWISE_FITMATCH_FEED_URL` configured, then inspect the local candidate previews in staging. This does not automatically approve products or connect the separate live ChatGPT Site. See [integration and verification instructions](docs/LINKWISE_CD104_INTEGRATION.md). No Awin integration is included.
+
+## Persistent Linkwise candidates (2026-10-29)
+The production advisor can read fresh, sanitized, **UNVERIFIED** product previews from the isolated RLS-protected table `public.fitmatch_feed_candidates` on the connected Supabase instance. This table does **not** contain tracking URLs or commission estimates. Vercel uses a publishable key. Trusted feed workers must first run `npm run linkwise:audit` and then **explicitly** run `npm run linkwise:publish-previews` with a service-role key in a worker (never Vercel). The publisher has not been confirmed to run on the full original feed and the production table may remain empty. The recommendation and purchase gates remain fail-closed. Details in docs/LINKWISE_CD104_INTEGRATION.md.
