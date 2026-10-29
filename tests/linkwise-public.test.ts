@@ -48,3 +48,24 @@ test("public catalog handles denied RLS and malformed payloads safely",async()=>
   if(oldKey===undefined)delete process.env.FITMATCH_PUBLIC_CATALOG_KEY;else process.env.FITMATCH_PUBLIC_CATALOG_KEY=oldKey;
  }
 });
+
+test("historical verified-category sample is visibly dated and never includes a buy link",async()=>{
+ const u=process.env.FITMATCH_PUBLIC_CATALOG_URL,k=process.env.FITMATCH_PUBLIC_CATALOG_KEY;
+ try{
+  process.env.FITMATCH_PUBLIC_CATALOG_URL="https://example123.supabase.co";
+  process.env.FITMATCH_PUBLIC_CATALOG_KEY="sb_publishable_test_123";
+  const source={source_product_id:"bike-1",product_name:"HMS fitness bike",brand_name:null,
+   category:"exercise-bike",price_eur:187.87,image_url:"https://cdn.example.org/bike.jpg",
+   observed_at:new Date(Date.now()-7*86400000).toISOString(),preview_state:"historical"};
+  const got=await publicLinkwisePreviews("exercise-bike",500,async()=>new Response(JSON.stringify([source]),{status:200}));
+  assert.equal(got.length,1);
+  assert.equal(got[0].status,"historical_feed_preview");
+  assert.deepEqual("trackingUrl" in got[0],false);
+  const obsolete={...source,observed_at:new Date(Date.now()-40*86400000).toISOString()};
+  const stale=await publicLinkwisePreviews("exercise-bike",500,async()=>new Response(JSON.stringify([obsolete]),{status:200}));
+  assert.deepEqual(stale,[]);
+ }finally{
+  if(u===undefined)delete process.env.FITMATCH_PUBLIC_CATALOG_URL;else process.env.FITMATCH_PUBLIC_CATALOG_URL=u;
+  if(k===undefined)delete process.env.FITMATCH_PUBLIC_CATALOG_KEY;else process.env.FITMATCH_PUBLIC_CATALOG_KEY=k;
+ }
+});

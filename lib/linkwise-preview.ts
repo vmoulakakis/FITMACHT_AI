@@ -12,7 +12,7 @@ import type {LinkwiseCandidate} from "./linkwise-feed";
 
 export type CandidatePreview={
   id:string;title:string;brand:string|null;price:number;imageUrl:string|null;
-  observedAt:string;status:"unverified_feed_preview";
+  observedAt:string;status:"unverified_feed_preview"|"historical_feed_preview";
 };
 export async function linkwisePreviews(category:Category,budget:number):Promise<CandidatePreview[]>{
   // Only a local, intentionally configured private staging path is read.
