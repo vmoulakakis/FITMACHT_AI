@@ -93,3 +93,18 @@ Current Linkwise membership per merchant, program ID, category terms, exclusions
 **Commission and publication:** Historical estimates >=10 EUR are screening indicators, not evidence that a commission is approved or payable. Merchant program identity, live program terms, stock and product specs must be verified before outbound affiliate links can be activated.
 
 **Deployment caveat:** The GitHub workflow requires encrypted FITMATCH_LINKWISE_FEED_URL and FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY and variable FITMATCH_IMPORT_SUPABASE_URL. This patch does not assert those are configured and does not claim that a complete live feed was imported.
+
+
+## Owner supplied CSV URL — verified 2026-10-29
+
+The current owner-supplied link ends in `/catinc-3/catex-0/proginc-0/progex-0/feed.csv`. A bounded direct source probe confirmed HTTP 200, `text/csv; charset=utf-8`, 27 named columns in the actual server order. In the real header, `extra_images` appeared before `in_stock`, despite the requested URL listing it last; import by **header names** rather than positional index.
+
+A bounded scan parsed **400 complete source records with 0 malformed CSV rows**; initial products were children's clothing and shoes. Category frequencies were predominantly `Παιδικά - Βρεφικά/...` (shirts, shoes, sandals, baby accessories). This is a sampled source observation; it does not prove every later record belongs to that category, and it does not establish the full row count.
+
+The `/catinc-3/` path is a category inclusion filter. The exact mapping of numeric category ID `3` has not been independently confirmed, but this export visibly includes baby/children's merchandise and should **not** be treated as a full home-fitness catalog. Do not change the ID without the account's documented category mapping.
+
+Updated `validateFeedUrl` permits both `.csv` and `.json`; `streamCsvObjects` handles UTF-8 BOM, quoted multiline descriptions, comma-separated values and re-ordered headers; streaming audit chooses parser by source URL and categorizes only genuine gym equipment. Fail closed if zero matching items, without importing children's clothing into FitMatch.
+
+The bounded probe was redeployed as a disabled function with JWT enabled immediately after evidence collection.
+
+To complete the full inventory, the dedicated runner needs its existing GitHub Action secrets and a category-inclusive Linkwise CSV feed that actually contains the target home-fitness categories. Both the total candidate count and verified commissions remain UNKNOWN until the full authorized source traversal and merchant-terms reconciliation complete.
