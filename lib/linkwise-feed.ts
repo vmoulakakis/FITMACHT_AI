@@ -44,27 +44,57 @@ const https = (v:unknown):string|null => {
   }catch{return null;}
 };
 const trueStock=(v:unknown):boolean => v===true||v===1||["true","yes","y","1","in stock","available","διαθέσιμο"].includes(str(v).toLowerCase());
-const rejectedParts=/ανταλλακτικ|θήκη|κάλυμμα|λιπαντικ|accessor|replacement|spare part|charger|φορτισ|πατάκι|χαλάκι|mat\b|καλώδιο|τηλεχειριστ|συντήρησ|belt only/i;
-
-/** Conservative candidate taxonomy: never equate text matching with verified specs. */
-function inferCategory(s:string):Category|null{
-  if(/walking[\s-]*pad|διάδρομ.{0,16}περπατ|διάδρομος βάδισης/i.test(s))return "walking-pad";
-  if(/treadmill|διάδρομ.{0,16}(γυμναστικ|τρεξίμ|τρεξιμ)/i.test(s))return "treadmill";
-  if(/exercise[\s-]*bike|spin[\s-]*bike|ποδήλατ.{0,18}(γυμναστικ|στατικ)|στατικ.{0,14}ποδήλατ/i.test(s))return "exercise-bike";
-  if(/adjustable[\s-]*dumbbell|ρυθμιζόμεν.{0,14}αλτήρ|ρυθμιζομεν.{0,14}αλτηρ/i.test(s))return "adjustable-dumbbells";
-  if(/resistance[\s-]*bands?|λάστιχ.{0,15}αντίστασ|λαστιχ.{0,15}αντιστασ|ιμάντ.{0,15}αντίστασ/i.test(s))return "resistance-bands";
-  if(/πάγκος γυμναστικής|παγκος γυμναστικ|adjustable[\s-]*weight[\s-]*bench|weight[\s-]*bench/i.test(s))return "weight-bench";
-  if(/dumbbell|βαράκ|αλτήρ|αλτηρ/i.test(s) && !/(ρυθμιζόμεν|adjustable|κολάρα|μανταλάκια|100[\s-]*kg|άκρων)/i.test(s))return "fixed-dumbbells";
+const rejectedParts=/(?:ανταλλακτικ|spare[\s-]*part|replacement[\s-]*part|θήκη|καλυμμ|λιπαντικ|lubricant|charger|φορτιστ|καλωδι|τηλεχειριστ|συντηρησ|belt only|κoλαρ|κολαρ|μανταλακι|αξεσουαρ ανταλλακτικ)/i;
+const fold=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("el-GR").replace(/&gt;|&amp;|&lt;/g," ");
+/**
+ * Classify actual home-fitness equipment; never use price as an inclusion filter.
+ * A precise category is useful for brand/model-only titles, but generic "Sports"
+ * categories cannot override unrelated title evidence.
+ */
+function inferCategory(title:string,merchantCategory:string):Category|null{
+  const t=fold(title),cat=fold(merchantCategory);
+  const exact:(readonly [RegExp,Category])[]=[
+    [/walking[\s-]*pad|διαδρομ.{0,20}περπατ|διαδρομος βαδισης/,"walking-pad"],
+    [/treadmill|διαδρομ.{0,20}(γυμναστ|τρεξιμ|running)/,"treadmill"],
+    [/elliptical|ελλειπτικ/,"elliptical"],
+    [/rowing[\s-]*(machine|trainer)|κωπηλατικ/,"rowing-machine"],
+    [/exercise[\s-]*bike|spinning[\s-]*bike|spin[\s-]*bike|magnetic[\s-]*bike|ποδηλατ.{0,20}(γυμναστ|στατικ)|στατικ.{0,14}ποδηλατ/,"exercise-bike"],
+    [/adjustable[\s-]*dumbbell|ρυθμιζομεν.{0,16}αλτηρ/,"adjustable-dumbbells"],
+    [/kettlebell|δραμι/,"kettlebells"],
+    [/resistance[\s-]*bands?|λαστιχ.{0,18}(αντιστασ|γυμναστ)|ιμαντ.{0,18}αντιστασ|exercise[\s-]*bands?/,"resistance-bands"],
+    [/πολυοργαν.{0,15}γυμναστ|multi[\s-]*gym|home[\s-]*gym|power[\s-]*rack|smith[\s-]*machine/,"home-gym"],
+    [/παγκ.{0,20}(γυμναστ|βαρ)|weight[\s-]*bench|workout[\s-]*bench/,"weight-bench"],
+    [/μονοζυγ|διζυγ|pull[\s-]*up[\s-]*bar|chin[\s-]*up[\s-]*bar|dip[\s-]*station/,"pull-up-bars"],
+    [/stepper|step[\s-]*machine|στεπερ/,"stepper"],
+    [/pilates[\s-]*reformer|reformer[\s-]*pilates|δακτυλιδι[\s-]*pilates|pilates[\s-]*ring|μπαλα[\s-]*pilates|pilates[\s-]*ball/,"pilates-equipment"],
+    [/yoga[\s-]*mat|exercise[\s-]*mat|fitness[\s-]*mat|στρωματ.{0,16}(γυμναστ|yoga|γιoγκα)|χαλακ.{0,16}(γυμναστ|yoga|γιoγκα)/,"exercise-mat"],
+    [/dumbbell|βαρακ|αλτηρ|αριστηρες? γυμναστ/,"fixed-dumbbells"]
+  ];
+  for(const [regex,category] of exact)if(regex.test(t))return category;
+  // Taxonomy fallback only when merchant category names a specific machine.
+  // Generic fitness/sport/gym categories never qualify by themselves.
+  const precise:(readonly [RegExp,Category])[]=[
+    [/ελλειπτικ|elliptical/,"elliptical"],
+    [/κωπηλατικ|rowing machines?/,"rowing-machine"],
+    [/διαδρομ.{0,18}περπατ|walking pads?/,"walking-pad"],
+    [/διαδρομοι γυμναστ|treadmills?/,"treadmill"],
+    [/ποδηλατ.{0,18}γυμναστ|exercise bikes?/,"exercise-bike"],
+    [/πολυοργανα γυμναστ|home gyms?/,"home-gym"],
+    [/παγκοι γυμναστ|weight benches/,"weight-bench"],
+    [/αλτηρ|βαρακ|dumbbells?/,"fixed-dumbbells"],
+    [/λαστιχ.{0,18}(αντιστασ|γυμναστ)|resistance bands?/,"resistance-bands"]
+  ];
+  for(const [regex,category] of precise){
+    if(regex.test(cat)&&!/(?:σετ ανταλλακτικ|spare|replacement|shirt|tshirt|μπλουζ|παντελον|φανελ|αξεσουαρ)/.test(t))return category;
+  }
   return null;
 }
 export function classifyFitness(row:SourceRow):Category|null {
-  const product=str(row.product_name).toLocaleLowerCase("el-GR").normalize("NFC");
-  const category=str(row.category).toLocaleLowerCase("el-GR").normalize("NFC");
-  if(!product||rejectedParts.test(product))return null;
-  // Product-specific text outranks a stale or over-broad merchant category.
-  // Do not infer a machine from a broad merchant category when the title is unrelated.
-  // This prevents clothing, linens and accessories from appearing as gym equipment.
-  return inferCategory(product);
+ const name=str(row.product_name)||str(row.model_name);
+ if(!name||rejectedParts.test(fold(name)))return null;
+ // Cross-category hygiene: a merchant's fitness bucket can contain misfiled items.
+ if(/(?:σεντον|κουρτιν|κλινοσκεπ|κοσμημ|βραχιολ|μπλουζ|παντελον|t[\\s-]*shirt|jacket|bed[\\s-]*sheet|linen[\\s-]*sheet)/.test(fold(name)))return null;
+ return inferCategory(name,str(row.category));
 }
 
 export function normalizeLinkwise(row:unknown,observedAt:string):LinkwiseCandidate|null {

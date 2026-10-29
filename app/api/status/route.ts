@@ -4,7 +4,7 @@ import {publicLinkwisePreviews} from "@/lib/linkwise-public";
 export const dynamic="force-dynamic";
 export async function GET(){
  const c=await catalog();
- const categories=["walking-pad","treadmill","exercise-bike","adjustable-dumbbells","resistance-bands","fixed-dumbbells","weight-bench"] as const;
+ const categories=["walking-pad","treadmill","exercise-bike","adjustable-dumbbells","resistance-bands","fixed-dumbbells","weight-bench","elliptical","rowing-machine","home-gym","kettlebells","pull-up-bars","stepper","exercise-mat","pilates-equipment"] as const;
  const previews=await Promise.all(categories.map(cat=>publicLinkwisePreviews(cat,100000,fetch,100)));
  return NextResponse.json({
   app:"FITMATCH AI",environment:process.env.VERCEL_ENV==="production"?"production":"staging",

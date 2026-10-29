@@ -10,7 +10,15 @@ const categories:Record<string,string>={
  "adjustable-dumbbells":"Ρυθμιζόμενοι αλτήρες",
  "fixed-dumbbells":"Αλτήρες / βαράκια",
  "weight-bench":"Πάγκοι",
- "resistance-bands":"Λάστιχα αντίστασης"
+ "resistance-bands":"Λάστιχα αντίστασης",
+ "elliptical":"Ελλειπτικά",
+ "rowing-machine":"Κωπηλατικά",
+ "home-gym":"Πολυόργανα",
+ "kettlebells":"Kettlebells",
+ "pull-up-bars":"Μονόζυγα / δίζυγα",
+ "stepper":"Steppers",
+ "exercise-mat":"Στρώματα yoga / γυμναστικής",
+ "pilates-equipment":"Εξοπλισμός Pilates"
 };
 export default function ProductExplorer({items}:{items:CatalogItem[]}){
  const [category,setCategory]=useState("all"),[query,setQuery]=useState(""),[maxBudget,setMaxBudget]=useState("all"),[page,setPage]=useState(0);
