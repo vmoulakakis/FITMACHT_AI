@@ -1,6 +1,6 @@
 "use client";
-import {useMemo,useState} from "react";
-import {ArrowUpRight,ArrowRight,ArrowLeft,Activity,MoveUpRight,SlidersHorizontal,Check,ChevronRight,Search,Command,ShieldCheck,Footprints,Dumbbell,Moon,MapPin,Database,Plus,RotateCcw,X,ExternalLink} from "lucide-react";
+import {useMemo,useState,useEffect} from "react";
+import {ArrowUpRight,ArrowRight,ArrowLeft,Activity,MoveUpRight,SlidersHorizontal,Check,ChevronRight,Search,Command,ShieldCheck,Footprints,Dumbbell,Moon,MapPin,Database,Plus,RotateCcw,X,ExternalLink,Share2,ClipboardCheck,Lightbulb,ShieldAlert} from "lucide-react";
 import {painGroups,targetItems,matchTargets} from "@/lib/mikromove-data";
 import type {TargetItem} from "@/lib/mikromove-data";
 type SourceExample={id:string;title:string;price:number;category:string;imageUrl:string|null;observedAt:string};
@@ -24,11 +24,44 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
  const [group,setGroup]=useState("all");
  const [showSources,setShowSources]=useState(false);
  const [saved,setSaved]=useState<string[]>([]);
+ const [shareStatus,setShareStatus]=useState("");
+ const [shareUrl,setShareUrl]=useState("");
+ useEffect(()=>{
+  const qs=new URLSearchParams(window.location.search);
+  const chosen=qs.get("pain");
+  if(qs.get("view")!=="match" || !chosen || !painGroups.some(g=>g.id===chosen))return;
+  setPain(chosen);
+  setCompact(qs.get("space")!=="flexible");
+  setQuiet(qs.get("quiet")!=="0");
+  const b=qs.get("budget");
+  if(["έως 100","100-300","300+"].includes(b||""))setBudget(b!);
+  setMode("match");setStep(2);
+ },[]);
  const selected=painGroups.find(g=>g.id===pain)||painGroups[0];
  const match=useMemo(()=>matchTargets(pain,compact?"compact":"flexible",quiet),[pain,compact,quiet]);
  const filtered=useMemo(()=>targetItems.filter(t=>(group==="all"||t.group===group)&&t.name.toLocaleLowerCase("el-GR").includes(query.toLocaleLowerCase("el-GR"))),[group,query]);
  const budgetCeiling=budget==="έως 100"?100:budget==="100-300"?300:Infinity;
  const relevant=examples.filter(e=>selected.categories.includes(e.category)&&e.price<=budgetCeiling);
+ const shareMatch=async()=>{
+   const params=new URLSearchParams({view:"match",pain,space:compact?"compact":"flexible",quiet:quiet?"1":"0",budget});
+   const link=window.location.origin+"/mikromove?"+params.toString();
+   const message="Βρήκα μια διαδρομή για "+selected.title.toLocaleLowerCase("el-GR")+" στο MIKRO/MOVE — επιλογές βάσει πραγματικών αναγκών, όχι τυχαίες προσφορές.";
+   setShareUrl(link);setShareStatus("");
+   try{
+     if(navigator.share){
+       await navigator.share({title:"MIKRO/MOVE · "+selected.title,text:message,url:link});
+       setShareStatus("Η επιλογή κοινοποιήθηκε μέσω της συσκευής.");
+     }else if(navigator.clipboard){
+       await navigator.clipboard.writeText(message+" "+link);
+       setShareStatus("Αντιγράφηκε ο σύνδεσμος για να τον στείλεις.");
+     }else{
+       setShareStatus("Αντέγραψε τον παρακάτω σύνδεσμο.");
+     }
+   }catch(e){
+     if(e instanceof Error&&e.name==="AbortError")return;
+     setShareStatus("Αντέγραψε τον παρακάτω σύνδεσμο.");
+   }
+ };
  const toggle=(id:string)=>setSaved(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
  const show=(next:Mode)=>{setMode(next);setShowSources(false)};
  const saveText=()=>{const names=targetItems.filter(t=>saved.includes(t.id)).map(t=>t.id+" — "+t.name).join("\n");if(names&&typeof navigator!=="undefined"&&navigator.clipboard)void navigator.clipboard.writeText("MIKRO/MOVE · shortlist προς έρευνα\n"+names);};
@@ -83,6 +116,8 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
        <div className="mm-setting"><b>Ενδεικτικό budget</b><div className="mm-toggle-row">{["έως 100","100-300","300+"].map(k=><button className={budget===k?"active":""} key={k} onClick={()=>setBudget(k)}>{k==="έως 100"?"Έως 100€":k==="300+"?"300€+": "100–300€"}</button>)}</div></div>
       </div>:
       <div className="mm-chooser mm-result-info"><span className="mm-overline">ΠΡΟΣΩΠΙΚΗ ΔΙΑΔΡΟΜΗ</span><h3>{selected.title}</h3><p>{selected.pain}. Αναζήτησε λύσεις με βάση: <b>{selected.check.toLocaleLowerCase("el-GR")}</b>.</p><div className="mm-result-legend"><span className="mm-legend-square"/> Οι παρακάτω λύσεις είναι προφίλ προς έρευνα, όχι αγοραστικές προσφορές.</div>
+       <div className="mm-match-reasons"><div><Lightbulb size={17}/><span><b>Γιατί αυτές;</b> Πρώτα λύνουμε το πρόβλημα «{selected.pain.toLocaleLowerCase("el-GR")}». {compact?"Δίνουμε προτεραιότητα στην αποθήκευση.":"Ο χώρος είναι πιο ευέλικτος."} {quiet?"Εξετάζουμε επίσης πιθανό θόρυβο και δονήσεις.":""}</span></div><div><ShieldAlert size={17}/><span><b>Τι να ελέγξεις;</b> {selected.check}. Πριν αγοράσεις, χρειάζονται μετρήσεις, πραγματική τιμή, επιστροφές και αξιόπιστος merchant.</span></div></div>
+       <div className="mm-share-zone"><button className="mm-share-btn" type="button" onClick={shareMatch}><Share2 size={17}/> Μοιράσου την πρότασή σου</button>{shareStatus&&<span role="status">{shareStatus}</span>}{shareUrl&&<input aria-label="Προσωπικός σύνδεσμος επιλογής" readOnly value={shareUrl} onFocus={e=>e.currentTarget.select()}/>}</div>
        <button onClick={()=>setShowSources(x=>!x)} className="mm-sources-button">{showSources?"Κλείσε":"Δες"} τις {relevant.length} συναφείς πραγματικές καταχωρίσεις <ArrowRight size={16}/></button>
       </div>}
      <div className="mm-wizard-footer"><button disabled={step===0} onClick={()=>setStep(s=>Math.max(0,s-1))}><ArrowLeft size={17}/> Πίσω</button>{step<2?<button className="mm-next" onClick={()=>setStep(s=>s+1)}>Συνέχεια <ArrowRight size={17}/></button>:<button className="mm-next" onClick={()=>{setStep(0);setShowSources(false)}}><RotateCcw size={17}/> Από την αρχή</button>}</div>
@@ -91,6 +126,7 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
      <div className="mm-recommendations"><h3>{step===2?selected.short+" / Δυνατές λύσεις":"Οι στόχοι αλλάζουν καθώς επιλέγεις"}</h3><div className="mm-top3">{match.slice(0,3).map((t,i)=>itemCard(t,i))}</div>
       {showSources&&<div className="mm-sourced"><div className="mm-sourced-head"><h4>Αληθινές εγγραφές της βάσης</h4><button onClick={()=>setShowSources(false)} aria-label="Κλείσιμο"><X size={19}/></button></div>{relevant.length?relevant.slice(0,6).map(x=><div key={x.category+"-"+x.id} className="mm-source-row"><div>{x.imageUrl?<img src={x.imageUrl} loading="lazy" alt={x.title}/>:<Dumbbell size={18}/>}</div><span>{x.title}<small>{sourceGroups[x.category]} · {new Date(x.observedAt).toLocaleDateString("el-GR")} · μη επιβεβαιωμένη διαθεσιμότητα</small></span><b>{currency(x.price)}</b></div>):<p>Δεν βρέθηκε συναφής εγγραφή στην τρέχουσα δημόσια βάση. Δεν θα επινοήσουμε προϊόν ή τιμή.</p>}</div>}
      </div>
+     <div className="mm-trust-strip"><span><ShieldCheck size={15}/> Καμία ψεύτικη έκπτωση</span><span><ClipboardCheck size={15}/> 3 λύσεις, όχι επιλογές χωρίς τέλος</span><span><Share2 size={15}/> Μοιράζεσαι μόνο εσύ</span></div>
      <p className="mm-side-note">Σημείωση: δεν κάνουμε ιατρικές διαγνώσεις ή υποσχέσεις θεραπείας. Το budget φιλτράρει μόνο τις ιστορικές τιμές προϊόντων, όχι τους στόχους χωρίς επαληθευμένη τιμή. Η καταλληλότητα οργάνων εξαρτάται από τις προσωπικές σου ανάγκες.</p>
     </div>
    </main>}
@@ -104,6 +140,6 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
      <section><span>03 / ΕΦΟΔΙΑΣΜΟΣ</span><h3>Αληθινό inventory ή καθαρό sourcing status.</h3><p>Η βάση SocialMarket/Linkwise περιλαμβάνει υπάρχουσες ιστορικές εγγραφές, αλλά δεν έχουμε 100 επιβεβαιωμένες προσφορές. Κάθε τιμή χρειάζεται νέο έλεγχο, κάθε προμήθεια ισχύοντες όρους εμπόρου.</p><a href="/mikromove/guide">Ο πρακτικός οδηγός επιλογής <ArrowUpRight size={16}/></a></section>
      <section><span>04 / ΣΕΒΑΣΜΟΣ</span><h3>Ελληνικό περιεχόμενο με αναγνωρίσιμες πηγές.</h3><p>Χωρίς ψεύτικα reviews, ατεκμηρίωτα «best», δήθεν stock, «έκπτωση μόνο σήμερα» ή μη επιβεβαιωμένες εγγυήσεις. Η αγοραστική ροή ενεργοποιείται μόνο όταν έχουν πιστοποιηθεί τα πραγματικά προϊόντα.</p><a href="/mikromove/guide">Δες την αναλυτική μεθοδολογία <ArrowUpRight size={16}/></a></section></div></main>}
   </div>
-  <footer className="mm-footer"><span>MIKRO/MOVE © 2026</span><span>POWERED BY HUMAN NEEDS · MARKET INTELLIGENCE</span><a href="/methodology">FITMATCH LAB · Η ΠΑΛΑΙΟΤΕΡΗ ΜΕΘΟΔΟΛΟΓΙΑ</a></footer>
+  <footer className="mm-footer"><span>MIKRO/MOVE © 2026 · Affiliate disclosure: μελλοντικοί σύνδεσμοι ενδέχεται να αποδίδουν προμήθεια.</span><span>POWERED BY HUMAN NEEDS · MARKET INTELLIGENCE</span><a href="/methodology">FITMATCH LAB · Η ΠΑΛΑΙΟΤΕΡΗ ΜΕΘΟΔΟΛΟΓΙΑ</a></footer>
  </div>;
 }
