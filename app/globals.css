@@ -16,3 +16,23 @@
 /* Staging-only Linkwise discovery previews: never confused with verified offers */
 .candidatePreviewArea{display:grid;gap:14px}.candidateNotice{display:flex;align-items:flex-start;gap:9px;padding:16px;border:1px solid #f0ddae;border-radius:12px;background:#fffaf0;color:#725c2f;font-size:12px;line-height:1.6;margin:0}.candidateNotice svg{flex-shrink:0}.candidateCard{display:flex;gap:16px;align-items:center;padding:15px;border:1px solid var(--line);background:#fff;border-radius:13px}.candidateCard img,.candidatePlaceholder{width:88px;height:88px;object-fit:contain;border-radius:8px;background:#f2f7ec;flex-shrink:0}.candidatePlaceholder{display:grid;place-items:center;color:#80a44b}.candidateInfo{flex:1;min-width:0;display:grid;gap:6px}.candidateInfo b{font-size:13px;line-height:1.5}.candidateInfo small,.candidateInfo span,.candidatePrice small{font-size:10px;line-height:1.5;color:#758675}.candidatePrice{font:800 17px Manrope,sans-serif;white-space:nowrap;display:grid;justify-items:end}.candidatePrice small{font-weight:400}
 @media(max-width:520px){.candidateCard{flex-wrap:wrap}.candidateCard img,.candidatePlaceholder{width:68px;height:68px}.candidateInfo{flex:1 1 calc(100% - 90px)}.candidatePrice{width:100%;justify-items:start;padding-left:84px}}
+
+
+/* Actual source-backed Linkwise inventory, visibly historical and non-clickable */
+.featuredFitness{max-width:1220px;margin:0 auto;padding:42px 26px 30px}
+.featuredFitnessHeader{max-width:740px;margin-bottom:22px}
+.featuredFitnessHeader h2{font-size:clamp(24px,3.2vw,38px);line-height:1.15;letter-spacing:-1px;margin:9px 0 14px;color:#23513b}
+.featuredFitnessHeader h2 em{color:#86a85d;font-weight:500}
+.featuredFitnessHeader p,.featuredFitnessFoot{color:#708171;font-size:12px;line-height:1.8}
+.featuredFitnessGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.featuredFitnessCard{overflow:hidden;border:1px solid #d9e7d6;border-radius:16px;background:#fff;min-width:0;box-shadow:0 4px 20px rgba(21,54,24,.045)}
+.featuredFitnessImage{height:172px;background:#f7f9f4;display:flex;align-items:center;justify-content:center;padding:12px}
+.featuredFitnessImage img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.featuredFitnessCopy{display:flex;flex-direction:column;gap:9px;padding:15px 15px 18px}
+.featuredFitnessCopy .sampleFlag{color:#8b681e;background:#fff6e2;align-self:flex-start;border-radius:20px;padding:4px 8px;font-size:9px;font-weight:800}
+.featuredFitnessCopy h3{font-size:12px;line-height:1.6;color:#315444;margin:0;min-height:58px}
+.featuredFitnessCopy strong{font-size:20px;color:#20553c}
+.featuredFitnessCopy small{font-size:10px;line-height:1.6;color:#81917c}
+.featuredFitnessFoot{margin-top:14px}
+@media(max-width:900px){.featuredFitnessGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.featuredFitness{padding:38px 18px 20px}.featuredFitnessGrid{gap:9px}.featuredFitnessImage{height:125px}.featuredFitnessCopy{padding:12px;gap:7px}.featuredFitnessCopy h3{font-size:11px;min-height:74px}.featuredFitnessCopy strong{font-size:17px}.featuredFitnessCopy small{font-size:9px}}
