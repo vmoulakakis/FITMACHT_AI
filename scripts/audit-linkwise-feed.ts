@@ -12,6 +12,7 @@ import {once} from "node:events";
 import {finished} from "node:stream/promises";
 import {normalizeLinkwise,streamJsonObjects,validateFeedUrl} from "../lib/linkwise-feed";
 
+async function main():Promise<void>{
 const url=validateFeedUrl(process.env.LINKWISE_FITMATCH_FEED_URL||"");
 const path=resolve(process.env.FITMATCH_LINKWISE_AUDIT_PATH||".fitmatch-private/linkwise-cd104-candidates.jsonl");
 const observedAt=new Date().toISOString();
@@ -53,3 +54,6 @@ try{
   await rm(temp,{force:true});
   throw e;
 }
+
+}
+main().catch(e=>{console.error(e instanceof Error?e.message:String(e));process.exitCode=1;});
