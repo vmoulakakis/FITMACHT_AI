@@ -26,7 +26,11 @@ export const extraMerchantResearch:ScreenedCandidate[]=[
  {id:"hms-17-13-001",title:"HMS Premium H1833i electromagnetic elliptical cross trainer",priceEur:1068.79,category:"elliptical"},
  {id:"hms-17-12-015",title:"HMS Premium H1742 magnetic elliptical cross trainer",priceEur:1406.40,category:"elliptical"},
  {id:"hms-17-08-001",title:"HMS R1817 horizontal exercise bike",priceEur:1068.78,category:"exercise-bike"},
- {id:"hms-17-60-010",title:"HMS BLACK GO700 Olympic bar",priceEur:284.94,category:"strength-equipment"}
+ {id:"hms-17-60-010",title:"HMS BLACK GO700 Olympic bar",priceEur:284.94,category:"strength-equipment"},
+ {id:"hms-17-03-100",title:"HMS MP6590 air bike",priceEur:282.70,category:"exercise-bike"},
+ {id:"hms-17-50-012",title:"Atlas with bench HMS Titan 12 150 LBS",priceEur:646.80,category:"home-gym"},
+ {id:"hms-rsch-1722201",title:"HMS MA1001 programmed massager 1722201",priceEur:341.35,category:"wellness-device"},
+ {id:"hms-rsch-atlasx1",title:"HMS Atlas X1 Πολυόργανο Γυμναστικής χωρίς Βάρη",priceEur:834.59,category:"home-gym"}
 ].map(v=>({...v,imageUrl:null,source:"merchant_public_page" as const,sourceDate:"2026-10-29",merchant:"Mybrand.shoes",review:"program_pending" as const,sourcePage:"https://mybrand.shoes/el/446_hms"}));
 export function screenCandidate(item:ScreenedCandidate){
  const indicative=commissionScenario(item.priceEur);
