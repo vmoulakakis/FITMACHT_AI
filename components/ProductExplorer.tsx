@@ -33,7 +33,7 @@ export default function ProductExplorer({items}:{items:CatalogItem[]}){
    <a href="/" className="catalogBack"><ArrowLeft size={16}/> Πίσω στον AI σύμβουλο</a>
    <div className="catalogHero"><div className="overline">FITMATCH AI · ΠΡΑΓΜΑΤΙΚΟΣ ΚΑΤΑΛΟΓΟΣ</div>
       <h1>Εξοπλισμός για το σπίτι. <em>Όχι τυχαία προϊόντα.</em></h1>
-      <p>{items.length} πραγματικές εγγραφές fitness από τη δική μας βάση Linkwise. Οι τιμές και οι ενδείξεις διαθεσιμότητας είναι από τη στιγμή καταγραφής τους — όχι live προσφορές.</p>
+      <p>{items.length} ιστορικές εγγραφές fitness από τη βάση Linkwise, όχι ολόκληρο τον κατάλογο του νέου CD104 CSV. Οι τιμές και οι ενδείξεις διαθεσιμότητας είναι από τη στιγμή καταγραφής τους — όχι live προσφορές.</p>
       <div className="catalogCaution"><ShieldAlert size={18}/> Η προμήθεια, η σημερινή διαθεσιμότητα και οι τεχνικές προδιαγραφές δεν έχουν ακόμη επαληθευτεί. Γι' αυτό δεν εμφανίζονται κουμπιά αγοράς.</div>
    </div>
    <div className="catalogFilters">
