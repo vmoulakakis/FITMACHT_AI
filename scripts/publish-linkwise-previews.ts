@@ -22,7 +22,7 @@ async function main(){
  const safeRoot=resolve(".fitmatch-private");
  if(!file.startsWith(safeRoot+"/"))throw new Error("invalid_private_snapshot_path");
  const size=(await stat(file)).size;
- if(size<=0||size>40_000_000)throw new Error("invalid_private_snapshot_size");
+ if(size<=0||size>120_000_000)throw new Error("invalid_private_snapshot_size");
  const rows:Record<string,unknown>[]=[];
  let examined=0,published=0;
  const lines=createInterface({input:createReadStream(file,{encoding:"utf8"}),crlfDelay:Infinity});
@@ -47,7 +47,7 @@ async function main(){
       p.currency!=="EUR"||p.inStock!==true||typeof p.sourceProductId!=="string"||
       !p.sourceProductId||typeof p.productName!=="string"||p.productName.length<2||
       p.productName.length>500||!Number.isFinite(p.priceEur)||p.priceEur<=0||
-      !["walking-pad","treadmill","exercise-bike","adjustable-dumbbells","resistance-bands"].includes(p.category))continue;
+      !["walking-pad","treadmill","exercise-bike","adjustable-dumbbells","resistance-bands","fixed-dumbbells","weight-bench"].includes(p.category))continue;
    const age=Date.now()-Date.parse(p.observedAt);
    if(!Number.isFinite(age)||age<0||age>48*3600_000)continue;
    rows.push({
