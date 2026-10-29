@@ -5,6 +5,18 @@ import {painGroups,targetItems,matchTargets} from "@/lib/mikromove-data";
 import type {TargetItem} from "@/lib/mikromove-data";
 type SourceExample={id:string;title:string;price:number;category:string;imageUrl:string|null;observedAt:string};
 type Mode="discover"|"match"|"library"|"evidence";
+const quickWins:Record<string,string>={
+ "movement":"Ξεκίνα με μικρά, ευχάριστα διαλείμματα κίνησης στον χώρο σου, χωρίς εξοπλισμό.",
+ "strength":"Δοκίμασε μια σύντομη ρουτίνα με ασκήσεις σωματικού βάρους, προσαρμοσμένη στις δυνατότητές σου.",
+ "desk":"Σήκω από την καρέκλα και άλλαζε θέση τακτικά. Δεν απαιτείται νέα συσκευή.",
+ "mobility":"Δοκίμασε λίγες ήπιες κινήσεις εντός άνετου εύρους, χωρίς πίεση ή πόνο.",
+ "sleep":"Έλεγξε πρώτα το φως, τον θόρυβο και τη θερμοκρασία στο δωμάτιο — δεν χρειάζεται απαραίτητα gadget.",
+ "air":"Μέτρησε απλά τις συνθήκες του χώρου και αξιολόγησε βασικές καθημερινές συνήθειες αερισμού.",
+ "quiet":"Ξεκίνα με ασκήσεις χωρίς άλματα και έλεγξε το δάπεδο πριν ξοδέψεις χρήματα σε μηχάνημα.",
+ "mature":"Προτίμησε απλές, σταθερές καθημερινές κινήσεις. Αν υπάρχει θέμα υγείας, ζήτησε εξατομικευμένη οδηγία από επαγγελματία.",
+ "travel":"Βάλε σύντομα διαλείμματα κίνησης στις μετακινήσεις, πριν σκεφτείς φορητό εξοπλισμό.",
+ "storage":"Βγάλε πρώτα ακριβείς μετρήσεις αποθήκευσης και φτιάξε μια θέση για όσα ήδη έχεις."
+};
 const firstCategory=painGroups[0].id;
 const sourceGroups:Record<string,string>={
  "walking-pad":"Walking pad","treadmill":"Διάδρομος","exercise-bike":"Ποδήλατο",
@@ -26,6 +38,7 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
  const [saved,setSaved]=useState<string[]>([]);
  const [shareStatus,setShareStatus]=useState("");
  const [shareUrl,setShareUrl]=useState("");
+ const [showFreePath,setShowFreePath]=useState(false);
  useEffect(()=>{
   const qs=new URLSearchParams(window.location.search);
   const chosen=qs.get("pain");
@@ -117,6 +130,7 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
       </div>:
       <div className="mm-chooser mm-result-info"><span className="mm-overline">ΠΡΟΣΩΠΙΚΗ ΔΙΑΔΡΟΜΗ</span><h3>{selected.title}</h3><p>{selected.pain}. Αναζήτησε λύσεις με βάση: <b>{selected.check.toLocaleLowerCase("el-GR")}</b>.</p><div className="mm-result-legend"><span className="mm-legend-square"/> Οι παρακάτω λύσεις είναι προφίλ προς έρευνα, όχι αγοραστικές προσφορές.</div>
        <div className="mm-match-reasons"><div><Lightbulb size={17}/><span><b>Γιατί αυτές;</b> Πρώτα λύνουμε το πρόβλημα «{selected.pain.toLocaleLowerCase("el-GR")}». {compact?"Δίνουμε προτεραιότητα στην αποθήκευση.":"Ο χώρος είναι πιο ευέλικτος."} {quiet?"Εξετάζουμε επίσης πιθανό θόρυβο και δονήσεις.":""}</span></div><div><ShieldAlert size={17}/><span><b>Τι να ελέγξεις;</b> {selected.check}. Πριν αγοράσεις, χρειάζονται μετρήσεις, πραγματική τιμή, επιστροφές και αξιόπιστος merchant.</span></div></div>
+       <button type="button" className="mm-free-toggle" onClick={()=>setShowFreePath(v=>!v)}><Lightbulb size={16}/> {showFreePath?"Κλείσε τη δωρεάν επιλογή":"Πριν αγοράσεις: δοκίμασε κάτι χωρίς κόστος"} <ArrowRight size={14}/></button>{showFreePath&&<div className="mm-free-panel"><strong>Πρώτα μία μικρή αλλαγή.</strong><p>{quickWins[pain]}</p><small>Δεν αντικαθιστά ιατρική συμβουλή και δεν απαιτεί αγορά ή εγγραφή.</small></div>}
        <div className="mm-share-zone"><button className="mm-share-btn" type="button" onClick={shareMatch}><Share2 size={17}/> Μοιράσου την πρότασή σου</button>{shareStatus&&<span role="status">{shareStatus}</span>}{shareUrl&&<input aria-label="Προσωπικός σύνδεσμος επιλογής" readOnly value={shareUrl} onFocus={e=>e.currentTarget.select()}/>}</div>
        <button onClick={()=>setShowSources(x=>!x)} className="mm-sources-button">{showSources?"Κλείσε":"Δες"} τις {relevant.length} συναφείς πραγματικές καταχωρίσεις <ArrowRight size={16}/></button>
       </div>}
@@ -137,7 +151,7 @@ export default function MikroMove({examples}:{examples:SourceExample[]}){
    </main>}
    {mode==="evidence"&&<main className="mm-evidence"><div className="mm-section-tag">03 / PROOF BEFORE PROMOTION</div><h2>ΧΩΡΙΣ ΕΙΚΟΝΙΚΕΣ<br/><em>ΠΡΟΣΦΟΡΕΣ.</em></h2><div className="mm-evidence-grid"><section><span>01 / ΖΗΤΗΣΗ</span><h3>Η έλλειψη χρόνου και η αδράνεια είναι υπαρκτές.</h3><p>Το Ευρωβαρόμετρο του Σεπτεμβρίου 2026 δείχνει ότι το 65% των ερωτηθέντων στην Ελλάδα δεν ασκείται ποτέ. Αυτό δεν μετρά αγοραστική ζήτηση για τα συγκεκριμένα προϊόντα.</p><a href="https://sport.ec.europa.eu/whats-new/news/strong-increase-in-active-commuting-and-some-positive-changes-in-sport-and-exercise-habits-latest-special-eurobarometer-shows" target="_blank" rel="noreferrer">Ευρωπαϊκή Επιτροπή <ArrowUpRight size={14}/></a></section>
      <section><span>02 / ΠΡΟΒΛΗΜΑ</span><h3>Το προϊόν δεν είναι η λύση από μόνο του.</h3><p>Οι εργαζόμενοι αναφέρουν δυσκολίες στη ξεκούραση και στον ύπνο. Δεν ισχυριζόμαστε ότι κάποιο gadget θεραπεύει την αϋπνία ή την κούραση.</p><a href="https://minobi.gr/" target="_blank" rel="noreferrer">MINOBI · Έρευνα εργαζομένων <ArrowUpRight size={14}/></a></section>
-     <section><span>03 / ΕΦΟΔΙΑΣΜΟΣ</span><h3>Αληθινό inventory ή καθαρό sourcing status.</h3><p>Η βάση SocialMarket/Linkwise περιλαμβάνει υπάρχουσες ιστορικές εγγραφές, αλλά δεν έχουμε 100 επιβεβαιωμένες προσφορές. Κάθε τιμή χρειάζεται νέο έλεγχο, κάθε προμήθεια ισχύοντες όρους εμπόρου.</p><a href="/mikromove/guide">Ο πρακτικός οδηγός επιλογής <ArrowUpRight size={16}/></a></section>
+     <section><span>03 / ΕΦΟΔΙΑΣΜΟΣ</span><h3>Αληθινό inventory ή καθαρό sourcing status.</h3><p>Η βάση SocialMarket/Linkwise περιλαμβάνει υπάρχουσες ιστορικές εγγραφές, αλλά δεν έχουμε 100 επιβεβαιωμένες προσφορές. Κάθε τιμή χρειάζεται νέο έλεγχο, κάθε προμήθεια ισχύοντες όρους εμπόρου.</p><a href="/mikromove/sourcing">Δες τα πραγματικά προϊόντα και τον έλεγχο στόχου ≥10€ <ArrowUpRight size={16}/></a><a href="/mikromove/guide">Ο πρακτικός οδηγός επιλογής <ArrowUpRight size={16}/></a></section>
      <section><span>04 / ΣΕΒΑΣΜΟΣ</span><h3>Ελληνικό περιεχόμενο με αναγνωρίσιμες πηγές.</h3><p>Χωρίς ψεύτικα reviews, ατεκμηρίωτα «best», δήθεν stock, «έκπτωση μόνο σήμερα» ή μη επιβεβαιωμένες εγγυήσεις. Η αγοραστική ροή ενεργοποιείται μόνο όταν έχουν πιστοποιηθεί τα πραγματικά προϊόντα.</p><a href="/mikromove/guide">Δες την αναλυτική μεθοδολογία <ArrowUpRight size={16}/></a></section></div></main>}
   </div>
   <footer className="mm-footer"><span>MIKRO/MOVE © 2026 · Affiliate disclosure: μελλοντικοί σύνδεσμοι ενδέχεται να αποδίδουν προμήθεια.</span><span>POWERED BY HUMAN NEEDS · MARKET INTELLIGENCE</span><a href="/methodology">FITMATCH LAB · Η ΠΑΛΑΙΟΤΕΡΗ ΜΕΘΟΔΟΛΟΓΙΑ</a></footer>
