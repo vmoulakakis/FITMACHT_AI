@@ -69,3 +69,35 @@ test("includes real gym benches and fixed dumbbells, but not spare parts or line
  assert.equal(classifyFitness({...base,product_name:"Κολάρα Μανταλάκια για Αλτήρες Σετ"}),null);
  assert.equal(classifyFitness({...base,product_name:"Σεντόνι με λάστιχο",category:"Γυμναστική"}),null);
 });
+
+
+test("expanded home fitness taxonomy includes equipment missing from old 7-category filter",()=>{
+ const cases:[string,string][]=[
+  ["HMS Magnetic Elliptical Trainer","elliptical"],
+  ["Κωπηλατικό μηχάνημα εσωτερικού χώρου","rowing-machine"],
+  ["Πολυόργανο γυμναστικής 100kg","home-gym"],
+  ["Kettlebell 12kg","kettlebells"],
+  ["Μονόζυγο τοίχου","pull-up-bars"],
+  ["Mini Stepper cardio","stepper"],
+  ["Yoga mat 6mm","exercise-mat"],
+  ["Pilates Reformer Home","pilates-equipment"],
+  ["HMS Hex Pro αλτήρας 15kg","fixed-dumbbells"],
+  ["Walking Pad S2","walking-pad"]
+ ];
+ for(const [product_name,category] of cases){
+  assert.equal(classifyFitness({...base,product_name}),category,product_name);
+ }
+});
+test("precise feed categories identify model-only gym equipment, but not irrelevant items",()=>{
+ assert.equal(classifyFitness({...base,product_name:"HMS R10",category:"Αθλήματα > Όργανα Γυμναστικής > Κωπηλατικά"}),"rowing-machine");
+ assert.equal(classifyFitness({...base,product_name:"HMS X100",category:"Αθλήματα > Όργανα Γυμναστικής > Ελλειπτικά"}),"elliptical");
+ assert.equal(classifyFitness({...base,product_name:"Σεντόνι με λάστιχο",category:"Λάστιχα αντίστασης"}),null);
+ assert.equal(classifyFitness({...base,product_name:"Παντελόνι",category:"Διάδρομοι Γυμναστικής"}),null);
+ assert.equal(classifyFitness({...base,product_name:"T-Shirt Fitness",category:"Sports Wear"}),null);
+});
+test("does not treat 120 euro as a minimum product price; suitability and payout are separate",()=>{
+ const cheap=normalizeLinkwise({...base,product_name:"Yoga mat 6mm",price:"19.99"},when);
+ assert.ok(cheap);assert.equal(cheap.priceEur,19.99);
+ assert.equal(cheap.category,"exercise-mat");
+ assert.equal("verifiedCommissionEur" in cheap,false);
+});
