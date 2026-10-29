@@ -26,7 +26,7 @@ await mkdir(dirname(path),{recursive:true,mode:0o700});
 const temp=path+".tmp-"+process.pid;
 const file=createWriteStream(temp,{mode:0o600,flags:"wx"});
 const seenKeys=new Set<string>();
-const counts={rowsSeen:0,candidates:0,stored:0,duplicates:0,invalidOrOutOfScope:0,outOfStock:0,missingProgram:0,missingImage:0,missingTrackingUrl:0};
+const counts={rowsSeen:0,candidates:0,stored:0,duplicates:0,invalidOrOutOfScope:0,outOfStock:0,missingProgram:0,missingImage:0,missingTrackingUrl:0,truncated:0};
 try{
   for await(const row of streamJsonObjects(r.body)){
     counts.rowsSeen++;
@@ -40,10 +40,12 @@ try{
     const key=(p.programId||"unknown")+"\u0000"+p.sourceProductId;
     if(seenKeys.has(key)){counts.duplicates++;continue;}
     seenKeys.add(key);
-    if(counts.stored>=maxCandidates)continue;
+    if(counts.stored>=maxCandidates){counts.truncated++;continue;}
     if(!file.write(JSON.stringify(p)+"\n"))await once(file,"drain");
     counts.stored++;
   }
+  if(counts.truncated>0)throw new Error("linkwise_candidate_limit_exceeded");
+  if(counts.stored===0)throw new Error("linkwise_zero_matching_fitness_candidates");
   file.end();
   await finished(file);
   await rename(temp,path);
