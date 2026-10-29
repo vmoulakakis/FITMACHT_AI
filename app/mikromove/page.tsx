@@ -9,6 +9,8 @@ export const metadata:Metadata={
  description:"AI οδηγός καθημερινής κίνησης και ευεξίας για την Ελλάδα. Ξεκίνα από το πρόβλημά σου, ανακάλυψε 100 εξειδικευμένους στόχους έρευνας και δες τεκμηριωμένες επιλογές — χωρίς ψεύτικες προσφορές.",
  keywords:["ευεξία στο σπίτι","γυμναστική μικρός χώρος","ήσυχη άσκηση","ενδυνάμωση στο σπίτι","μικρό σπίτι γυμναστική","εργονομία γραφείου","έξυπνες λύσεις σπιτιού"],
  robots:{index:true,follow:true},
+ alternates:{canonical:"https://fitmatch-ai-taupe.vercel.app/mikromove"},
+ twitter:{card:"summary_large_image",title:"MIKRO/MOVE · Λίγος χώρος. Πολλή ζωή.",description:"100 ιδέες, 10 καθημερινά προβλήματα, μια πιο έξυπνη επιλογή."},
  openGraph:{type:"website",locale:"el_GR",title:"MIKRO/MOVE | Λίγος χώρος. Πολλή ζωή.",description:"Ελληνικός οδηγός προϊόντων-λύσεων για μικρούς χώρους, καθημερινή κίνηση και ευεξία."}
 };
 export default async function MikroMovePage(){
