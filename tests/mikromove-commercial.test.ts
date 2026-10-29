@@ -13,7 +13,7 @@ test("conservative payout scenario requires about 183 EUR retail at old 8% under
 });
 test("all ten newly observed merchant examples pass hypothetical EUR 10 payout but none passes approval",()=>{
  assert.equal(extraMerchantResearch.length,10);
- assert.equal(new Set(extraMerchantResearch.map(x=>x.id)).size,6);
+ assert.equal(new Set(extraMerchantResearch.map(x=>x.id)).size,10);
  assert.ok(extraMerchantResearch.every(x=>x.source==="merchant_public_page"&&x.sourceDate==="2026-10-29"));
  for(const candidate of extraMerchantResearch){
    const result=screenCandidate(candidate);
