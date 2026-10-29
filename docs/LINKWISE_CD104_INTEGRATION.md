@@ -35,3 +35,18 @@ This classifier is intentionally conservative, excludes obvious parts/accessorie
 `npm test && npm run typecheck && npm run build` and verify small fixture, large stream, UTF-8 chunk boundaries, wrapped JSON arrays, expired data, duplicates, malicious URL, unavailable feed and empty preview. Check desktop and mobile previews, no unverified merchant links, reduced-motion behavior and anonymous access before approving release.
 
 Status: **IMPLEMENTED IN REVIEW BRANCH, NOT PRODUCTION VERIFIED**.
+
+## Permanent preview catalog / production contract (2026-10-29)
+
+Isolated table `public.fitmatch_feed_candidates` is created in the existing Supabase vmdb project and protected by RLS. Only `preview_state='preview'`, in-stock, younger-than-48h product preview rows are readable by public publishable-key clients. Raw tracking URLs, merchant terms and private keys are **not stored** here.
+
+Vercel project `fitmatch-ai` uses the **publishable** key via `FITMATCH_PUBLIC_CATALOG_URL` and `FITMATCH_PUBLIC_CATALOG_KEY` in preview/production; the code does not allow privileged writes from the website.
+
+Two-stage import (trusted worker only):
+1. `npm run linkwise:audit` using `LINKWISE_FITMATCH_FEED_URL` privately; inspect parse counts and category relevance before any publication.
+2. `npm run linkwise:publish-previews` using a short-lived, **server-only**, authorized `FITMATCH_IMPORT_SUPABASE_URL` and `FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY`. **Never add this key to the website's Vercel variables, GitHub source or any browser.** Only sanitized unverified discovery metadata is upserted.
+3. Run the public `/api/status` smoke. Fresh RLS data must be present for preview items to show; the app cannot conjure it from an empty or stale database.
+
+The supplied Linkwise URL currently omits program_id and merchant identity. Product previews must not be promoted to verified purchase CTAs without authoritative identity, dimension specs, currency, stock, permissions and verified program terms. Source snapshots expire naturally at 48h in RLS.
+
+**Known remaining issue:** No completed full-feed snapshot or populated fresh preview table has been verified in this session. A successful Vercel build alone does not make the source ingestion operational. Also this Vercel deployment is independent of the ChatGPT Site `fitmatch-home-advisor.vmoulakakis.chatgpt.site`.
