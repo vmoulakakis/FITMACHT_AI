@@ -60,3 +60,12 @@ test("rejects wrong title even when merchant category resembles fitness",()=>{
  assert.equal(classifyFitness({...base,product_name:"Βαμβακερή μπλούζα",category:"Διάδρομοι γυμναστικής"}),null);
  assert.equal(classifyFitness({...base,product_name:"Σεντόνι με λάστιχο",category:"Λάστιχα αντίστασης"}),null);
 });
+
+
+test("includes real gym benches and fixed dumbbells, but not spare parts or linen",()=>{
+ assert.equal(classifyFitness({...base,product_name:"HMS LS3859 Ρυθμιζόμενος Πάγκος Γυμναστικής"}),"weight-bench");
+ assert.equal(classifyFitness({...base,product_name:"HMS SG01 Αλτήρας 1 x 7kg"}),"fixed-dumbbells");
+ assert.equal(classifyFitness({...base,product_name:"Body Sculpture Dumbbell 2x3 kg"}),"fixed-dumbbells");
+ assert.equal(classifyFitness({...base,product_name:"Κολάρα Μανταλάκια για Αλτήρες Σετ"}),null);
+ assert.equal(classifyFitness({...base,product_name:"Σεντόνι με λάστιχο",category:"Γυμναστική"}),null);
+});

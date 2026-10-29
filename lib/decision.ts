@@ -3,7 +3,7 @@ export type Space = "compact" | "medium" | "large";
 export type Noise = "critical" | "normal";
 export type Activity = "walk" | "run" | "both";
 export type Answers = { goal:Goal; space:Space; noise:Noise; activity:Activity; budget:number; fold:boolean };
-export type Category = "walking-pad" | "treadmill" | "exercise-bike" | "adjustable-dumbbells" | "resistance-bands";
+export type Category = "walking-pad" | "treadmill" | "exercise-bike" | "adjustable-dumbbells" | "resistance-bands" | "fixed-dumbbells" | "weight-bench";
 export type Advice = { category:Category; label:string; reason:string; caution:string; checks:string[]; wait:boolean };
 export function advise(a:Answers):Advice {
   if (!Number.isFinite(a.budget) || a.budget < 0) throw new Error("invalid_budget");

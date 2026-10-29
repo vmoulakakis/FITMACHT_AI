@@ -6,7 +6,9 @@ export default async function Home(){
   publicLinkwisePreviews("exercise-bike",1500),
   publicLinkwisePreviews("adjustable-dumbbells",1500),
   publicLinkwisePreviews("resistance-bands",1500),
-  publicLinkwisePreviews("treadmill",7000)
+  publicLinkwisePreviews("treadmill",7000),
+  publicLinkwisePreviews("fixed-dumbbells",1500),
+  publicLinkwisePreviews("weight-bench",1500)
  ]);
  const featured=sections.flatMap((items)=>items.slice(0,1));
  return <Advisor featured={featured}/>;

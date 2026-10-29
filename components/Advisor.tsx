@@ -28,7 +28,7 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
  return <div className="shell">
   <header className="header"><div className="headerInside">
     <a className="brand" href="/" aria-label="FITMATCH AI αρχική"><span className="brandMark"><Activity size={20} strokeWidth={2.8}/></span><span>FITMATCH<span className="brandAI"> AI</span></span></a>
-    <nav className="nav" aria-label="Κύρια πλοήγηση"><a href="#how">Πώς λειτουργεί</a><a href="#why">Η φιλοσοφία μας</a><a href="/methodology">Μεθοδολογία</a></nav>
+    <nav className="nav" aria-label="Κύρια πλοήγηση"><a href="#how">Πώς λειτουργεί</a><a href="#why">Η φιλοσοφία μας</a><a href="/products">Προϊόντα</a><a href="/methodology">Μεθοδολογία</a></nav>
     <button className="headerCTA" onClick={begin} type="button">Βρες τον εξοπλισμό σου <ArrowRight size={16}/></button>
   </div></header>
   {!started?<main>
@@ -48,6 +48,7 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
          <div className="featuredFitnessImage">{p.imageUrl?<img src={p.imageUrl} alt={p.title} loading="lazy" width="220" height="165"/>:<PackageCheck size={28}/>}</div>
          <div className="featuredFitnessCopy"><span className="sampleFlag">Ιστορική καταχώριση</span><h3>{p.title}</h3><strong>{p.price.toLocaleString("el-GR")}€</strong><small>Τιμή πηγής: {new Date(p.observedAt).toLocaleDateString("el-GR")} · Διαθεσιμότητα μη επιβεβαιωμένη</small></div>
       </article>)}</div>
+      <a className="catalogBrowseLink" href="/products">Δες όλα τα πραγματικά προϊόντα →</a>
       <p className="featuredFitnessFoot">Το FitMatch επιλέγει βάσει του προσωπικού σου στόχου. Δεν υποθέτουμε ότι όλα τα παραπάνω ταιριάζουν στον χώρο ή στο budget σου.</p>
     </section>}
     <section className="trustStrip"><div className="trustInside"><span>ΠΡΩΤΑ Η ΑΝΑΓΚΗ ΣΟΥ. ΜΕΤΑ ΤΟ ΠΡΟΪΟΝ.</span><div><ShieldCheck size={18}/> Τεκμηριωμένα κριτήρια</div><div><Eye size={18}/> Διαφανείς επιλογές</div><div><LockKeyhole size={18}/> Χωρίς υποχρεωτικό email</div></div></section>

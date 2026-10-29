@@ -1,0 +1,51 @@
+name: FITMATCH | Linkwise CD104 bulk feed sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 5 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fitmatch-linkwise-cd104-ingestion
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    # Disabled until required encrypted GitHub secrets and the explicit enable variable are configured.
+    # Manual dispatch may run it for a one-time review.
+    if: github.event_name == 'workflow_dispatch' || vars.FITMATCH_FEED_SYNC_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    env:
+      LINKWISE_FITMATCH_FEED_URL: ${{ secrets.FITMATCH_LINKWISE_FEED_URL }}
+      FITMATCH_IMPORT_SUPABASE_URL: ${{ vars.FITMATCH_IMPORT_SUPABASE_URL }}
+      FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY }}
+      FITMATCH_MAX_AUDIT_CANDIDATES: "50000"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Ensure private feed permissions are configured
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$LINKWISE_FITMATCH_FEED_URL" || { echo "::error::FITMATCH_LINKWISE_FEED_URL secret is missing"; exit 1; }
+          test -n "$FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY" || { echo "::error::FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY secret is missing"; exit 1; }
+          test -n "$FITMATCH_IMPORT_SUPABASE_URL" || { echo "::error::FITMATCH_IMPORT_SUPABASE_URL variable is missing"; exit 1; }
+          echo "Feed configuration detected; values will not be printed."
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Stream and audit the original feed
+        run: npm run linkwise:audit
+      - name: Publish sanitized unverified fitness previews
+        run: npm run linkwise:publish-previews
+      - name: Review summary
+        run: |
+          echo "Bulk import completed. No affiliate links or unverified merchant commissions were activated."
+          echo "Check FitMatch /api/status and inspect upstream program permissions before monetizing."

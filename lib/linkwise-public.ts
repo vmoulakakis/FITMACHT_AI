@@ -18,7 +18,7 @@ const httpsImage=(raw:unknown):string|null=>{
    return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&u.hostname.includes(".")?u.href:null;
  }catch{return null;}
 };
-export async function publicLinkwisePreviews(category:Category,budget:number,fetcher:typeof fetch=fetch):Promise<CandidatePreview[]> {
+export async function publicLinkwisePreviews(category:Category,budget:number,fetcher:typeof fetch=fetch,maxResults=3):Promise<CandidatePreview[]> {
  const base=process.env.FITMATCH_PUBLIC_CATALOG_URL;
  const key=process.env.FITMATCH_PUBLIC_CATALOG_KEY;
  if(!base||!key||!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(base))return [];
@@ -26,7 +26,7 @@ export async function publicLinkwisePreviews(category:Category,budget:number,fet
  query.searchParams.set("select","source_product_id,product_name,brand_name,price_eur,image_url,observed_at,category,preview_state");
  query.searchParams.set("category","eq."+category);
  query.searchParams.set("order","price_eur.asc");
- query.searchParams.set("limit","15");
+ query.searchParams.set("limit",String(Math.min(100,Math.max(15,maxResults))));
  try{
    const r=await fetcher(query,{headers:{"apikey":key},signal:AbortSignal.timeout(3000),cache:"no-store"});
    if(!r.ok)return [];
@@ -50,6 +50,6 @@ export async function publicLinkwisePreviews(category:Category,budget:number,fet
        price,imageUrl:httpsImage(p.image_url),observedAt,status:historical?"historical_feed_preview":"unverified_feed_preview"
      });
    }
-   return candidates.slice(0,3);
+   return candidates.slice(0,Math.min(100,Math.max(1,maxResults)));
  }catch{return [];}
 }
