@@ -60,7 +60,9 @@ export function classifyFitness(row:SourceRow):Category|null {
   const category=str(row.category).toLocaleLowerCase("el-GR").normalize("NFC");
   if(!product||rejectedParts.test(product))return null;
   // Product-specific text outranks a stale or over-broad merchant category.
-  return inferCategory(product) ?? inferCategory(category);
+  // Do not infer a machine from a broad merchant category when the title is unrelated.
+  // This prevents clothing, linens and accessories from appearing as gym equipment.
+  return inferCategory(product);
 }
 
 export function normalizeLinkwise(row:unknown,observedAt:string):LinkwiseCandidate|null {
