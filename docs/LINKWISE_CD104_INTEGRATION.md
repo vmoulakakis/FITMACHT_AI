@@ -50,3 +50,27 @@ Two-stage import (trusted worker only):
 The supplied Linkwise URL currently omits program_id and merchant identity. Product previews must not be promoted to verified purchase CTAs without authoritative identity, dimension specs, currency, stock, permissions and verified program terms. Source snapshots expire naturally at 48h in RLS.
 
 **Known remaining issue:** No completed full-feed snapshot or populated fresh preview table has been verified in this session. A successful Vercel build alone does not make the source ingestion operational. Also this Vercel deployment is independent of the ChatGPT Site `fitmatch-home-advisor.vmoulakakis.chatgpt.site`.
+
+
+## Niche coverage audit (29 October 2026)
+The previous FitMatch UI published **14 / 36** stored fitness candidates, not the entire Linkwise affiliate network. The existing Supabase sources have separate populations:
+- `commerce_feed_eligible_offers`: 3,921 legacy records, 2,036 with `expected_commission_eur >= 10`, last observed 17 September 2026; these are predominantly home furnishings, not home-fitness items. This estimate is **not** verified payout.
+- `ai_product_offers`: 1,466 AliExpress offers, 481 with `expected_commission_eur >= 10`, overwhelmingly unrelated categories.
+- `fitmatch.offer_candidates`: 36 actual fitness SKUs observed 22 October 2026; all have `review_status=needs_commission`. Mybrand.shoes historical 8% applies to 29 rows, Z-mall historical 6% to 7. Both lack verified Linkwise program-ID crosswalk and current category-specific terms.
+- `fitmatch.source_readiness`: 0 verified specs, 0 legacy active-in-stock offers, 17 program IDs present in a different global source, 334 merchant commission records, but none establishes approved individual FitMatch payout.
+Therefore **do not turn expected_commission_eur into verifiedCommissionEur** and never present 2,036 broad-category estimated payouts as 2,036 home fitness products.
+
+### Immediate inventory repair
+The isolated public historical projection now includes **32 true home-fitness SKUs** across six categories: resistance bands, stationary bikes, treadmills, adjustable and fixed dumbbells, and weight benches. Four ambiguous/irrelevant SKUs remain excluded. All retain the 22 October 2026 timestamp; stock and commission are unverified.
+A new `/products` browser enables category, budget and text search in paginated cards with real product imagery; the guided advice remains the primary purchase decision experience.
+
+### Dedicated bulk ingestion
+The `.github/workflows/fitmatch-feed-sync.yml` GitHub Actions worker streams the owner-provided large CD104 feed on a dedicated runner (not Supabase Edge or Vercel Lambda). It reads **GitHub encrypted secrets**, not browser configuration:
+- `FITMATCH_LINKWISE_FEED_URL` (full owner-authorized URL; never commit it in the repo)
+- `FITMATCH_IMPORT_SUPABASE_SERVICE_ROLE_KEY` (only available to the runner)
+- GitHub Actions variable `FITMATCH_IMPORT_SUPABASE_URL` pointing to the owned vmdb Supabase project
+- Set GitHub Actions variable `FITMATCH_FEED_SYNC_ENABLED=true` after an initial successful reviewed manual run to enable scheduled sync.
+No secret values are presently confirmed as configured for this GitHub workflow, so **scheduled ingestion is opt-in and not yet active**. The pipeline rejects an empty candidate set or an exceeded candidate cap; partial feeds may never be labeled complete. Preview records do not contain tracking links or commission evidence.
+
+### What is still required for true 10+ EUR monetized offers
+Current Linkwise membership per merchant, program ID, category terms, exclusions, VAT/commission basis, fresh stock/price and product dimensions/weight specifications must be verified. A tracked link alone is not proof of an approved commission. The user-facing /api/out stays closed to unapproved products.
