@@ -4,18 +4,15 @@ import {publicLinkwisePreviews} from "@/lib/linkwise-public";
 export const dynamic="force-dynamic";
 export async function GET(){
  const c=await catalog();
- const previews=await Promise.all([
-   publicLinkwisePreviews("walking-pad",100000),
-   publicLinkwisePreviews("treadmill",100000),
-   publicLinkwisePreviews("exercise-bike",100000),
-   publicLinkwisePreviews("adjustable-dumbbells",100000),
-   publicLinkwisePreviews("resistance-bands",100000)
- ]);
+ const categories=["walking-pad","treadmill","exercise-bike","adjustable-dumbbells","resistance-bands","fixed-dumbbells","weight-bench"] as const;
+ const previews=await Promise.all(categories.map(cat=>publicLinkwisePreviews(cat,100000,fetch,100)));
  return NextResponse.json({
   app:"FITMATCH AI",environment:process.env.VERCEL_ENV==="production"?"production":"staging",
   catalog:c.mode,verifiedOffers:c.offers.filter(x=>x.specsVerified&&x.commissionEvidence).length,
   publicPreviewCategories:previews.filter(v=>v.length>0).length,
-  publicPreviewSampleCount:previews.reduce((n,v)=>n+v.length,0),
+  publicPreviewSampleCount:previews.reduce((n,v)=>n+Math.min(v.length,3),0),
+  publicSourceProductCount:previews.reduce((n,v)=>n+v.length,0),
+  publicSourceDisclaimer:"Historically observed products are not verified live offers or commissions.",
   previewDisclaimer:"Product discovery only. Prices and stock are not verified offers.",
   time:new Date().toISOString()
  },{headers:{"Cache-Control":"no-store"}});
