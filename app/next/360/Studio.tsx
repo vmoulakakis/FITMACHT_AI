@@ -13,6 +13,7 @@ function getInput(initial:Initial):PlanInput {
 }
 export default function Studio({initial}: {initial:Initial}){
  const [plan,setPlan]=useState<PlanInput>(()=>getInput(initial));
+ useEffect(()=>{try{const raw=sessionStorage.getItem("fitmatch-360-handoff");if(!raw)return;sessionStorage.removeItem("fitmatch-360-handoff");const from=JSON.parse(raw);const candidate={...getInput(initial),...from};if(validPlanInput(candidate))setPlan(candidate);}catch{}},[initial]);
  const [phase,setPhase]=useState<"questions"|"results"|"delivery">("questions");
  const [offers,setOffers]=useState<ProductOption[]>([]);
  const [chosen,setChosen]=useState<string|null>(null);
@@ -71,6 +72,7 @@ export default function Studio({initial}: {initial:Initial}){
    <p className="fm360-lead">Κίνηση, ευχάριστες συνήθειες, γενικές αρχές διατροφής και κατάλληλος εξοπλισμός. Λίγες επιλογές — όλα συνδεδεμένα.</p>
    <div className="fm360-tiles">
     <div className="fm360-question"><div className="fm360-question-title"><span>01</span><h2>Τι θέλεις να κάνεις πιο εύκολο;</h2></div><div className="fm360-chip-row">{needs.map(([id,label])=><button type="button" key={id} className={plan.need===id?"active":""} onClick={()=>patch({need:id as PlanInput["need"],safety:["rehab","pain","care","independence"].includes(id)?"clinical":plan.safety})}>{label}</button>)}</div></div>
+    <div className="fm360-question"><div className="fm360-question-title"><span>✳</span><h2>Χρειάζεσαι υποστήριξη υγείας αυτή την περίοδο;</h2></div><div className="fm360-segments">{([["well","Γενική ευεξία"],["clinical","Πόνος / θεραπεία / πάθηση"],["urgent","Σοβαρό ή ξαφνικό σύμπτωμα"]] as const).map(([id,label])=><button key={id} type="button" className={plan.safety===id?"active":""} onClick={()=>patch({safety:id})}>{label}</button>)}</div></div>
     <div className="fm360-question"><div className="fm360-question-title"><span>02</span><h2>Πού σου ταιριάζει να κινείσαι;</h2></div><div className="fm360-segments">{([["home","Στο σπίτι"],["outdoors","Έξω"],["flexible","Όπου βολεύει"]] as const).map(([id,label])=><button type="button" key={id} onClick={()=>patch({setting:id})} className={plan.setting===id?"active":""}>{label}</button>)}</div></div>
     <div className="fm360-question"><div className="fm360-question-title"><span>03</span><h2>Τι προσέγγιση διατροφής προτιμάς;</h2></div><div className="fm360-segments">{([["mediterranean","Μεσογειακή"],["vegetarian","Χορτοφαγική"],["unsure","Δεν ξέρω ακόμα"]] as const).map(([id,label])=><button type="button" key={id} onClick={()=>patch({preference:id})} className={plan.preference===id?"active":""}>{label}</button>)}</div></div>
     <div className="fm360-question"><div className="fm360-question-title"><span>04</span><h2>Budget εξοπλισμού — αν χρειαστεί;</h2></div><div className="fm360-segments">{([["low","Έως 100 €"],["medium","Έως 300 €"],["high","Έως 1.500 €"]] as const).map(([id,label])=><button type="button" key={id} onClick={()=>patch({budget:id})} className={plan.budget===id?"active":""}>{label}</button>)}</div><small>Ο εξοπλισμός είναι προαιρετικός· η βοήθεια δεν εξαρτάται από αγορά.</small></div>
