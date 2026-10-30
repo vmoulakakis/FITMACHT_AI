@@ -104,7 +104,7 @@ export async function createFitmatchPdf(input:PlanInput,program:Program,offers:P
     const p=current[k],y=530+k*345;
     panel(ctx,90,y,1060,315,k%2===0?"#EDF4F0":"#F4EFED");
     ctx.fillStyle="#FFFFFF";ctx.beginPath();ctx.roundRect(116,y+32,300,250,20);ctx.fill();
-    const loaded=p.imageUrl?await renderPhoto(ctx,p.imageUrl,140,y+55,252,203):false;
+    const loaded=p.imageUrl?((await renderPhoto(ctx,"/api/360/photo?id="+encodeURIComponent(p.id),140,y+55,252,203)) || (await renderPhoto(ctx,p.imageUrl,140,y+55,252,203))):false;
     if(!loaded){ctx.fillStyle="#8CA5A0";ctx.font="800 18px Arial";ctx.fillText("ΦΩΤΟ ΠΡΟΪΟΝΤΟΣ",148,y+160);}
     ctx.fillStyle="#173745";ctx.font="800 26px Arial";
     const end=write(ctx,p.title,450,y+78,420,26,36,"#173745",true);
