@@ -17,3 +17,9 @@ Semantic nav, buttons, headings, labels, text alternatives, focus visibility, re
 - No public indexing of preview route.
 - Test red-path and compound barrier cases.
 - No changes to production home/old APIs until reviewed.
+
+## FITMATCH 360 funnel and reports
+Existing /next journey carries need, barrier, minutes and safety to /next/360. Route asks only movement environment, general dietary preference, and optional product budget. The new report always has distinct movement/nutrition/product sections, but in clinical routes does not invent trainer-approved exercise or registered-dietitian medical diets. Product lane shows 3–5 live verified offers when supply exists, no historical candidates as available offers. User chooses a single featured offer; the PDF may list up to five verified offers.
+PDF A4 is rendered client-side with original source photos only where CORS permits, linked image and real QR code targeting the exact verified HTTPS tracking URL. Absent verified URL means NO QR or purchase CTA. Users may download without email.
+Email delivery is opt-in and wellness-only, with Turnstile verification, verified sending domain, server-side Resend API secret, bounded PDF size and NO marketing consent inferred. GDPR health-data cases are blocked from email transmission pending professional/legal review.
+Canva is the editable design/reference master, whereas dynamic per-user export uses a separate runtime graphics renderer until a licensed Canva autofill/export integration has been validated. Do not misrepresent the runtime PDF as an official rendered Canva file.
