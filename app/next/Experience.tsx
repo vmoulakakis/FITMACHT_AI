@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {journeyTier,commerceEligible} from "@/lib/movement-intelligence";
 import {Activity,ArrowDownRight,ArrowLeft,ArrowRight,ArrowUpRight,BookOpen,BrainCircuit,Check,CheckCircle2,Clock3,Heart,HeartHandshake,HeartPulse,Leaf,Menu,RotateCcw,ShieldCheck,Sparkles,Users,X} from "lucide-react";
 type NeedId="desk"|"motivation"|"confidence"|"pain"|"rehab"|"independence"|"care"|"fitness";
 type Barrier="time"|"energy"|"body"|"confidence"|"space"|"routine";
@@ -41,9 +42,10 @@ export default function Experience({previews}:{previews:Preview[]}){
  const [pending,setPending]=useState(false);
  const [menu,setMenu]=useState(false);
  const activeNeed=needs.find(n=>n.id===need) || needs[0];
- const complex=["pain","rehab","independence","care"].includes(need)||barrier==="body"||safety==="clinical";
- const urgent=safety==="urgent";
- const commercial=!complex&&!urgent&&["desk","motivation","confidence","fitness"].includes(need);
+ const tier=journeyTier(need,barrier,safety);
+ const complex=tier==="professional";
+ const urgent=tier==="urgent";
+ const commercial=commerceEligible(need,barrier,safety);
  const nav=(v:typeof view)=>{setView(v);if(typeof window!=="undefined")window.scrollTo({top:0,behavior:"smooth"})};
  const reset=()=>{setNeed("desk");setBarrier("time");setMinutes(5);setSafety(null);setOffers([]);setCommitted(false);nav("home")};
  const selectNeed=(id:NeedId)=>{setNeed(id);setBarrier(id==="pain"||id==="rehab"?"body":id==="motivation"?"energy":"time");nav("barrier")};
