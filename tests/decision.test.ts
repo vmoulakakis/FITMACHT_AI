@@ -4,6 +4,8 @@ import {advise,eligible,choose,type Answers,type Offer} from "../lib/decision";
 const q:Answers={goal:"walking",space:"compact",noise:"critical",activity:"walk",budget:500,fold:true};
 test("walking apartment routes to walking pad with noise caveat",()=>{const x=advise(q);assert.equal(x.category,"walking-pad");assert.match(x.caution,/αθόρυβα/);});
 test("running routes separately",()=>assert.equal(advise({...q,activity:"run"}).category,"treadmill"));
+test("compact noisy running requires additional checks",()=>{const x=advise({...q,activity:"run",fold:true});assert.equal(x.wait,true);assert.match(x.caution,/δεν αποτελεί επιβεβαίωση/);assert.ok(x.checks.some(item=>item.includes("διπλωμένη")));});
+test("storage preference affects walking checks",()=>{const withStorage=advise(q);const stationary=advise({...q,fold:false});assert.notDeepEqual(withStorage.checks,stationary.checks);});
 test("strength routes separately",()=>assert.equal(advise({...q,goal:"strength"}).category,"adjustable-dumbbells"));
 const offer:Offer={id:"x1",title:"verified",category:"walking-pad",price:350,currency:"EUR",merchant:"Shop",trackingUrl:"https://affiliate.linkwi.se/test",inStock:true,lastSeen:"2026-10-21T08:00:00.000Z",verifiedCommissionEur:10,commissionEvidence:true,specsVerified:true};
 const now=new Date("2026-10-21T12:00:00.000Z").getTime();
