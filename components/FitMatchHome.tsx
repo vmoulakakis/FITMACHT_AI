@@ -2,9 +2,9 @@
 
 import {useState} from "react";
 import {
- Activity, ArrowRight, ArrowUpRight, BadgeCheck, Check, ChevronDown,
+ Activity, ArrowRight, ArrowUpRight, Check, ChevronDown,
  ClipboardCheck, Compass, Dumbbell, HeartHandshake, Layers3, Menu,
- MoveUpRight, Ruler, ShieldCheck, SlidersHorizontal, Sparkles, Wallet, X
+ Ruler, ShieldCheck, SlidersHorizontal, Sparkles, Wallet, X
 } from "lucide-react";
 
 type Goal = "cardio" | "strength" | "mobility";
@@ -78,7 +78,7 @@ export default function FitMatchHome(){
   <header className="fmx-header">
    <div className="fmx-header-inner">
     <a href="/" className="fmx-logo" aria-label="FitMatch AI — αρχική"><span className="fmx-logo-symbol"><Activity size={21}/></span>fitmatch<span className="fmx-logo-dot">✳</span><small>AI</small></a>
-    <nav className={menuOpen?"fmx-navigation is-open":"fmx-navigation"} aria-label="Κύρια πλοήγηση">
+    <nav id="fmx-menu" className={menuOpen?"fmx-navigation is-open":"fmx-navigation"} aria-label="Κύρια πλοήγηση">
      <a onClick={close} href="#fmx-how">Πώς λειτουργεί</a>
      <a onClick={close} href="#fmx-explorer">Δοκίμασε το FitCheck</a>
      <a onClick={close} href="/products">Κατάλογος</a>
