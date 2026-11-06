@@ -1,12 +1,45 @@
-# FITMATCH NEXT — DESIGN.md
-Version: 2026-10-30 · Branch: feat/fitmatch-next-human-movement-20261030
-Owner: FITMATCH AI · Review PR staging only.
+# FITMATCH AI — DESIGN.md (v2 · 2026-11-07)
 
-## 2026-11-07 integrated-home addendum
-Release candidate on redesign/fitmatch-experience-20261107. The original / buying advisor is preserved at /equipment; the public-home replacement is staging-only and requires explicit release review. The /next and /next/360 journeys remain present and unchanged.
-Design system for the new home: deep navy #102F37, dark teal #15363D, lime #D6F7A8, coral #EF9276, warm paper #FAFBF7, muted sage #EAF3ED; Noto Sans Greek-capable text and Manrope brand. Original SVG isometric room illustration, educational FitCheck with 9 deterministic states, accessible selection controls and responsive 320–1440px layout. See docs/FITMATCH_REDESIGN_20261107.md.
-No LLM is represented as active; trust and data gates remain explicit.
+## Authority / visual thesis
+**Product truth:** FitMatch AI is an evidence-first fitness equipment buying advisor, not an e-shop and not a substitute for clinical advice. / is the equipment-first entry point. /next and /next/360 remain optional separate lifestyle journeys.
+**North Star:** a person identifies a suitably justified equipment category for their own constraints without repeating answers.
+**Visual thesis:** "Personal Fit Lab". A confident editorial dark teal interface contrasted with a live, useful consultation card, not decorative AI claims or generic gym stock images.
 
+## Design tokens
+- Fjord #102F37: primary brand/hero background.
+- Ink #163942: headings, dark surface.
+- Lime #D9F6AB: primary action/highlight.
+- Coral #EE947A: restrained markers and keyboard-focus adjunct.
+- Paper #FAFBF8: readable foundation.
+- Mint #EAF3EB: educational surfaces.
+- Muted #5C7374, lines #DCE6E0: supporting neutrals.
+- Main typography: Greek-coverage Noto Sans; brand Latin font Manrope with system fallback.
+- Card radius 12–25px; rounded primary CTA. No fake gradients over images.
+
+## Hierarchy
+Header (logo / Fit / how / products / methodology) -> dark hero with one direct interactive consultation -> methodology in 3 stages -> real catalog previews or honest empty state -> decision evidence -> optional movement/360 services -> FAQ -> conversion CTA -> footer.
+No more competing equal-priority 2-path choice at the top.
+
+## Interaction
+- Two visible, explicit decisions (goal, available space) at first touch. No hidden defaults.
+- 9 deterministic explanations but no invented percentages, confidence or recommendations.
+- Once answered, direct warm-start to the existing advisor at /equipment?start=1&goal=...&space=..., **step 3 of 6**, with server-side allowlist validation.
+- Continue in original advisor with movement type, noise, budget and storage. Original API logic remains unchanged.
+- Semantic fieldsets, aria-pressed, progressbar with honest completion, aria-live updates, menu aria-expanded, skip link, focus-visible.
+- Failed/absent catalog: noncommercial empty state, no fake products.
+- Existing safety/product eligibility fail-closed.
+
+## Responsive and motion
+Target 320, 360, 390, 768, 1024, 1440px. Dark editorial split hero on desktop; form stacks on mobile. >=44px tap targets, no horizontal scroll (visual QA still required). Original product images have explicit dimensions and contain fitting. CSS-only motion in decorative circles, reduced-motion disables animation and transitions; safe-area side padding.
+
+## Evidence boundaries
+No made-up product rating, price, availability, social proof, SEO ranking, live AI agent or medical claims. Raw Linkwise previews get no checkout link. Verified offers only through existing gated /api routes. No live commercial attribution is promised.
+
+## Release
+Staging PR only; GitHub CI typecheck, tests and build required. Browser QA in authenticated Vercel preview is not yet verified. Production domain unchanged. See docs/FITMATCH_REDESIGN_20261107.md.
+
+---
+## Legacy /next visual contract (unchanged)
 ## Creative brief
 Greek-first human movement and function platform, not a sports e-shop or an AI physiotherapist. Create dignity and autonomy for adults with diverse abilities, ages and motivations. Every recommendation is useful even without a purchase.
 
