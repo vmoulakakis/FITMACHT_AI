@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
-import {ArrowRight,ArrowLeft,Check,ChevronRight,ChevronDown,Compass,Footprints,ShieldCheck,HeartPulse,House,Activity,Dumbbell,Volume2,Wallet,PackageCheck,RotateCcw,ExternalLink,Sparkles,SlidersHorizontal,Ruler,MoveRight,Search,Eye,LockKeyhole} from "lucide-react";
+import EditorialHome from "./EditorialHome";
+import {ArrowRight,ArrowLeft,Check,ChevronRight,ChevronDown,Compass,Footprints,ShieldCheck,HeartPulse,House,Activity,Dumbbell,Volume2,Wallet,PackageCheck,RotateCcw,ExternalLink,Sparkles,SlidersHorizontal,Ruler,MoveRight,Search,Eye,LockKeyhole,Menu} from "lucide-react";
 import type {Answers,Advice} from "@/lib/decision";
 type Product = {id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string};
 type CandidatePreview={id:string;title:string;brand:string|null;price:number;imageUrl:string|null;observedAt:string;status:"unverified_feed_preview"|"historical_feed_preview"};
@@ -17,6 +18,7 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
  const [error,setError]=useState("");
  const patch=(p:Partial<Answers>)=>setA(x=>({...x,...p}));
  const begin=()=>{setResult(null);setError("");setStarted(true);setStep(0);window.scrollTo({top:0,behavior:"smooth"});};
+ const beginWithGoal=(goal:"walking"|"cardio"|"strength")=>{setA({...initial,goal,activity:goal==="walking"?"walk":initial.activity});begin();};
  const next=async()=>{
    if(step<stages.length-1){setStep(s=>s+1);return;}
    setLoading(true);setError("");
@@ -28,36 +30,10 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
  return <div className="shell">
   <header className="header"><div className="headerInside">
     <a className="brand" href="/" aria-label="FITMATCH AI αρχική"><span className="brandMark"><Activity size={20} strokeWidth={2.8}/></span><span>FITMATCH<span className="brandAI"> AI</span></span></a>
-    <nav className="nav" aria-label="Κύρια πλοήγηση"><a href="#how">Πώς λειτουργεί</a><a href="#why">Η φιλοσοφία μας</a><a href="/products">Προϊόντα</a><a href="/methodology">Μεθοδολογία</a></nav>
-    <button className="headerCTA" onClick={begin} type="button">Βρες τον εξοπλισμό σου <ArrowRight size={16}/></button>
+    <nav className="nav" aria-label="Κύρια πλοήγηση"><a href="/#fm-process">Πώς λειτουργεί</a><a href="/#fm-scenarios">Οι στόχοι σου</a><a href="/products">Προϊόντα</a><a href="/methodology">Μεθοδολογία</a></nav><details className="fm-mobileMenu"><summary aria-label="Άνοιγμα μενού πλοήγησης"><Menu size={21}/></summary><div className="fm-mobileMenu__links"><a href="/#fm-process">Πώς λειτουργεί</a><a href="/#fm-scenarios">Οι στόχοι σου</a><a href="/products">Κατάλογος προϊόντων</a><a href="/methodology">Μεθοδολογία</a></div></details>
+    <button className="headerCTA" onClick={begin} type="button" aria-label="Έναρξη αξιολόγησης FitMatch">Βρες τον εξοπλισμό σου <ArrowRight size={16}/></button>
   </div></header>
-  {!started?<main>
-    <section className="hero"><div className="heroInner"><div className="heroText">
-      <div className="eyebrow"><Sparkles size={14}/> AI BUYING ADVISOR · ΕΛΛΑΔΑ</div>
-      <h1>Ο σωστός εξοπλισμός.<br/><span className="accent">Για τον δικό σου χώρο.</span></h1>
-      <p className="heroLead">Δεν χρειάζεσαι άλλο ένα fitness κατάλογο. Χρειάζεσαι κάποιον να καταλάβει τι πραγματικά σου ταιριάζει — πριν ξοδέψεις ούτε ένα ευρώ.</p>
-      <div className="heroActions"><button onClick={begin} type="button" className="btnPrimary">Βρες τι σου ταιριάζει <ArrowRight size={19}/></button><a href="#how" className="btnSecondary">Πώς λειτουργεί <ChevronDown size={17}/></a></div>
-      <div className="heroPoints"><span><Check size={15}/> 2 λεπτά</span><span><Check size={15}/> Χωρίς εγγραφή</span><span><Check size={15}/> Ανεξάρτητες συμβουλές</span></div>
-    </div>
-    <div className="heroArt" aria-label="Παράδειγμα διαμόρφωσης γυμναστικής σε σπίτι" role="img"><div className="artRing ring1"/><div className="artRing ring2"/><div className="artPlane"><div className="planeLines"/><div className="equipment"><div className="equipmentHandle"/><div className="equipmentBar"/><div className="equipmentBase"><div className="equipmentStripe"/></div></div><div className="miniLabel"><span className="labelDot"/> SMART SPACE FIT</div></div><div className="floatCard floatA"><Ruler size={17}/><span><b>Χώρος</b><small>Στα μέτρα σου</small></span><Check size={16}/></div><div className="floatCard floatB"><ShieldCheck size={17}/><span><b>Ελεγμένα κριτήρια</b><small>Χωρίς υποθέσεις</small></span></div></div>
-    </div></section>
-
-    {featured.length>0&&<section className="featuredFitness" aria-label="Πραγματικά προϊόντα γυμναστικής από τη βάση">
-      <div className="featuredFitnessHeader"><div><div className="overline">ΠΡΑΓΜΑΤΙΚΑ ΠΡΟΪΟΝΤΑ · LINKWISE</div><h2>Λύσεις που υπάρχουν. <em>Όχι υποσχέσεις.</em></h2><p>Επιλεγμένα είδη από πραγματικές καταχωρίσεις του καταστήματος. Οι τιμές είναι από την ημερομηνία καταγραφής και χρειάζονται νέα επιβεβαίωση πριν αγοράσεις.</p></div></div>
-      <div className="featuredFitnessGrid">{featured.map(p=><article className="featuredFitnessCard" key={p.id}>
-         <div className="featuredFitnessImage">{p.imageUrl?<img src={p.imageUrl} alt={p.title} loading="lazy" width="220" height="165"/>:<PackageCheck size={28}/>}</div>
-         <div className="featuredFitnessCopy"><span className="sampleFlag">Ιστορική καταχώριση</span><h3>{p.title}</h3><strong>{p.price.toLocaleString("el-GR")}€</strong><small>Τιμή πηγής: {new Date(p.observedAt).toLocaleDateString("el-GR")} · Διαθεσιμότητα μη επιβεβαιωμένη</small></div>
-      </article>)}</div>
-      <a className="catalogBrowseLink" href="/products">Δες όλα τα πραγματικά προϊόντα →</a>
-      <p className="featuredFitnessFoot">Το FitMatch επιλέγει βάσει του προσωπικού σου στόχου. Δεν υποθέτουμε ότι όλα τα παραπάνω ταιριάζουν στον χώρο ή στο budget σου.</p>
-    </section>}
-    <section className="trustStrip"><div className="trustInside"><span>ΠΡΩΤΑ Η ΑΝΑΓΚΗ ΣΟΥ. ΜΕΤΑ ΤΟ ΠΡΟΪΟΝ.</span><div><ShieldCheck size={18}/> Τεκμηριωμένα κριτήρια</div><div><Eye size={18}/> Διαφανείς επιλογές</div><div><LockKeyhole size={18}/> Χωρίς υποχρεωτικό email</div></div></section>
-    <section id="how" className="section"><div className="sectionHead"><div className="overline">ΠΩΣ ΛΕΙΤΟΥΡΓΕΙ</div><h2>Από το «τι να πάρω;»<br/>στο <em>«αυτό είναι για μένα».</em></h2><p>Τρία βήματα που αφαιρούν την αβεβαιότητα — όχι προσθέτουν προϊόντα.</p></div>
-      <div className="stepsGrid"><div className="stepCard"><div className="stepTop"><span>01</span><Compass size={25}/></div><h3>Πες μας τι σε δυσκολεύει</h3><p>Χώρος, στόχος, θόρυβος, συνήθειες και budget. Όχι δύσκολες ερωτήσεις, μόνο ό,τι έχει σημασία.</p><div className="stepPill">Κατανόηση ανάγκης <ChevronRight size={14}/></div></div><div className="stepCard"><div className="stepTop"><span>02</span><SlidersHorizontal size={25}/></div><h3>Βρίσκουμε τη σωστή κατηγορία</h3><p>Πρώτα αξιολογούμε τον τύπο εξοπλισμού. Ακόμη κι αν η σωστή απόφαση είναι να μην αγοράσεις τώρα.</p><div className="stepPill">Αιτιολογημένη επιλογή <ChevronRight size={14}/></div></div><div className="stepCard"><div className="stepTop"><span>03</span><PackageCheck size={25}/></div><h3>Συγκρίνεις με σιγουριά</h3><p>Μόνο πραγματικές και ελεγμένες προσφορές, όταν υπάρχουν. Με σαφή κριτήρια και απευθείας αγορά στο κατάστημα.</p><div className="stepPill">Έλεγχος πριν την αγορά <ChevronRight size={14}/></div></div></div>
-    </section>
-    <section id="why" className="purpose"><div className="purposeInner"><div><div className="overline">ΤΟ ΠΡΟΒΛΗΜΑ</div><h2>Μικρό σπίτι.<br/>Μεγάλες αποφάσεις.</h2><p>Ένας διάδρομος που δεν χωράει, ένα όργανο που καταλήγει στην αποθήκη, τεχνικά χαρακτηριστικά που δεν εξηγούνται. Εμείς ξεκινάμε από τον πραγματικό τρόπο ζωής σου.</p><button onClick={begin} className="btnWhite" type="button">Ξεκίνα το προσωπικό σου fit <ArrowRight size={18}/></button></div><div className="purposeVisual"><div className="statBlock"><span>01 / SPACE</span><b>Χωράει;</b><small>Με πραγματικές διαστάσεις</small></div><div className="statBlock"><span>02 / PURPOSE</span><b>Σε εξυπηρετεί;</b><small>Με κριτήρια χρήσης</small></div><div className="statBlock"><span>03 / VALUE</span><b>Αξίζει;</b><small>Με διαφανείς εναλλακτικές</small></div></div></div></section>
-    <section className="lastCTA"><div className="overline">ΕΙΣΑΙ ΕΤΟΙΜΟΣ;</div><h2>Μην μαντεύεις.<br/><em>Βρες το fit σου.</em></h2><p>Λιγότερες αμφιβολίες. Πιο σωστές επιλογές.</p><button onClick={begin} className="btnPrimary" type="button">Ξεκίνα δωρεάν <ArrowRight size={19}/></button></section>
-  </main>:<main className="quizShell"><div className="quizDecor"/><div className="quizLayout">
+  {!started?<EditorialHome featured={featured} onStart={begin} onStartGoal={beginWithGoal}/>:<main className="quizShell"><div className="quizDecor"/><div className="quizLayout">
     <div className="quizTop"><button className="subtleBack" type="button" onClick={()=>{setStarted(false);setResult(null)}}><ArrowLeft size={17}/> Πίσω στην αρχική</button><span className="quizBrand">FITMATCH <b>AI</b></span></div>
     {!result?<div className="quizPanel"><div className="quizProgress"><div className="progressTitle"><span>Ο ΠΡΟΣΩΠΙΚΟΣ ΣΟΥ ΣΥΜΒΟΥΛΟΣ</span><span>Βήμα {step+1} από {stages.length}</span></div><div className="progressBar"><span style={{width:((step+1)/stages.length*100)+"%"}}/></div></div>
        <div className="quizQuestion"><div className="questionLabel">{String(step+1).padStart(2,"0")} — {stages[step]}</div>
@@ -83,6 +59,6 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
        <p className="disclosure">{result.disclosure} Δεν παρέχουμε ιατρικές συμβουλές ή εγγυήσεις αποτελεσμάτων.</p>
        </div>}
     </div></main>}
-  <footer className="footer"><div className="footerInner"><div className="footerBrand"><span className="brandMark"><Activity size={19}/></span><b>FITMATCH <span>AI</span></b></div><p>Πρώτα ταιριάζουμε τις ανάγκες. Μετά εξετάζουμε προϊόντα.</p><div className="footerLinks"><a href="/methodology">Μεθοδολογία & affiliate disclosure</a><a href="/privacy">Απόρρητο</a></div><small>© 2026 FITMATCH AI · Staging / δοκιμαστική έκδοση</small></div></footer>
+  <footer className="footer"><div className="footerInner"><div className="footerBrand"><span className="brandMark"><Activity size={19}/></span><b>FITMATCH <span>AI</span></b></div><p>Πρώτα ταιριάζουμε τις ανάγκες. Μετά εξετάζουμε προϊόντα.</p><div className="footerLinks"><a href="/methodology">Μεθοδολογία & affiliate disclosure</a><a href="/privacy">Απόρρητο</a></div><small>© 2026 FITMATCH AI · Δοκιμαστική έκδοση</small></div></footer>
  </div>;
 }
