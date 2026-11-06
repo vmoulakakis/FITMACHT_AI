@@ -1,3 +1,41 @@
+# FITMATCH UX Contract (v2 · 2026-11-07)
+
+## Primary journey
+/ -> goal selected -> space selected -> a grounded early explanation -> user chooses continue -> /equipment prefilled at step 3/6 -> activity -> noise -> budget -> storage -> recommendation -> eligible product, historical preview, or honest unavailable state.
+
+### Interactive state matrix
+| State | UI outcome | Action |
+| --- | --- | --- |
+| No answers | "Choose goal and available space" explanation | Continue disabled |
+| Goal only | Goal visually selected, 1/6 done | Continue disabled |
+| Space only | Space visually selected, 1/6 done | Continue disabled |
+| Both | Relevant explanation + source/spec reminder, 2/6 done | Continue enabled |
+| Valid warm-start URL | Advisor loads provided goal and space, opens at step index 2 | Back can edit space or goal |
+| Invalid URL / arrays / unsupported values | No prefill, advisor opens at ordinary landing | Never assume user answers |
+| Catalog has real unverified candidates | Images/names with accurate historical disclosure, no buy CTA | Browse products |
+| Catalog unavailable | Honest empty state, no hallucinated cards | Browse methodology |
+| Existing API returns verified offers | Use preserved /api/out allowlisted redirect only | Store external link |
+| API fails / no offers | Existing advisor error or empty state; no false stock claim | Retry/alternate |
+
+## Navigation
+Header logo -> /; product menu -> #catalog; methodology -> /methodology; movement -> /next; studio -> /next/360. Mobile menu uses actual expanded state, all links navigable by keyboard. No visible controls without action.
+
+## Safety and data
+- Selections are nonclinical and passed only as allowlisted URL values. No personal health answers captured on /. No new analytics, cookies, or database mutation.
+- /next complex/urgent health states follow original protected safety paths.
+- /api/recommend and /api/360/offers unchanged. Raw SocialMarket commission estimates never count as independently verified.
+- Real images reflect source. No synthetic product photos posed as genuine.
+- Unverified candidates lack buy link; no arbitrary affiliate link rewriting.
+
+## Acceptance / QA
+- CI typecheck, unit tests (9 combinations, handoff, invalid URL rejection), build.
+- Visual desktop/tablet/mobile at 320/360/390/768/1024/1440, keyboard and assistive tech, 200% zoom, reduced motion.
+- Real manual E2E: / -> choose goal+space -> third advisor question -> complete -> safe result. 
+- Vercel preview is protected by login; live visual QA cannot be claimed without authenticated browser.
+- Production release requires explicit signoff.
+
+---
+## Legacy movement and 360 journeys (unchanged contract)
 # FITMATCH NEXT — UX-CONTRACT.md
 ## Screen transitions
 home -> barrier -> duration -> safety -> result. Backwards navigation preserves current answers. Reset clears answers, commitments and verified-offer response. No free-text medical input.
