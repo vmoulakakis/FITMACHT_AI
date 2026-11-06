@@ -1,114 +1,118 @@
 "use client";
 
 import {useState} from "react";
-import {goals,spaces,getFitCheckSuggestion,type Goal,type Space} from "@/lib/fitcheck";
 import {
- Activity, ArrowRight, ArrowUpRight, Check, ChevronDown,
- ClipboardCheck, Compass, Dumbbell, HeartHandshake, Layers3, Menu,
- Ruler, ShieldCheck, SlidersHorizontal, Sparkles, Wallet, X
+ Activity, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown,
+ Compass, Dumbbell, Footprints, HeartHandshake, Info, Layers3,
+ Menu, Ruler, SearchCheck, ShieldCheck, SlidersHorizontal, Sparkles,
+ Target, Wallet, X
 } from "lucide-react";
+import {goals,spaces,getFitCheckSuggestion,fitCheckAdvisorUrl,type Goal,type Space} from "@/lib/fitcheck";
 
-function Blueprint(){
- return <div className="fmx-blueprint" aria-label="Καλλιτεχνική απεικόνιση χώρου και εργαλείων σχεδιασμού">
-  <div className="fmx-blueprint-top"><span className="fmx-bp-bullet"/><span>FITMATCH / SPACE INTELLIGENCE</span><span className="fmx-bp-mark">✳</span></div>
-  <div className="fmx-visual" aria-hidden="true">
-   <div className="fmx-orbit fmx-orbit-a"/><div className="fmx-orbit fmx-orbit-b"/>
-   <svg viewBox="0 0 490 410" role="presentation" focusable="false">
-    <defs><linearGradient id="fmx-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#dff1dd"/><stop offset="1" stopColor="#c5dacb"/></linearGradient></defs>
-    <path d="M92 95L315 31L429 119L206 190Z" fill="#c4e3dc" opacity=".2"/>
-    <path d="M87 201L302 119L428 202L207 297Z" fill="url(#fmx-grad)" stroke="#89b7af" strokeWidth="2"/>
-    <path d="M207 297V333L428 239V202" fill="#8cb5a8" opacity=".55"/>
-    <path d="M87 201V239L207 333V297" fill="#bad8c8"/>
-    <path d="M132 188L304 128M160 210L332 147M190 232L358 165M117 227L328 149M160 255L373 173" stroke="#94b9ac" strokeWidth="1" opacity=".65"/>
-    <ellipse cx="252" cy="205" rx="100" ry="42" fill="#14454a" opacity=".13"/>
-    <path d="M180 195L290 155L334 183L224 226Z" fill="#e2eee7" stroke="#20515b" strokeWidth="3"/>
-    <path d="M193 174L284 142L311 154L220 188Z" fill="#183e48"/>
-    <path d="M194 174V195L220 209V188M220 188V209L311 174V154" fill="#345f66"/>
-    <path d="M223 185V120C223 113 230 107 239 106L254 103C263 102 270 106 270 115V162" fill="none" stroke="#1e5056" strokeWidth="10" strokeLinecap="round"/>
-    <path d="M240 106L263 101" stroke="#f17e68" strokeWidth="10" strokeLinecap="round"/>
-    <rect x="244" y="157" width="40" height="11" rx="5" fill="#f17e68" transform="rotate(-20 244 157)"/>
-    <circle cx="305" cy="215" r="16" fill="#ee8d76" stroke="#fff" strokeWidth="6"/>
-    <circle cx="333" cy="203" r="14" fill="#17464d" stroke="#fff" strokeWidth="5"/>
-    <path d="M357 70L378 61M378 61L372 82M378 61L388 80" stroke="#ee8d76" strokeWidth="4" strokeLinecap="round"/>
-   </svg>
-   <div className="fmx-float fmx-float-a"><Ruler size={17}/><span>Πρώτα οι πραγματικές<br/><b>διαστάσεις</b></span></div>
-   <div className="fmx-float fmx-float-b"><ShieldCheck size={17}/><span>Διαφάνεια<br/><b>χωρίς υποθέσεις</b></span></div>
-  </div>
-  <div className="fmx-bp-bottom"><span>01 / ΚΑΤΑΝΟΗΣΗ</span><span>02 / ΚΑΤΑΛΛΗΛΟΤΗΤΑ</span><span>03 / ΕΠΙΛΟΓΗ</span></div>
- </div>;
-}
+type Preview={
+ id:string;title:string;brand:string|null;imageUrl:string|null;observedAt:string;
+ category:string;status:"unverified_feed_preview"|"historical_feed_preview"
+};
 
-export default function FitMatchHome(){
- const [goal,setGoal]=useState<Goal>("cardio");
- const [space,setSpace]=useState<Space>("compact");
- const [menuOpen,setMenuOpen]=useState(false);
- const selected=getFitCheckSuggestion(goal,space);
- const close=()=>setMenuOpen(false);
+const facts=[
+ {index:"01",title:"Πρώτα η χρήση",description:"Κατανοούμε τι θέλεις να κάνεις, όχι ποιο μηχάνημα σου αρέσει σε μια φωτογραφία.",Icon:Target},
+ {index:"02",title:"Έπειτα οι περιορισμοί",description:"Χώρος, θόρυβος, τρόπος άσκησης, προϋπολογισμός και αποθήκευση μπαίνουν στην απόφαση.",Icon:Ruler},
+ {index:"03",title:"Τέλος η τεκμηρίωση",description:"Προτείνουμε κατηγορία με αιτιολόγηση. Προϊόντα προς αγορά εμφανίζονται μόνο μετά από έλεγχο.",Icon:SearchCheck}
+];
+
+export default function FitMatchHome({featured=[]}:{featured?:Preview[]}){
+ const [goal,setGoal]=useState<Goal|null>(null);
+ const [space,setSpace]=useState<Space|null>(null);
+ const [mobileMenu,setMobileMenu]=useState(false);
+ const match=goal&&space?getFitCheckSuggestion(goal,space):null;
+ const ready=goal!==null&&space!==null;
+ const proceed=()=>{if(goal&&space)window.location.assign(fitCheckAdvisorUrl({goal,space}));};
  return <div className="fmx">
-  <a className="fmx-skip" href="#fmx-content">Μετάβαση στο περιεχόμενο</a>
+  <a className="fmx-skip" href="#main">Μετάβαση στο κύριο περιεχόμενο</a>
   <header className="fmx-header">
    <div className="fmx-header-inner">
-    <a href="/" className="fmx-logo" aria-label="FitMatch AI — αρχική"><span className="fmx-logo-symbol"><Activity size={21}/></span>fitmatch<span className="fmx-logo-dot">✳</span><small>AI</small></a>
-    <nav id="fmx-menu" className={menuOpen?"fmx-navigation is-open":"fmx-navigation"} aria-label="Κύρια πλοήγηση">
-     <a onClick={close} href="#fmx-how">Πώς λειτουργεί</a>
-     <a onClick={close} href="#fmx-explorer">Δοκίμασε το FitCheck</a>
-     <a onClick={close} href="/products">Κατάλογος</a>
-     <a onClick={close} href="/methodology">Μεθοδολογία</a>
+    <a className="fmx-logo" href="/" aria-label="FitMatch AI — αρχική"><span className="fmx-logo-symbol"><Activity size={20}/></span><span>fitmatch</span><span className="fmx-logo-dot">✳</span><small>AI</small></a>
+    <nav id="fmx-menu" className={mobileMenu?"fmx-navigation is-open":"fmx-navigation"} aria-label="Κύρια πλοήγηση">
+     <a href="#fitstart" onClick={()=>setMobileMenu(false)}>Βρες το Fit σου</a>
+     <a href="#how" onClick={()=>setMobileMenu(false)}>Πώς λειτουργεί</a>
+     <a href="#catalog" onClick={()=>setMobileMenu(false)}>Προϊόντα</a>
+     <a href="/methodology" onClick={()=>setMobileMenu(false)}>Μεθοδολογία</a>
     </nav>
-    <a className="fmx-header-cta" href="/equipment">Ξεκίνα το matching <ArrowUpRight size={17}/></a>
-    <button type="button" className="fmx-mobile-menu" aria-label={menuOpen?"Κλείσιμο μενού":"Άνοιγμα μενού"} aria-expanded={menuOpen} aria-controls="fmx-menu" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?<X size={24}/>:<Menu size={24}/>}</button>
+    <a className="fmx-header-cta" href="#fitstart">Ξεκίνα δωρεάν <ArrowUpRight size={17}/></a>
+    <button type="button" className="fmx-mobile-menu" aria-label={mobileMenu?"Κλείσιμο μενού":"Άνοιγμα μενού"} aria-expanded={mobileMenu} aria-controls="fmx-menu" onClick={()=>setMobileMenu(x=>!x)}>{mobileMenu?<X size={23}/>:<Menu size={23}/>}</button>
    </div>
   </header>
-  <main id="fmx-content">
-   <section className="fmx-hero">
+  <main id="main">
+   <section className="fmx-hero" aria-labelledby="hero-title">
     <div className="fmx-hero-inner">
      <div className="fmx-hero-copy">
-      <div className="fmx-kicker"><span/> SMARTER FITNESS DECISIONS · ΕΛΛΑΔΑ</div>
-      <h1>Η σωστή επιλογή δεν αρχίζει από το <em>προϊόν.</em><br/><span>Αρχίζει από εσένα.</span></h1>
-      <p className="fmx-lead">Ένας πιο έξυπνος τρόπος να βρεις εξοπλισμό και συνήθειες που ταιριάζουν πραγματικά στον χώρο, τον στόχο και την καθημερινότητά σου.</p>
-      <div className="fmx-hero-actions"><a className="fmx-btn fmx-btn-lime" href="/equipment">Βρες τι σου ταιριάζει <ArrowUpRight size={19}/></a><a className="fmx-btn fmx-btn-outline" href="/next/360">Δημιούργησε πλάνο 360° <ArrowRight size={18}/></a></div>
-      <div className="fmx-hero-notes"><span><Check size={17}/> Δωρεάν αξιολόγηση</span><span><Check size={17}/> Χωρίς λογαριασμό</span><span><Check size={17}/> Χωρίς πίεση αγοράς</span></div>
+      <div className="fmx-kicker"><span/> PERSONAL FITNESS INTELLIGENCE / ΕΛΛΑΔΑ</div>
+      <h1 id="hero-title">Μην αγοράζεις<br/>απλώς εξοπλισμό.<br/><em>Βρες το Fit σου.</em></h1>
+      <p className="fmx-lead">Ο σωστός εξοπλισμός εξαρτάται από το πώς ζεις, όχι μόνο από την τιμή του. Πες μας τον στόχο και τον χώρο σου. Θα προχωρήσουμε μαζί σε μια αιτιολογημένη επιλογή.</p>
+      <div className="fmx-hero-actions"><a className="fmx-btn fmx-btn-lime" href="#fitstart">Ξεκίνα την αξιολόγηση <ArrowUpRight size={18}/></a><a className="fmx-btn fmx-btn-outline" href="#how">Δες τη διαδικασία <ArrowRight size={16}/></a></div>
+      <div className="fmx-hero-notes"><span><Check size={16}/> Χωρίς εγγραφή</span><span><Check size={16}/> Χωρίς υποχρεωτική αγορά</span><span><Check size={16}/> Ελληνικός οδηγός</span></div>
+      <div className="fmx-hero-signature"><span>FIT / 001</span><span className="fmx-fingerprint" aria-hidden="true">✳</span><span>ΑΠΟΦΑΣΕΙΣ ΜΕ ΚΡΙΤΗΡΙΑ</span></div>
      </div>
-     <Blueprint/>
+     <section id="fitstart" className="fmx-interactive" aria-labelledby="fmx-question-heading">
+      <div className="fmx-interactive-top"><div><span className="fmx-interactive-eyebrow"><span className="fmx-status-dot"/> FITMATCH / QUICK START</span><h2 id="fmx-question-heading">Ας βρούμε τι <em>σου ταιριάζει.</em></h2></div><span className="fmx-interactive-symbol" aria-hidden="true"><SlidersHorizontal size={23}/></span></div>
+      <div className="fmx-assessment-progress" aria-label="Δύο πρώτες ερωτήσεις από έξι"><span className="filled"/><span className={goal?"filled":""}/><span className={space?"filled":""}/><span/><span/><span/></div>
+      <p className="fmx-assessment-hint">Δύο σύντομες επιλογές εδώ. Οι απαντήσεις σου μεταφέρονται στον πλήρη σύμβουλο — δεν τις ξαναγράφεις.</p>
+      <fieldset className="fmx-selector">
+       <legend><span>01</span> Τι θέλεις να πετύχεις;</legend>
+       <div className="fmx-option-stack">{goals.map(g=><button type="button" key={g.id} onClick={()=>setGoal(g.id)} aria-pressed={goal===g.id} className={goal===g.id?"selected":""}><span className="fmx-option-dot">{goal===g.id?<Check size={15}/>:null}</span><span><strong>{g.label}</strong><small>{g.detail}</small></span></button>)}</div>
+      </fieldset>
+      <fieldset className="fmx-selector">
+       <legend><span>02</span> Πόσο χώρο διαθέτεις;</legend>
+       <div className="fmx-space-options">{spaces.map(s=><button type="button" key={s.id} onClick={()=>setSpace(s.id)} aria-pressed={space===s.id} className={space===s.id?"selected":""}><span aria-hidden="true" className={"fmx-space-mark "+s.id}><span/></span><strong>{s.label}</strong></button>)}</div>
+      </fieldset>
+      <div className="fmx-interactive-insight" aria-live="polite" aria-atomic="true">
+       <span className="fmx-insight-label"><Sparkles size={15}/> ΠΡΩΤΗ ΕΝΔΕΙΞΗ</span>
+       {match?<><h3>{match.title}</h3><p>{match.description}</p><small><ShieldCheck size={15}/>{match.check}</small></>:<p>Επίλεξε στόχο και χώρο για να εμφανιστεί μια πρώτη εξήγηση. Δεν είναι ακόμη τελική σύσταση.</p>}
+      </div>
+      <button type="button" className="fmx-assessment-cta" disabled={!ready} onClick={proceed}>Συνέχεια στο βήμα 3 από 6 <ArrowRight size={18}/></button>
+      <p className="fmx-assessment-disclosure"><ShieldCheck size={14}/> Χωρίς σκορ που δεν τεκμηριώνεται · χωρίς ψεύτικες προσφορές.</p>
+     </section>
     </div>
-    <div className="fmx-hero-foot"><span>FITMATCH / HUMAN-FIRST INTELLIGENCE</span><a href="#fmx-paths">Εξερεύνησε τις επιλογές <ChevronDown size={18}/></a></div>
+    <div className="fmx-hero-foot"><span>ONE PROCESS · INFORMED CHOICES</span><a href="#how">Μάθε πώς λειτουργεί <ChevronDown size={17}/></a></div>
    </section>
 
-   <section id="fmx-paths" className="fmx-paths fmx-wrap">
-    <div className="fmx-section-heading"><div><span className="fmx-eyebrow">ΔΥΟ ΔΙΑΔΡΟΜΕΣ · ΕΝΑΣ ΣΤΟΧΟΣ</span><h2>Αυτό που χρειάζεσαι.<br/><em>Όχι περισσότερα απ' όσα χρειάζεσαι.</em></h2></div><p>Μπορείς να επιλέξεις εξοπλισμό ή να ξεκινήσεις με μικρές καθημερινές αλλαγές. Και οι δύο δρόμοι καταλήγουν σε πιο συνειδητές αποφάσεις.</p></div>
-    <div className="fmx-path-grid">
-     <a href="/equipment" className="fmx-path fmx-path-primary"><span className="fmx-card-tag">01 / BUYING ADVISOR</span><div className="fmx-path-icon"><Dumbbell size={31}/></div><h3>Βρες τον σωστό<br/>εξοπλισμό.</h3><p>Έξι απλές επιλογές για στόχο, χώρο, τρόπο άσκησης, θόρυβο, budget και αποθήκευση.</p><span className="fmx-path-link">Ξεκίνα την αξιολόγηση <ArrowUpRight size={20}/></span><span className="fmx-path-number">01</span></a>
-     <a href="/next" className="fmx-path fmx-path-secondary"><span className="fmx-card-tag">02 / MOVEMENT JOURNEY</span><div className="fmx-path-icon"><HeartHandshake size={31}/></div><h3>Βρες τον δικό σου<br/>τρόπο κίνησης.</h3><p>Ξεκίνα από το τι σε δυσκολεύει, χωρίς σύγκριση, περιττές αγορές ή αυθαίρετες υποσχέσεις.</p><span className="fmx-path-link">Ανακάλυψε τη διαδρομή σου <ArrowUpRight size={20}/></span><span className="fmx-path-number">02</span></a>
+   <section id="how" className="fmx-method fmx-wrap">
+    <div className="fmx-section-heading">
+     <div><span className="fmx-eyebrow">ΤΟ FITMATCH ΣΕ ΤΡΙΑ ΣΤΑΔΙΑ</span><h2>Πρώτα καταλαβαίνουμε.<br/><em>Μετά προτείνουμε.</em></h2></div>
+     <p>Η καλή εμπειρία αγοράς δεν ξεκινά με «best sellers». Ξεκινά με πραγματικά ερωτήματα.</p>
     </div>
+    <div className="fmx-method-grid">{facts.map(f=>{const Icon=f.Icon;return <article key={f.index}><span className="fmx-method-number">{f.index} / 03</span><span className="fmx-method-icon"><Icon size={25}/></span><h3>{f.title}</h3><p>{f.description}</p></article>})}</div>
+    <div className="fmx-method-action"><p><Info size={18}/> Η επιλογή κατηγορίας γίνεται με σαφείς κανόνες. Η τρέχουσα έκδοση δεν ισχυρίζεται ότι λειτουργεί αυτόνομος LLM agent.</p><a href="/methodology">Διάβασε τη μεθοδολογία <ArrowUpRight size={16}/></a></div>
    </section>
 
-   <section id="fmx-explorer" className="fmx-check-section">
-    <div className="fmx-wrap fmx-check-layout">
-     <div className="fmx-check-intro"><span className="fmx-eyebrow">LIVE INTERACTION · FITCHECK</span><h2>Δες πώς σκέφτεται ένα <em>καλύτερο matching.</em></h2><p>Διάλεξε στόχο και χώρο. Θα δεις μια πρώτη κατεύθυνση — όχι αυτόματη πρόταση προϊόντος. Ο πλήρης σύμβουλος ελέγχει επιπλέον περιορισμούς πριν καταλήξει.</p><div className="fmx-check-proof"><ClipboardCheck size={20}/> Χωρίς «μαγικά» scores ή ατεκμηρίωτα προϊόντα.</div></div>
-     <div className="fmx-check-panel">
-      <div className="fmx-check-heading"><span>FITCHECK / QUICK EXPLORE</span><SlidersHorizontal size={19}/></div>
-      <fieldset><legend>01 / Τι θέλεις να πετύχεις;</legend><div className="fmx-chips">{goals.map(x=><button key={x.id} type="button" className={goal===x.id?"active":""} aria-pressed={goal===x.id} onClick={()=>setGoal(x.id)}>{x.label}</button>)}</div></fieldset>
-      <fieldset><legend>02 / Πόσο χώρο διαθέτεις;</legend><div className="fmx-chips">{spaces.map(x=><button key={x.id} type="button" className={space===x.id?"active":""} aria-pressed={space===x.id} onClick={()=>setSpace(x.id)}>{x.label}</button>)}</div></fieldset>
-      <div className="fmx-check-result" aria-live="polite" aria-atomic="true"><span><Sparkles size={17}/> ΕΝΔΕΙΚΤΙΚΗ ΚΑΤΕΥΘΥΝΣΗ</span><h3>{selected.title}</h3><p>{selected.copy}</p><div><ShieldCheck size={16}/>{selected.check}</div></div>
-      <a href="/equipment" className="fmx-btn fmx-btn-dark fmx-check-action">Συνέχισε στον πλήρη σύμβουλο <ArrowUpRight size={19}/></a>
+   <section id="catalog" className="fmx-catalog-area">
+    <div className="fmx-wrap">
+     <div className="fmx-section-heading">
+      <div><span className="fmx-eyebrow">SOURCE-AUTHENTIC / LINKWISE DATA</span><h2>Αληθινές καταχωρίσεις.<br/><em>Όχι τεχνητή διαθεσιμότητα.</em></h2></div>
+      <p>Τα δείγματα προέρχονται από καταχωρίσεις πηγής, όχι από φανταστικά προϊόντα. Η τρέχουσα διαθεσιμότητα και τιμή απαιτούν νέα επαλήθευση.</p>
      </div>
+     {featured.length>0?<div className="fmx-preview-grid">{featured.slice(0,3).map(item=><article className="fmx-preview-product" key={item.id}>
+      <div className="fmx-preview-media">{item.imageUrl?<img src={item.imageUrl} alt={item.title} loading="lazy" width={280} height={220}/>:<Dumbbell size={48} aria-label="Δεν υπάρχει εικόνα πηγής"/>}<span>ΑΝΕΠΙΒΕΒΑΙΩΤΗ ΚΑΤΑΧΩΡΙΣΗ</span></div>
+      <div className="fmx-preview-body"><span className="fmx-preview-tag">FITNESS EQUIPMENT</span><h3>{item.title}</h3><p>Καταγραφή: {new Date(item.observedAt).toLocaleDateString("el-GR")} · Η διαθεσιμότητα δεν έχει επαληθευτεί.</p></div>
+     </article>)}</div>:<div className="fmx-catalog-empty"><SearchCheck size={28}/><div><h3>Δεν εμφανίζονται ακόμη επαληθευμένα δείγματα καταλόγου.</h3><p>Η απουσία δεδομένων δεν αντικαθίσταται με ψεύτικα προϊόντα ή προσφορές.</p></div></div>}
+     <div className="fmx-catalog-bottom"><span><ShieldCheck size={17}/> Ιστορική καταχώριση ≠ διαθέσιμη προσφορά αγοράς.</span><a href="/products">Εξερεύνησε τον κατάλογο <ArrowUpRight size={17}/></a></div>
     </div>
    </section>
 
-   <section id="fmx-how" className="fmx-logic fmx-wrap"><div className="fmx-logic-head"><span className="fmx-eyebrow">ΤΟ ΜΟΝΤΕΛΟ ΑΠΟΦΑΣΗΣ</span><h2>Λιγότερη εικασία.<br/><em>Περισσότερη ουσία.</em></h2></div>
-    <div className="fmx-logic-grid">
-     <article><span className="fmx-logic-icon"><Ruler/></span><span>01 / SPACE</span><h3>Χωράει;</h3><p>Χώρος χρήσης, αποθήκευση και πραγματικές διαστάσεις — όχι μόνο ωραίες φωτογραφίες.</p></article>
-     <article><span className="fmx-logic-icon"><Compass/></span><span>02 / PURPOSE</span><h3>Σου ταιριάζει;</h3><p>Στόχος, συνήθειες, θόρυβος και πρακτικά εμπόδια στην καθημερινότητά σου.</p></article>
-     <article><span className="fmx-logic-icon"><Wallet/></span><span>03 / VALUE</span><h3>Αξίζει;</h3><p>Πραγματική τεκμηρίωση αντί για αυθαίρετη κατάταξη προϊόντων και τεχνητή βεβαιότητα.</p></article>
-    </div>
+   <section className="fmx-reality fmx-wrap"><div className="fmx-reality-copy"><span className="fmx-eyebrow">ΑΠΟ ΤΟ ΦΙΛΤΡΟ ΣΤΗΝ ΑΠΟΦΑΣΗ</span><h2>Το «ταιριάζει»<br/>χρειάζεται <em>αποδείξεις.</em></h2><p>Δεν αρκεί ένα όνομα προϊόντος. Πριν από σύνδεσμο αγοράς ελέγχουμε καταλληλότητα, τεχνικά χαρακτηριστικά και επιλεξιμότητα προσφοράς.</p><a href="#fitstart" className="fmx-btn fmx-btn-dark">Ξεκίνα από τον στόχο σου <ArrowUpRight size={17}/></a></div>
+    <div className="fmx-proof" aria-label="Κριτήρια επιλογής"><div className="fmx-proof-header"><span><span className="fmx-status-dot"/> FITMATCH / DECISION MODEL</span><span>01—03</span></div><div className="fmx-proof-canvas"><div className="fmx-proof-ring ring-a"/><div className="fmx-proof-ring ring-b"/><div className="fmx-proof-cross"/><div className="fmx-proof-center"><Target size={35}/><strong>THE FIT</strong><small>ανάγκη × πραγματικά δεδομένα</small></div></div><div className="fmx-proof-row"><span><Ruler size={16}/> Χώρος & χρήσεις</span><CheckCircle2 size={17}/></div><div className="fmx-proof-row"><span><Wallet size={16}/> Προϋπολογισμός</span><CheckCircle2 size={17}/></div><div className="fmx-proof-row"><span><ShieldCheck size={16}/> Επαλήθευση πηγής</span><CheckCircle2 size={17}/></div></div>
    </section>
 
-   <section className="fmx-360 fmx-wrap"><div className="fmx-360-inner"><div className="fmx-360-kicker"><Layers3 size={18}/> FITMATCH 360° STUDIO</div><h2>Κίνηση. Συνήθειες.<br/>Εξοπλισμός. <em>Στην ίδια εικόνα.</em></h2><p>Ένα ξεχωριστό εργαλείο γενικής ενημέρωσης, με προσωπικές επιλογές, συνοπτικό πλάνο και δυνατότητα PDF. Δεν αντικαθιστά επαγγελματική συμβουλή υγείας.</p><a className="fmx-btn fmx-btn-lime" href="/next/360">Άνοιξε το 360° Studio <ArrowUpRight size={19}/></a><div className="fmx-360-art" aria-hidden="true"><span className="fmx-360-ring r1"/><span className="fmx-360-ring r2"/><span className="fmx-360-ring r3"/><span className="fmx-360-center">360<span>°</span></span></div></div></section>
+   <section className="fmx-next-area"><div className="fmx-wrap fmx-next-inner"><div><span className="fmx-eyebrow">ΠΕΡΙΣΣΟΤΕΡΟ ΑΠΟ ΤΗΝ ΑΓΟΡΑ</span><h2>Και αν το επόμενο βήμα<br/>δεν είναι <em>να αγοράσεις;</em></h2><p>Το FitMatch προσφέρει επίσης ένα ξεχωριστό, πληροφοριακό εργαλείο καθημερινής κίνησης και ένα 360° Studio για γενικές συνήθειες, διατροφή και PDF. Χωρίς ιατρικές υποσχέσεις.</p><div className="fmx-next-links"><a href="/next">Ανακάλυψε τη διαδρομή κίνησης <ArrowUpRight size={17}/></a><a href="/next/360">Άνοιξε το 360° Studio <ArrowUpRight size={17}/></a></div></div><div className="fmx-next-motif" aria-hidden="true"><span className="circle1"/><span className="circle2"/><span className="circle3"/><strong>360°</strong></div></div></section>
 
-   <section className="fmx-transparency fmx-wrap"><div><span className="fmx-eyebrow">ΕΜΠΙΣΤΟΣΥΝΗ ΧΩΡΙΣ ΥΠΟΣΧΕΣΕΙΣ</span><h2>Τα δεδομένα έχουν σημασία.</h2><p>Ο κατάλογος περιλαμβάνει καταχωρίσεις πηγής που μπορεί να είναι ιστορικές. Δεν αποτελούν αυτομάτως διαθέσιμες προσφορές. Η εμφάνιση πραγματικών affiliate συνδέσμων απαιτεί επαλήθευση.</p></div><a className="fmx-text-link" href="/methodology">Δες τη μεθοδολογία και την affiliate ενημέρωση <ArrowUpRight size={19}/></a></section>
+   <section className="fmx-faq fmx-wrap"><div><span className="fmx-eyebrow">FAQ / ΔΙΑΦΑΝΕΙΑ</span><h2>Μερικές σωστές ερωτήσεις.</h2></div><div className="fmx-faq-items">
+    <details><summary>Είναι πραγματικά AI ή απλώς ένας κατάλογος; <ChevronDown size={18}/></summary><p>Σήμερα χρησιμοποιείται μια εξηγήσιμη μηχανή κανόνων και ασφαλών ελέγχων. Η ενεργοποίηση αυτόνομου AI agent είναι ξεχωριστό τεχνικό στάδιο και δεν παρουσιάζεται ως ήδη διαθέσιμη.</p></details>
+    <details><summary>Γιατί δεν βλέπω πάντα προϊόντα προς αγορά; <ChevronDown size={18}/></summary><p>Η απουσία επαληθευμένων προσφορών είναι προτιμότερη από ψευδείς τιμές ή ανεπιβεβαίωτους συνδέσμους. Ο κατάλογος δειγμάτων δεν είναι live stock.</p></details>
+    <details><summary>Χρειάζεται λογαριασμός ή αγορά; <ChevronDown size={18}/></summary><p>Όχι. Ο βασικός σύμβουλος μπορεί να χρησιμοποιηθεί χωρίς λογαριασμό και χωρίς υποχρέωση αγοράς.</p></details>
+   </div></section>
 
-   <section className="fmx-final"><div className="fmx-wrap"><span className="fmx-eyebrow">READY WHEN YOU ARE</span><h2>Βρες αυτό που <em>πραγματικά</em><br/>σου ταιριάζει.</h2><div className="fmx-final-actions"><a className="fmx-btn fmx-btn-lime" href="/equipment">Ξεκίνα δωρεάν <ArrowUpRight size={19}/></a><a className="fmx-final-secondary" href="/next">Ή εξερεύνησε την κίνηση <ArrowRight size={17}/></a></div></div></section>
+   <section className="fmx-final"><div className="fmx-wrap"><span className="fmx-eyebrow">FITMATCH / START WITH YOUR NEED</span><h2>Η καλύτερη επιλογή<br/><em>ξεκινά από εσένα.</em></h2><a className="fmx-btn fmx-btn-lime" href="#fitstart">Βρες το Fit σου <ArrowUpRight size={17}/></a></div></section>
   </main>
-  <footer className="fmx-footer"><div className="fmx-wrap fmx-footer-inner"><div><a href="/" className="fmx-logo"><span className="fmx-logo-symbol"><Activity size={18}/></span>fitmatch<span className="fmx-logo-dot">✳</span><small>AI</small></a><p>Human-first fitness intelligence. Πρώτα η ανάγκη, μετά η επιλογή.</p></div><nav aria-label="Υποσέλιδο"><a href="/equipment">Σύμβουλος αγοράς</a><a href="/next">Κίνηση</a><a href="/products">Κατάλογος</a><a href="/methodology">Μεθοδολογία</a><a href="/privacy">Απόρρητο</a></nav></div><div className="fmx-footer-meta fmx-wrap"><span>© 2026 FITMATCH AI · Staging / δοκιμαστική έκδοση</span><span>Οι επιλογές είναι ενημερωτικές, όχι ιατρική συμβουλή.</span></div></footer>
+  <footer className="fmx-footer"><div className="fmx-wrap fmx-footer-inner"><div><a href="/" className="fmx-logo"><span className="fmx-logo-symbol"><Activity size={19}/></span><span>fitmatch</span><span className="fmx-logo-dot">✳</span><small>AI</small></a><p>Ένας τεκμηριωμένος τρόπος να αξιολογείς fitness επιλογές. Όχι ηλεκτρονικό κατάστημα.</p></div><nav aria-label="Υποσέλιδο"><a href="/equipment">Σύμβουλος</a><a href="/products">Κατάλογος</a><a href="/next">Κίνηση</a><a href="/next/360">360° Studio</a><a href="/methodology">Μεθοδολογία</a><a href="/privacy">Απόρρητο</a></nav></div><div className="fmx-footer-meta fmx-wrap"><span>© 2026 FitMatch AI · Δοκιμαστική έκδοση</span><span>Affiliate links ενδέχεται να αποφέρουν προμήθεια, χωρίς επιπλέον κόστος αγοράς.</span></div></footer>
  </div>;
 }
