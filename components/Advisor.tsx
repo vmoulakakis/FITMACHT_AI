@@ -17,7 +17,7 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
  const patch=(p:Partial<Answers>)=>setA(x=>({...x,...p}));
- const begin=()=>{setResult(null);setError("");setStarted(true);setStep(0);window.scrollTo({top:0,behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});};
+ const begin=()=>{setResult(null);setError("");setStarted(true);setStep(0);window.scrollTo({top:0,behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});};
  const beginForGoal=(goal:Goal)=>{setA({...initial,goal});begin();};
  const next=async()=>{
    if(loading)return;
