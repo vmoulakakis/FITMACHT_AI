@@ -3,9 +3,8 @@
 import {useState} from "react";
 import {
  Activity, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown,
- Compass, Dumbbell, Footprints, HeartHandshake, Info, Layers3,
- Menu, Ruler, SearchCheck, ShieldCheck, SlidersHorizontal, Sparkles,
- Target, Wallet, X
+ Dumbbell, Info, Menu, Ruler, SearchCheck, ShieldCheck, SlidersHorizontal,
+ Sparkles, Target, Wallet, X
 } from "lucide-react";
 import {goals,spaces,getFitCheckSuggestion,fitCheckAdvisorUrl,type Goal,type Space} from "@/lib/fitcheck";
 
@@ -55,7 +54,7 @@ export default function FitMatchHome({featured=[]}:{featured?:Preview[]}){
      </div>
      <section id="fitstart" className="fmx-interactive" aria-labelledby="fmx-question-heading">
       <div className="fmx-interactive-top"><div><span className="fmx-interactive-eyebrow"><span className="fmx-status-dot"/> FITMATCH / QUICK START</span><h2 id="fmx-question-heading">Ας βρούμε τι <em>σου ταιριάζει.</em></h2></div><span className="fmx-interactive-symbol" aria-hidden="true"><SlidersHorizontal size={23}/></span></div>
-      <div className="fmx-assessment-progress" aria-label="Δύο πρώτες ερωτήσεις από έξι"><span className="filled"/><span className={goal?"filled":""}/><span className={space?"filled":""}/><span/><span/><span/></div>
+      <div className="fmx-assessment-progress" role="progressbar" aria-label="Συμπληρωμένες απαντήσεις" aria-valuemin={0} aria-valuemax={6} aria-valuenow={Number(Boolean(goal))+Number(Boolean(space))}><span className={goal?"filled":""}/><span className={space?"filled":""}/><span/><span/><span/><span/></div>
       <p className="fmx-assessment-hint">Δύο σύντομες επιλογές εδώ. Οι απαντήσεις σου μεταφέρονται στον πλήρη σύμβουλο — δεν τις ξαναγράφεις.</p>
       <fieldset className="fmx-selector">
        <legend><span>01</span> Τι θέλεις να πετύχεις;</legend>
@@ -63,7 +62,7 @@ export default function FitMatchHome({featured=[]}:{featured?:Preview[]}){
       </fieldset>
       <fieldset className="fmx-selector">
        <legend><span>02</span> Πόσο χώρο διαθέτεις;</legend>
-       <div className="fmx-space-options">{spaces.map(s=><button type="button" key={s.id} onClick={()=>setSpace(s.id)} aria-pressed={space===s.id} className={space===s.id?"selected":""}><span aria-hidden="true" className={"fmx-space-mark "+s.id}><span/></span><strong>{s.label}</strong></button>)}</div>
+       <div className="fmx-space-options">{spaces.map(s=><button type="button" key={s.id} onClick={()=>setSpace(s.id)} aria-pressed={space===s.id} className={space===s.id?"selected":""}><span aria-hidden="true" className={"fmx-space-mark "+s.id}><span/></span><strong>{s.label}</strong><small>{s.detail}</small></button>)}</div>
       </fieldset>
       <div className="fmx-interactive-insight" aria-live="polite" aria-atomic="true">
        <span className="fmx-insight-label"><Sparkles size={15}/> ΠΡΩΤΗ ΕΝΔΕΙΞΗ</span>
