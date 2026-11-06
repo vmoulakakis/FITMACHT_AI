@@ -1,13 +1,14 @@
 "use client";
 import {useState} from "react";
+import FitCheck from "./FitCheck";
 import {ArrowRight,ArrowLeft,Check,ChevronRight,ChevronDown,Compass,Footprints,ShieldCheck,HeartPulse,House,Activity,Dumbbell,Volume2,Wallet,PackageCheck,RotateCcw,ExternalLink,Sparkles,SlidersHorizontal,Ruler,MoveRight,Search,Eye,LockKeyhole} from "lucide-react";
-import type {Answers,Advice} from "@/lib/decision";
+import type {Answers,Advice,Goal} from "@/lib/decision";
 type Product = {id:string;title:string;merchant:string;price:number;lastSeen:string;tag:string};
 type CandidatePreview={id:string;title:string;brand:string|null;price:number;imageUrl:string|null;observedAt:string;status:"unverified_feed_preview"|"historical_feed_preview"};
 type Result={decision:Advice;offers:Product[];candidatePreviews:CandidatePreview[];catalogState:string;catalogNote:string;disclosure:string};
 const initial:Answers={goal:"walking",space:"compact",noise:"normal",activity:"walk",budget:500,fold:true};
 const stages=["Στόχος","Ο χώρος σου","Τρόπος άσκησης","Θόρυβος","Budget","Αποθήκευση"];
-function Choice({active,title,detail,emoji,onClick}:{active:boolean;title:string;detail?:string;emoji:string;onClick:()=>void}){return <button className={"choice"+(active?" selected":"")} type="button" onClick={onClick}><span className="choiceEmoji">{emoji}</span><span className="choiceCopy"><strong>{title}</strong>{detail&&<small>{detail}</small>}</span><span className="choiceCheck">{active?<Check size={16}/>:<span className="emptyCircle"/>}</span></button>;}
+function Choice({active,title,detail,emoji,onClick}:{active:boolean;title:string;detail?:string;emoji:string;onClick:()=>void}){return <button className={"choice"+(active?" selected":"")} aria-pressed={active} type="button" onClick={onClick}><span className="choiceEmoji">{emoji}</span><span className="choiceCopy"><strong>{title}</strong>{detail&&<small>{detail}</small>}</span><span className="choiceCheck">{active?<Check size={16}/>:<span className="emptyCircle"/>}</span></button>;}
 export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
  const [started,setStarted]=useState(false);
  const [step,setStep]=useState(0);
@@ -16,8 +17,10 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
  const patch=(p:Partial<Answers>)=>setA(x=>({...x,...p}));
- const begin=()=>{setResult(null);setError("");setStarted(true);setStep(0);window.scrollTo({top:0,behavior:"smooth"});};
+ const begin=()=>{setResult(null);setError("");setStarted(true);setStep(0);window.scrollTo({top:0,behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});};
+ const beginForGoal=(goal:Goal)=>{setA({...initial,goal});begin();};
  const next=async()=>{
+   if(loading)return;
    if(step<stages.length-1){setStep(s=>s+1);return;}
    setLoading(true);setError("");
    try{const r=await fetch("/api/recommend",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(a)});if(!r.ok)throw new Error("Αδυναμία ελέγχου των απαντήσεων.");setResult(await r.json());}
@@ -33,14 +36,15 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
   </div></header>
   {!started?<main>
     <section className="hero"><div className="heroInner"><div className="heroText">
-      <div className="eyebrow"><Sparkles size={14}/> AI BUYING ADVISOR · ΕΛΛΑΔΑ</div>
-      <h1>Ο σωστός εξοπλισμός.<br/><span className="accent">Για τον δικό σου χώρο.</span></h1>
-      <p className="heroLead">Δεν χρειάζεσαι άλλο ένα fitness κατάλογο. Χρειάζεσαι κάποιον να καταλάβει τι πραγματικά σου ταιριάζει — πριν ξοδέψεις ούτε ένα ευρώ.</p>
-      <div className="heroActions"><button onClick={begin} type="button" className="btnPrimary">Βρες τι σου ταιριάζει <ArrowRight size={19}/></button><a href="#how" className="btnSecondary">Πώς λειτουργεί <ChevronDown size={17}/></a></div>
-      <div className="heroPoints"><span><Check size={15}/> 2 λεπτά</span><span><Check size={15}/> Χωρίς εγγραφή</span><span><Check size={15}/> Ανεξάρτητες συμβουλές</span></div>
+      <div className="eyebrow"><Sparkles size={14}/> FITMATCH · HUMAN MOVEMENT STUDIO</div>
+      <h1>Ξεκίνα από αυτό που<br/><span className="accent">θέλεις να αλλάξεις.</span></h1>
+      <p className="heroLead">Κίνηση, δύναμη, καθημερινές συνήθειες ή περιορισμένος χώρος. Περιέγραψε τι σε δυσκολεύει και βρες μια πρακτική διαδρομή — πριν αποφασίσεις αν χρειάζεσαι εξοπλισμό.</p>
+      <div className="heroActions"><a href="#fitcheck" className="btnPrimary">Πες μας τι σε δυσκολεύει <ArrowRight size={19}/></a><a href="#how" className="btnSecondary">Πώς λειτουργεί <ChevronDown size={17}/></a></div>
+      <div className="heroPoints"><span><Check size={15}/> 2 λεπτά</span><span><Check size={15}/> Χωρίς εγγραφή</span><span><Check size={15}/> Διαφανή κριτήρια</span></div>
     </div>
     <div className="heroArt" aria-label="Παράδειγμα διαμόρφωσης γυμναστικής σε σπίτι" role="img"><div className="artRing ring1"/><div className="artRing ring2"/><div className="artPlane"><div className="planeLines"/><div className="equipment"><div className="equipmentHandle"/><div className="equipmentBar"/><div className="equipmentBase"><div className="equipmentStripe"/></div></div><div className="miniLabel"><span className="labelDot"/> SMART SPACE FIT</div></div><div className="floatCard floatA"><Ruler size={17}/><span><b>Χώρος</b><small>Στα μέτρα σου</small></span><Check size={16}/></div><div className="floatCard floatB"><ShieldCheck size={17}/><span><b>Ελεγμένα κριτήρια</b><small>Χωρίς υποθέσεις</small></span></div></div>
     </div></section>
+    <FitCheck onExplore={beginForGoal}/>
 
     {featured.length>0&&<section className="featuredFitness" aria-label="Πραγματικά προϊόντα γυμναστικής από τη βάση">
       <div className="featuredFitnessHeader"><div><div className="overline">ΠΡΑΓΜΑΤΙΚΑ ΠΡΟΪΟΝΤΑ · LINKWISE</div><h2>Λύσεις που υπάρχουν. <em>Όχι υποσχέσεις.</em></h2><p>Επιλεγμένα είδη από πραγματικές καταχωρίσεις του καταστήματος. Οι τιμές είναι από την ημερομηνία καταγραφής και χρειάζονται νέα επιβεβαίωση πριν αγοράσεις.</p></div></div>
@@ -59,7 +63,7 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
     <section className="lastCTA"><div className="overline">ΕΙΣΑΙ ΕΤΟΙΜΟΣ;</div><h2>Μην μαντεύεις.<br/><em>Βρες το fit σου.</em></h2><p>Λιγότερες αμφιβολίες. Πιο σωστές επιλογές.</p><button onClick={begin} className="btnPrimary" type="button">Ξεκίνα δωρεάν <ArrowRight size={19}/></button></section>
   </main>:<main className="quizShell"><div className="quizDecor"/><div className="quizLayout">
     <div className="quizTop"><button className="subtleBack" type="button" onClick={()=>{setStarted(false);setResult(null)}}><ArrowLeft size={17}/> Πίσω στην αρχική</button><span className="quizBrand">FITMATCH <b>AI</b></span></div>
-    {!result?<div className="quizPanel"><div className="quizProgress"><div className="progressTitle"><span>Ο ΠΡΟΣΩΠΙΚΟΣ ΣΟΥ ΣΥΜΒΟΥΛΟΣ</span><span>Βήμα {step+1} από {stages.length}</span></div><div className="progressBar"><span style={{width:((step+1)/stages.length*100)+"%"}}/></div></div>
+    {!result?<div className="quizPanel"><div className="quizProgress"><div className="progressTitle"><span>Ο ΠΡΟΣΩΠΙΚΟΣ ΣΟΥ ΣΥΜΒΟΥΛΟΣ</span><span>Βήμα {step+1} από {stages.length}</span></div><div className="progressBar" role="progressbar" aria-label="Πρόοδος αξιολόγησης" aria-valuemin={1} aria-valuemax={stages.length} aria-valuenow={step+1}><span style={{width:((step+1)/stages.length*100)+"%"}}/></div></div>
        <div className="quizQuestion"><div className="questionLabel">{String(step+1).padStart(2,"0")} — {stages[step]}</div>
        {step===0&&<><h2>Ποιος είναι ο στόχος σου;</h2><p>Η ανάγκη σου καθορίζει τι αξίζει να εξετάσουμε.</p><div className="choices"><Choice active={a.goal==="walking"} emoji="🚶" title="Περισσότερο περπάτημα" detail="Καθημερινή ήπια κίνηση στο σπίτι" onClick={()=>patch({goal:"walking",activity:"walk"})}/><Choice active={a.goal==="cardio"} emoji="💓" title="Cardio & αντοχή" detail="Συστηματική αερόβια άσκηση" onClick={()=>patch({goal:"cardio"})}/><Choice active={a.goal==="strength"} emoji="💪" title="Δύναμη & ενδυνάμωση" detail="Χρήσιμος εξοπλισμός για μυϊκή προπόνηση" onClick={()=>patch({goal:"strength"})}/><Choice active={a.goal==="mixed"} emoji="⚡" title="Λίγο απ' όλα" detail="Ευέλικτη γυμναστική χωρίς υπερβολές" onClick={()=>patch({goal:"mixed"})}/></div></>}
        {step===1&&<><h2>Πόσο χώρο διαθέτεις;</h2><p>Δεν θα ισχυριστούμε ότι κάτι χωράει χωρίς επιβεβαιωμένες διαστάσεις.</p><div className="choices"><Choice active={a.space==="compact"} emoji="🏙️" title="Μικρός χώρος" detail="Δωμάτιο ή διαμέρισμα, περιορισμένη αποθήκευση" onClick={()=>patch({space:"compact"})}/><Choice active={a.space==="medium"} emoji="🏠" title="Κανονικός χώρος" detail="Μια ελεύθερη γωνιά για άσκηση" onClick={()=>patch({space:"medium"})}/><Choice active={a.space==="large"} emoji="🏡" title="Άνετος χώρος" detail="Ξεχωριστό σημείο για εξοπλισμό" onClick={()=>patch({space:"large"})}/></div></>}
