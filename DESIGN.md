@@ -2,6 +2,11 @@
 Version: 2026-10-30 · Branch: feat/fitmatch-next-human-movement-20261030
 Owner: FITMATCH AI · Review PR staging only.
 
+## 2026-11-07 integrated-home addendum
+Release candidate on redesign/fitmatch-experience-20261107. The original / buying advisor is preserved at /equipment; the public-home replacement is staging-only and requires explicit release review. The /next and /next/360 journeys remain present and unchanged.
+Design system for the new home: deep navy #102F37, dark teal #15363D, lime #D6F7A8, coral #EF9276, warm paper #FAFBF7, muted sage #EAF3ED; Noto Sans Greek-capable text and Manrope brand. Original SVG isometric room illustration, educational FitCheck with 9 deterministic states, accessible selection controls and responsive 320–1440px layout. See docs/FITMATCH_REDESIGN_20261107.md.
+No LLM is represented as active; trust and data gates remain explicit.
+
 ## Creative brief
 Greek-first human movement and function platform, not a sports e-shop or an AI physiotherapist. Create dignity and autonomy for adults with diverse abilities, ages and motivations. Every recommendation is useful even without a purchase.
 
@@ -16,7 +21,7 @@ Greek-first human movement and function platform, not a sports e-shop or an AI p
 - White space and tint blocks should create confidence, not infantilize adults or medicalize everyday behaviour.
 
 ## Production design boundaries
-- Preview lives at /next, noindex. Legacy / and commerce APIs unchanged.
+- /next remains noindex preview. Proposed / replacement is isolated on the new redesign branch, while the original advisor is preserved at /equipment. All commerce APIs unchanged. No production deploy without explicit approval.
 - No claim of clinical efficacy; clinical routes display education/referral rather than autonomous rehab prescriptions.
 - Historical products are labelled historical, without checkout buttons.
 - Current commission verification remains a separate canonical gate in the existing API.
