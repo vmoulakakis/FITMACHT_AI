@@ -1,15 +1,17 @@
-import Advisor from "@/components/Advisor";
+import type {Metadata} from "next";
+import FitMatchHome from "@/components/FitMatchHome";
 import {publicLinkwisePreviews} from "@/lib/linkwise-public";
+import type {Category} from "@/lib/decision";
+import "./home.css";
 export const dynamic="force-dynamic";
+export const metadata:Metadata={
+ title:"FitMatch AI | Βρες τον κατάλληλο fitness εξοπλισμό για εσένα",
+ description:"Έξυπνος ελληνικός σύμβουλος fitness εξοπλισμού. Στόχος, διαθέσιμος χώρος, θόρυβος, budget και τεκμηριωμένη επιλογή, χωρίς υποχρεωτική αγορά.",
+ robots:{index:false,follow:false}
+};
 export default async function Home(){
- const sections=await Promise.all([
-  publicLinkwisePreviews("exercise-bike",1500),
-  publicLinkwisePreviews("adjustable-dumbbells",1500),
-  publicLinkwisePreviews("resistance-bands",1500),
-  publicLinkwisePreviews("treadmill",7000),
-  publicLinkwisePreviews("fixed-dumbbells",1500),
-  publicLinkwisePreviews("weight-bench",1500)
- ]);
- const featured=sections.flatMap((items)=>items.slice(0,1));
- return <Advisor featured={featured}/>;
+ const categories:Category[]=["exercise-bike","adjustable-dumbbells","resistance-bands","treadmill"];
+ const results=await Promise.all(categories.map(async category=>({category,items:await publicLinkwisePreviews(category,1500,fetch,1)})));
+ const featured=results.flatMap(group=>group.items.map(item=>({...item,category:group.category}))).slice(0,3);
+ return <FitMatchHome featured={featured}/>;
 }

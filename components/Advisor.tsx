@@ -8,10 +8,10 @@ type Result={decision:Advice;offers:Product[];candidatePreviews:CandidatePreview
 const initial:Answers={goal:"walking",space:"compact",noise:"normal",activity:"walk",budget:500,fold:true};
 const stages=["Στόχος","Ο χώρος σου","Τρόπος άσκησης","Θόρυβος","Budget","Αποθήκευση"];
 function Choice({active,title,detail,emoji,onClick}:{active:boolean;title:string;detail?:string;emoji:string;onClick:()=>void}){return <button className={"choice"+(active?" selected":"")} type="button" onClick={onClick}><span className="choiceEmoji">{emoji}</span><span className="choiceCopy"><strong>{title}</strong>{detail&&<small>{detail}</small>}</span><span className="choiceCheck">{active?<Check size={16}/>:<span className="emptyCircle"/>}</span></button>;}
-export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
- const [started,setStarted]=useState(false);
- const [step,setStep]=useState(0);
- const [a,setA]=useState<Answers>(initial);
+export default function Advisor({featured=[],seed=null}:{featured?:CandidatePreview[];seed?:Pick<Answers,"goal"|"space">|null}){
+ const [started,setStarted]=useState(seed!==null);
+ const [step,setStep]=useState(seed?2:0);
+ const [a,setA]=useState<Answers>(()=>({...initial,...(seed||{})}));
  const [result,setResult]=useState<Result|null>(null);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");

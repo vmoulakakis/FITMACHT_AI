@@ -1,0 +1,63 @@
+# FITMATCH UX Contract (v2 · 2026-11-07)
+
+## Primary journey
+/ -> goal selected -> space selected -> a grounded early explanation -> user chooses continue -> /equipment prefilled at step 3/6 -> activity -> noise -> budget -> storage -> recommendation -> eligible product, historical preview, or honest unavailable state.
+
+### Interactive state matrix
+| State | UI outcome | Action |
+| --- | --- | --- |
+| No answers | "Choose goal and available space" explanation | Continue disabled |
+| Goal only | Goal visually selected, 1/6 done | Continue disabled |
+| Space only | Space visually selected, 1/6 done | Continue disabled |
+| Both | Relevant explanation + source/spec reminder, 2/6 done | Continue enabled |
+| Valid warm-start URL | Advisor loads provided goal and space, opens at step index 2 | Back can edit space or goal |
+| Invalid URL / arrays / unsupported values | No prefill, advisor opens at ordinary landing | Never assume user answers |
+| Catalog has real unverified candidates | Images/names with accurate historical disclosure, no buy CTA | Browse products |
+| Catalog unavailable | Honest empty state, no hallucinated cards | Browse methodology |
+| Existing API returns verified offers | Use preserved /api/out allowlisted redirect only | Store external link |
+| API fails / no offers | Existing advisor error or empty state; no false stock claim | Retry/alternate |
+
+## Navigation
+Header logo -> /; product menu -> #catalog; methodology -> /methodology; movement -> /next; studio -> /next/360. Mobile menu uses actual expanded state, all links navigable by keyboard. No visible controls without action.
+
+## Safety and data
+- Selections are nonclinical and passed only as allowlisted URL values. No personal health answers captured on /. No new analytics, cookies, or database mutation.
+- /next complex/urgent health states follow original protected safety paths.
+- /api/recommend and /api/360/offers unchanged. Raw SocialMarket commission estimates never count as independently verified.
+- Real images reflect source. No synthetic product photos posed as genuine.
+- Unverified candidates lack buy link; no arbitrary affiliate link rewriting.
+
+## Acceptance / QA
+- CI typecheck, unit tests (9 combinations, handoff, invalid URL rejection), build.
+- Visual desktop/tablet/mobile at 320/360/390/768/1024/1440, keyboard and assistive tech, 200% zoom, reduced motion.
+- Real manual E2E: / -> choose goal+space -> third advisor question -> complete -> safe result. 
+- Vercel preview is protected by login; live visual QA cannot be claimed without authenticated browser.
+- Production release requires explicit signoff.
+
+---
+## Legacy movement and 360 journeys (unchanged contract)
+# FITMATCH NEXT — UX-CONTRACT.md
+## Screen transitions
+home -> barrier -> duration -> safety -> result. Backwards navigation preserves current answers. Reset clears answers, commitments and verified-offer response. No free-text medical input.
+## Safety state
+urgent -> ONLY emergency callout, no habit actions or product previews. professional -> no automatic activity instructions, no commercial equipment. wellness -> informational habit assistance and optionally existing verified-offer API.
+## Data
+No health-related answers persisted or sent to API. Existing /api/recommend receives only generic fitness goal, space, noise, activity, price budget, fold flag, not pain or clinical state.
+Preview catalog fetch is read-only; historical records carry no purchase links or current-price claims. Offers API is fail-closed in its existing eligibility gates.
+## Failure states
+If offer API fails or returns no items, show no-purchase statement. User may reset. No empty fake product cards.
+## Accessibility / privacy
+Semantic nav, buttons, headings, labels, text alternatives, focus visibility, reduced motion, keyboard support. No analytics consent assumption. No treatment or diagnostic claim.
+## Acceptance
+- Stable hydration; verified responsive layouts.
+- All transitions reachable with keyboard.
+- No clinical/commercial leakage.
+- No public indexing of preview route.
+- Test red-path and compound barrier cases.
+- No changes to production home/old APIs until reviewed.
+
+## FITMATCH 360 funnel and reports
+Existing /next journey carries need, barrier, minutes and safety to /next/360. Route asks only movement environment, general dietary preference, and optional product budget. The new report always has distinct movement/nutrition/product sections, but in clinical routes does not invent trainer-approved exercise or registered-dietitian medical diets. Product lane shows 3–5 live verified offers when supply exists, no historical candidates as available offers. User chooses a single featured offer; the PDF may list up to five verified offers.
+PDF A4 is rendered client-side with original source photos only where CORS permits, linked image and real QR code targeting the exact verified HTTPS tracking URL. Absent verified URL means NO QR or purchase CTA. Users may download without email.
+Email delivery is opt-in and wellness-only, with Turnstile verification, verified sending domain, server-side Resend API secret, bounded PDF size and NO marketing consent inferred. GDPR health-data cases are blocked from email transmission pending professional/legal review.
+Canva is the editable design/reference master, whereas dynamic per-user export uses a separate runtime graphics renderer until a licensed Canva autofill/export integration has been validated. Do not misrepresent the runtime PDF as an official rendered Canva file.
