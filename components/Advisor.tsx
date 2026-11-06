@@ -54,7 +54,7 @@ export default function Advisor({featured=[]}:{featured?:CandidatePreview[]}){
            <div className="candidatePrice">{p.price.toLocaleString("el-GR")}€<small>Τιμή πηγής · όχι live</small></div>
          </div>)}</div>
        </div>:<div className="emptyOffers"><Search size={29}/><h4>Δεν εμφανίζουμε μη επαληθευμένες προσφορές</h4><p>Η κατάλληλη κατηγορία έχει προσδιοριστεί. Οι πραγματικές επιλογές θα ενεργοποιηθούν μόλις ελεγχθούν το feed, οι τεχνικές προδιαγραφές και οι συμφωνίες προμήθειας.</p><small>{result.catalogNote||"Η εισαγωγή προσφορών βρίσκεται σε διαδικασία ελέγχου."}</small></div>}</div>
-       {result.decision.wait&&<div className="waitCard">Με αυτό το budget, ίσως είναι προτιμότερο να μην αγοράσεις ακόμη μηχάνημα. Εξέτασε δωρεάν εναλλακτικές μέχρι να βρεθεί επιβεβαιωμένα κατάλληλη επιλογή.</div>}
+       {result.decision.wait&&<div className="waitCard">Με το διαθέσιμο budget ή τους περιορισμούς χρήσης, είναι πιθανό να χρειάζεται επιπλέον έλεγχος πριν αγοράσεις. Μην θεωρείς κατάλληλο ένα μηχάνημα χωρίς ακριβείς διαστάσεις, απαιτήσεις ασφάλειας και τεκμηριωμένα τεχνικά στοιχεία.</div>}
        <div className="resultActions"><button className="btnPrimary" type="button" onClick={begin}><RotateCcw size={17}/> Νέα αξιολόγηση</button><a href="/methodology" className="btnText">Δες τη μεθοδολογία <MoveRight size={16}/></a></div>
        <p className="disclosure">{result.disclosure} Δεν παρέχουμε ιατρικές συμβουλές ή εγγυήσεις αποτελεσμάτων.</p>
        </div>}
