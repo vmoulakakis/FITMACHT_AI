@@ -1,15 +1,9 @@
-import Advisor from "@/components/Advisor";
-import {publicLinkwisePreviews} from "@/lib/linkwise-public";
-export const dynamic="force-dynamic";
-export default async function Home(){
- const sections=await Promise.all([
-  publicLinkwisePreviews("exercise-bike",1500),
-  publicLinkwisePreviews("adjustable-dumbbells",1500),
-  publicLinkwisePreviews("resistance-bands",1500),
-  publicLinkwisePreviews("treadmill",7000),
-  publicLinkwisePreviews("fixed-dumbbells",1500),
-  publicLinkwisePreviews("weight-bench",1500)
- ]);
- const featured=sections.flatMap((items)=>items.slice(0,1));
- return <Advisor featured={featured}/>;
-}
+import type {Metadata} from "next";
+import FitMatchHome from "@/components/FitMatchHome";
+import "./home.css";
+export const metadata:Metadata={
+ title:"FitMatch AI | Η σωστή επιλογή αρχίζει από εσένα",
+ description:"Ελληνικός fitness buying advisor για εξοπλισμό, χώρο και καθημερινή κίνηση. Δωρεάν FitCheck, έξυπνη αξιολόγηση και FitMatch 360° Studio.",
+ robots:{index:false,follow:false}
+};
+export default function Home(){return <FitMatchHome/>;}
