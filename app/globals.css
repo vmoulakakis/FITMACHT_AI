@@ -69,3 +69,54 @@
 .catalogPagination button:disabled{opacity:.4;cursor:default}.catalogPagination span{font-size:12px;color:#567462}.catalogEmpty{font-size:13px;color:#526b55;margin:20px 0}
 @media(max-width:920px){.catalogCards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.catalogExplorer{padding:20px 15px 55px}.catalogCards{gap:9px}.catalogCardPicture{height:135px}.catalogCardBody{padding:10px}.catalogCardBody h2{font-size:11px;min-height:73px}.catalogCardBody b{font-size:17px}.catalogSelect select{max-width:180px}.catalogHero{padding-top:18px}.catalogPagination{gap:10px}}
+
+
+/* FITCHECK / Decision Studio — editorial problem-first surface */
+.fitcheck{max-width:1230px;margin:36px auto 56px;padding:0 25px;scroll-margin-top:92px}
+.fcFrame{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1fr);background:#12392c;border-radius:28px;overflow:hidden;box-shadow:0 28px 70px rgba(15,48,35,.12)}
+.fcEditorial{position:relative;min-height:570px;display:flex;flex-direction:column;align-items:flex-start;padding:52px clamp(28px,4vw,60px);color:#fff;isolation:isolate;overflow:hidden}
+.fcEditorial:before{content:"";position:absolute;width:370px;height:370px;border:1px solid #ffffff24;border-radius:50%;right:-180px;bottom:-190px;box-shadow:0 0 0 48px #ffffff08,0 0 0 96px #ffffff05;z-index:-1;pointer-events:none}
+.fcOverline{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#d1e8c0;display:flex;align-items:center;gap:11px}
+.fcSignal{width:9px;height:9px;border-radius:50%;background:#e8a07b;box-shadow:0 0 0 5px #e8a07b29}
+.fcEditorial h2{font:800 clamp(35px,4vw,57px)/1.12 Manrope,Arial,sans-serif;letter-spacing:-2.5px;margin:68px 0 22px;max-width:470px}
+.fcEditorial h2 em{font-style:normal;color:#d0eaa3}
+.fcEditorial>p{font-size:15px;line-height:1.85;color:#d1dfd3;max-width:405px;margin:0}
+.fcValues{display:grid;gap:16px;margin-top:38px}
+.fcValues span{display:flex;align-items:center;gap:12px;font-size:12px;color:#e4efdc}
+.fcValues svg{color:#bde787}
+.fcIndex{font:800 12px Manrope,Arial,sans-serif;letter-spacing:2px;margin-top:auto;padding-top:40px;color:#a5c99d}
+.fcIndex span{margin:0 10px;color:#e8a07b}
+.fcWorkarea{background:#fffdf7;padding:48px clamp(23px,3.5vw,50px);min-width:0}
+.fcForm,.fcResult{display:flex;flex-direction:column;min-width:0}
+.fcFormTop{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:36px;border-bottom:1px solid #e6e9df;padding-bottom:20px}
+.fcFormTop span:first-child{display:flex;align-items:center;gap:9px;color:#234d39;font-size:12px;font-weight:800}
+.fcFormTop span:last-child{font-size:10px;letter-spacing:1px;color:#778c7a;font-weight:800;white-space:nowrap}
+.fcForm>label:not(.fcConsent){font:800 24px Manrope,Arial,sans-serif;letter-spacing:-.7px;margin-bottom:13px}
+.fcForm textarea{background:#fff;border:1.5px solid #d6e2d3;border-radius:14px;width:100%;min-height:128px;padding:18px;color:#193629;line-height:1.65;resize:vertical;font:14px "DM Sans",Arial,sans-serif}
+.fcForm textarea:focus-visible{outline:3px solid #bde787;outline-offset:2px;border-color:#538a58}
+.fcForm textarea::placeholder{color:#8d9a8c}
+.fcSupport{font-size:11px;color:#637769;line-height:1.6;margin:9px 0 15px}
+.fcExamples{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.fcExamples button{background:#eef4e9;color:#31523e;border:1px solid #dde8d6;border-radius:100px;padding:10px 12px;font-size:11px;text-align:left;line-height:1.4;min-height:44px}
+.fcExamples button:hover{border-color:#8cac77;background:#e8f0df}
+.fcConsent{display:flex;align-items:flex-start;gap:11px;cursor:pointer;color:#506a57;font-size:11px;line-height:1.65;margin:4px 0 18px}
+.fcConsent input{width:18px;height:18px;flex:0 0 auto;margin:2px 0 0;accent-color:#245d3e}
+.fcSubmit{display:inline-flex;justify-content:center;align-items:center;gap:12px;background:#1d4b35;color:#fff;border:0;border-radius:12px;padding:15px 20px;font:800 13px Manrope,Arial,sans-serif;min-height:48px;transition:transform .18s,background .18s}
+.fcSubmit:hover:not(:disabled){background:#31664b;transform:translateY(-2px)}
+.fcSubmit:disabled{opacity:.5;cursor:not-allowed}
+.fcError{font-size:12px;color:#b12e28;line-height:1.6}
+.fcResult h3{font:800 clamp(24px,2.6vw,34px)/1.2 Manrope,Arial,sans-serif;letter-spacing:-1.5px;margin:0 0 14px;color:#1a4731}
+.fcRationale{font-size:13px;line-height:1.8;color:#637667}
+.fcResult ol{display:grid;gap:14px;list-style:none;margin:23px 0;padding:0}
+.fcResult li{display:flex;gap:15px;border-bottom:1px solid #e4eadc;padding-bottom:13px}
+.fcResult li>span{font:800 12px Manrope,Arial,sans-serif;color:#a16e50;margin-top:3px}
+.fcResult li>p{margin:0;color:#2f503a;font-size:13px;line-height:1.6}
+.fcQuestion{display:flex;gap:12px;background:#ecf4e5;border-radius:12px;padding:16px;color:#2a5139}
+.fcQuestion>span{display:grid;gap:5px;line-height:1.55;font-size:12px}
+.fcCaution{display:flex;gap:9px;align-items:flex-start;margin:16px 0;font-size:11px;line-height:1.7;color:#735f35}
+.fcCaution svg{flex-shrink:0}
+.fcResultActions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+.fcReset{min-height:48px;border:1px solid #d7e3d0;background:#fff;border-radius:10px;display:inline-flex;align-items:center;gap:7px;padding:10px 14px;font-weight:700;color:#31563b}
+.fcResult>small{color:#687b6b;font-size:10px;line-height:1.6;margin-top:18px}
+@media(max-width:900px){.fcFrame{grid-template-columns:1fr}.fcEditorial{min-height:0;padding:38px 32px}.fcEditorial h2{margin:30px 0 14px;font-size:clamp(32px,5vw,47px)}.fcValues{display:flex;gap:18px;flex-wrap:wrap;margin-top:24px}.fcIndex{display:none}.fcWorkarea{padding:36px 32px}}
+@media(max-width:560px){.fitcheck{margin:14px auto 40px;padding:0 12px;scroll-margin-top:70px}.fcFrame{border-radius:19px}.fcEditorial{padding:29px 24px}.fcOverline{font-size:9px}.fcEditorial h2{font-size:35px;letter-spacing:-1.7px}.fcEditorial>p{font-size:13px}.fcValues{gap:12px 20px}.fcValues span{font-size:11px}.fcWorkarea{padding:28px 19px}.fcFormTop{margin-bottom:23px}.fcForm>label:not(.fcConsent){font-size:20px}.fcForm textarea{font-size:16px}.fcResultActions{display:grid;grid-template-columns:1fr}.fcReset,.fcSubmit{width:100%}}

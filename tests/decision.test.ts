@@ -13,3 +13,10 @@ test("expired stock and budget limits rejected",()=>{assert.equal(eligible({...o
 test("stale price rejected",()=>assert.equal(eligible({...offer,lastSeen:"2026-10-01T00:00:00Z"},500,7,now).reason,"stale_offer"));
 test("zero eligible offers never fabricate results",()=>assert.deepEqual(choose([{...offer,commissionEvidence:false}],q,"walking-pad",now),[]));
 test("verified offer eligibility passes",()=>assert.equal(eligible(offer,500,7,now).ok,true));
+
+test("storage preference changes the evidence checklist, not unverifiable product claims",()=>{
+ const fold=advise({...q,activity:"run",fold:true});
+ const fixed=advise({...q,activity:"run",fold:false});
+ assert.ok(fold.checks.some(x=>x.includes("αναδίπλωσης")));
+ assert.ok(fixed.checks.some(x=>x.includes("σε χρήση")));
+});
