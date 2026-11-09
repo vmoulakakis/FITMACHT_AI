@@ -30,3 +30,6 @@ A server-side streaming JSON importer is available for the **owner-supplied CD10
 
 ## Persistent Linkwise candidates (2026-10-29)
 The production advisor can read fresh, sanitized, **UNVERIFIED** product previews from the isolated RLS-protected table `public.fitmatch_feed_candidates` on the connected Supabase instance. This table does **not** contain tracking URLs or commission estimates. Vercel uses a publishable key. Trusted feed workers must first run `npm run linkwise:audit` and then **explicitly** run `npm run linkwise:publish-previews` with a service-role key in a worker (never Vercel). The publisher has not been confirmed to run on the full original feed and the production table may remain empty. The recommendation and purchase gates remain fail-closed. Details in docs/LINKWISE_CD104_INTEGRATION.md.
+
+## MyAgenticTeam Free LLM integration (internal only)
+A protected, disabled-by-default server-side AI explanation endpoint is available at `/api/internal/ai-explain`. It never alters verified offers, commissions or `/api/recommend`. See [implementation and privacy gates](docs/FREE_LLM_ASSISTANT.md). Requires dedicated server-only provider and service token secrets; user-facing AI remains off until security and quota review.
